@@ -18,7 +18,7 @@ export class Point {
   }
 
   randomWithin(exclude: Array<Point>) {
-    let newPoint;
+    let newPoint: (Point | undefined);
     const excludeKeys = exclude.reduce((map, p) => {
       map[p.toString()] = true;
       return map;

@@ -1,6 +1,6 @@
 {
   "name": "ice-puzzle",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "repository": "git@github.com:mpaulweeks/ice-puzzle.git",
   "author": "mpaulweeks <mpaulweeks@gmail.com>",
