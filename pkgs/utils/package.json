@@ -1,8 +1,9 @@
 {
   "name": "ice-puzzle-utils",
   "version": "0.1.0",
-  "main": "index.js",
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "gen": "ts-node src/bin/run.ts",

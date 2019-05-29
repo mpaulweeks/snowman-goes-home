@@ -1,8 +1,8 @@
 import { Level } from "./level";
-import { Point } from "./Point";
+import { Point } from "./point";
 
-function range(n: number) {
-  let arr = [];
+function range(n: number): Array<number> {
+  let arr: Array<number> = [];
   for (let i = 0; i < n; i++) {
     arr.push(i);
   }
@@ -33,8 +33,8 @@ export class Generator {
     return solution && solution.moves.length > minMoves ? level : null;
   }
 
-  generateLevels(max: number, tries: number) {
-    const levels = [];
+  generateLevels(max: number, tries: number): Array<Level> {
+    const levels: Array<Level> = [];
     for (let i = 0; levels.length < max && i < tries; i++) {
       const l = this.tryGenerateLevel();
       if (l) {

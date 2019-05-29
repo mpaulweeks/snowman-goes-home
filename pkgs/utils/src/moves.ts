@@ -1,4 +1,4 @@
-import { Point } from "./Point";
+import { Point } from "./point";
 
 export enum Move {
   Up = 1,
@@ -22,6 +22,13 @@ export class MoveHistory {
 
   last() {
     return this.moves[this.moves.length - 1]
+  }
+  addMove(move: Move) {
+    this.moves.push(move);
+  }
+  updatePoint(point: Point) {
+    // todo point history?
+    this.point = point;
   }
 
   getNextMoves() {

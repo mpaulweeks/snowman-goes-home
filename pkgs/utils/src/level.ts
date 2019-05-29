@@ -1,7 +1,7 @@
 // https://repl.it/@mpaulweeks/ice
 
 import { Move, MoveHistory } from './moves';
-import { Point } from './Point';
+import { Point } from './point';
 
 export class Level {
   width: number;
@@ -31,7 +31,7 @@ export class Level {
       (loc.y >= height)
     );
   }
-  applyMove(moveHistory: MoveHistory) {
+  applyMove(moveHistory: MoveHistory): Point {
     let move = moveHistory.moves[moveHistory.moves.length - 1];
     let current = moveHistory.point;
     while (true) {
@@ -59,7 +59,7 @@ export class Level {
     let counter = 0;
     while (counter < 8000 && queue.length) {
       counter++;
-      let next = queue.shift();
+      let next = queue.shift() as MoveHistory;
       next.point = this.applyMove(next);
       if (this.isWinningPoint(next.point)) {
         return next;
@@ -75,9 +75,9 @@ export class Level {
 
   print() {
     const { width, height, start, win, blocks } = this;
-    const grid = [];
+    const grid: Array<Array<string>> = [];
     for (let y = 0; y < height; y++) {
-      const row = [];
+      const row: Array<string> = [];
       for (let x = 0; x < width; x++) {
         let char = '_';
         if (win.x === x && win.y === y) {

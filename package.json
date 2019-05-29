@@ -14,7 +14,7 @@
     "test:all": "yarn test:api && yarn test:app && yarn test:utils",
     "test:app": "cd pkgs/app && yarn test-ci",
     "test:utils": "cd pkgs/utils && yarn test-ci",
-    "tsc-utils": "cd pkgs/utils && yarn tsc"
+    "tsc-utils": "cd pkgs/utils && yarn install && yarn tsc"
   },
   "devDependencies": {
     "gh-pages": "^2.0.1",
