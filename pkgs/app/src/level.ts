@@ -1,12 +1,14 @@
-import { Level, Move, MoveHistory } from "ice-puzzle-utils";
+import { Level, Move, MoveHistory, SolvableLevel } from "ice-puzzle-utils";
 
 export class PlayableLevel {
   level: Level;
+  soln: MoveHistory;
   hero: MoveHistory;
 
-  constructor(level: Level) {
-    this.level = level;
-    this.hero = new MoveHistory(level.start, []);
+  constructor(solved: SolvableLevel) {
+    this.level = solved.level;
+    this.soln = solved.soln;
+    this.hero = new MoveHistory(this.level.start, []);
   }
 
   moveHero(move: Move) {

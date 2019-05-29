@@ -21,10 +21,7 @@ console.log(l2.solve())
 const gen = new Generator(5, 5, 0.1, 5);
 const levels = gen.generateLevels(10, 1000);
 levels.forEach(l => {
-  console.log(l.print())
-  const soln = l.solve();
-  if (soln) {
-    console.log('Solution:', soln.printMoves())
-  }
+  console.log(l.level.print())
+  console.log('Solution:', l.soln.printMoves())
   console.log('\n');
 })

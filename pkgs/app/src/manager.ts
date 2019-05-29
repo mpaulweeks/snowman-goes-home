@@ -43,7 +43,7 @@ export class GameManager {
     const generator = new Generator(10, 8, Math.random() * 0.1 + 0.2, Math.random() * 10 + 5);
     const newLevel = generator.generateLevels(1, 1000)[0];
     if (newLevel) {
-      console.log('solution:', newLevel.solve());
+      console.log('solution:', newLevel.soln.printMoves());
     }
     this.currentLevel = newLevel && new PlayableLevel(newLevel);
     this.draw();

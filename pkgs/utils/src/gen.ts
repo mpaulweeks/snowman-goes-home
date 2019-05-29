@@ -1,4 +1,4 @@
-import { Level } from "./level";
+import { Level, SolvableLevel } from "./level";
 import { Point } from "./point";
 
 function range(n: number): Array<number> {
@@ -22,7 +22,7 @@ export class Generator {
     this.minMoves = minMoves;
   }
 
-  tryGenerateLevel(): (Level | null) {
+  tryGenerateLevel(): (SolvableLevel | null) {
     const { width, height, blockPercent, minMoves } = this;
     const bound = new Point(width, height);
     const win = bound.randomWithin([]);
@@ -30,11 +30,11 @@ export class Generator {
     const blocks = range(width * height * blockPercent).map(_ => bound.randomWithin([win, start]));
     const level = new Level(width, height, start, win, blocks);
     const solution = level.solve();
-    return solution && solution.moves.length > minMoves ? level : null;
+    return solution && solution.moves.length > minMoves ? new SolvableLevel(level, solution) : null;
   }
 
-  generateLevels(max: number, tries: number): Array<Level> {
-    const levels: Array<Level> = [];
+  generateLevels(max: number, tries: number): Array<SolvableLevel> {
+    const levels: Array<SolvableLevel> = [];
     for (let i = 0; levels.length < max && i < tries; i++) {
       const l = this.tryGenerateLevel();
       if (l) {

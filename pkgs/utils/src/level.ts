@@ -99,3 +99,11 @@ export class Level {
   }
 }
 
+export class SolvableLevel {
+  level: Level;
+  soln: MoveHistory;
+  constructor(level: Level, soln: MoveHistory) {
+    this.level = level;
+    this.soln = soln;
+  }
+}
