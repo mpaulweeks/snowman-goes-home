@@ -1,0 +1,23 @@
+{
+  "name": "ice-puzzle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:mpaulweeks/ice-puzzle.git",
+  "author": "mpaulweeks <mpaulweeks@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "bs": "yarn tsc-utils && lerna bootstrap",
+    "build:app": "yarn bs && cd pkgs/app && yarn build",
+    "deploy:app": "yarn build:app && gh-pages -d pkgs/app/build",
+    "dev:app": "yarn bs && cd pkgs/app && yarn start",
+    "setup": "yarn install && yarn bs",
+    "test:all": "yarn test:api && yarn test:app && yarn test:utils",
+    "test:app": "cd pkgs/app && yarn test-ci",
+    "test:utils": "cd pkgs/utils && yarn test-ci",
+    "tsc-utils": "cd pkgs/utils && yarn tsc"
+  },
+  "devDependencies": {
+    "gh-pages": "^2.0.1",
+    "lerna": "^3.14.1"
+  }
+}
