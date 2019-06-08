@@ -7,11 +7,10 @@
   "scripts": {
     "predeploy": "yarn build",
     "deploy": "yarn build:app && gh-pages -d pkgs/app/build",
-    "test": "jest --watchAll",
+    "test": "react-scripts test",
     "test-ci": "jest",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "dependencies": {
@@ -28,9 +27,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.13",
     "gh-pages": "^2.0.1",
-    "jest": "^24.8.0",
-    "lerna": "^3.14.1",
-    "ts-jest": "^24.0.2",
+    "ts-jest": "^24.0.2"
   },
   "eslintConfig": {
     "extends": "react-app"
