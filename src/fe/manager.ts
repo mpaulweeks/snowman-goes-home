@@ -1,4 +1,4 @@
-import { Generator, Move, PlayableLevel } from "ice-puzzle-utils";
+import { Generator, Move, PlayableLevel } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,

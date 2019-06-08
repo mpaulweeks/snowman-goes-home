@@ -1,6 +1,4 @@
-import { Generator } from '../gen';
-import { Level } from '../level';
-import { Point } from '../point';
+import { Generator, Level, Point } from '../utils';
 
 const l1 = new Level(
   5, 5, new Point(1, 1), new Point(3, 3), [

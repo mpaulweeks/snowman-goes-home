@@ -1,20 +1,50 @@
 {
   "name": "ice-puzzle",
   "version": "0.1.0",
+  "private": true,
   "license": "MIT",
+  "homepage": ".",
   "scripts": {
-    "bs": "yarn build:utils && lerna bootstrap",
-    "build:app": "yarn bs && cd pkgs/app && yarn build",
-    "build:utils": "cd pkgs/utils && yarn install && yarn build",
-    "deploy:app": "yarn build:app && gh-pages -d pkgs/app/build",
-    "dev:app": "yarn bs && cd pkgs/app && yarn start",
-    "setup": "yarn install && yarn bs",
-    "test:all": "yarn test:app && yarn test:utils",
-    "test:app": "cd pkgs/app && yarn test-ci",
-    "test:utils": "cd pkgs/utils && yarn test-ci"
+    "predeploy": "yarn build",
+    "deploy": "yarn build:app && gh-pages -d pkgs/app/build",
+    "test": "jest --watchAll",
+    "test-ci": "jest",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@types/node": "^12.0.3",
+    "@types/react": "^16.8.19",
+    "@types/react-dom": "^16.8.4",
+    "@types/styled-components": "^4.1.15",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "styled-components": "^4.2.0",
+    "typescript": "^3.4.5"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "gh-pages": "^2.0.1",
-    "lerna": "^3.14.1"
+    "jest": "^24.8.0",
+    "lerna": "^3.14.1",
+    "ts-jest": "^24.0.2",
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
