@@ -6,7 +6,7 @@
   "homepage": ".",
   "scripts": {
     "predeploy": "yarn build",
-    "deploy": "yarn build:app && gh-pages -d pkgs/app/build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "test-ci": "jest",
     "start": "react-scripts start",
