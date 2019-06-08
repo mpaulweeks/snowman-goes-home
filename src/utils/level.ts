@@ -41,7 +41,7 @@ export class Level {
       else if (move === Move.Right) next.x++;
       else if (move === Move.Up) next.y--;
       else if (move === Move.Down) next.y++;
-      else throw `unexpected move: ${move}`;
+      else throw new Error(`unexpected move: ${move}`);
 
       if (this.isWinningPoint(next)) {
         return next;
