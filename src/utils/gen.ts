@@ -9,38 +9,60 @@ function range(n: number): Array<number> {
   return arr;
 }
 
-export class Generator {
+function randomInRange(min: number, max: number) {
+  return min + (Math.random() * (max - min));
+}
+
+export interface GeneratorSettings {
   width: number;
   height: number;
-  blockPercent: number;
-  minMoves: number;
+  blockPercentMin: number;
+  blockPercentMax: number;
+  minMovesMin: number;
+  minMovesMax: number;
+}
 
-  constructor(width: number, height: number, blockPercent: number, minMoves: number) {
-    this.width = width;
-    this.height = height;
-    this.blockPercent = blockPercent;
-    this.minMoves = minMoves;
+export class Generator {
+  settings: GeneratorSettings;
+
+  constructor(settings: GeneratorSettings) {
+    this.settings = settings;
   }
 
-  tryGenerateLevel(): (SolvableLevel | null) {
-    const { width, height, blockPercent, minMoves } = this;
+  tryGenerateLevel(numBlocks: number, minMoves: number): (SolvableLevel | null) {
+    const { width, height } = this.settings;
     const bound = new Point(width, height);
     const win = bound.randomWithin([]);
     const start = bound.randomWithin([win]);
-    const blocks = range(width * height * blockPercent).map(_ => bound.randomWithin([win, start]));
+    const blocks = range(numBlocks).map(_ => bound.randomWithin([win, start]));
     const level = new Level(width, height, start, win, blocks);
     const solution = level.solve();
     return solution && solution.moves.length > minMoves ? new SolvableLevel(level, solution) : null;
   }
 
   generateLevels(max: number, tries: number): Array<SolvableLevel> {
+    const {
+      width,
+      height,
+      blockPercentMin,
+      blockPercentMax,
+      minMovesMin,
+      minMovesMax,
+    } = this.settings;
     const levels: Array<SolvableLevel> = [];
-    for (let i = 0; levels.length < max && i < tries; i++) {
-      const l = this.tryGenerateLevel();
-      if (l) {
-        levels.push(l);
+    let attempts = 0;
+    while (levels.length < max && attempts < tries * 10) {
+      const numBlocks = width * height * randomInRange(blockPercentMin, blockPercentMax);
+      const minMoves = randomInRange(minMovesMin, minMovesMax);
+      for (let i = 0; levels.length < max && i < tries; i++) {
+        attempts += 1;
+        const level = this.tryGenerateLevel(numBlocks, minMoves);
+        if (level) {
+          levels.push(level);
+        }
       }
     }
+    console.log(attempts);
     return levels;
   }
 }

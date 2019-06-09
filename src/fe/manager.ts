@@ -86,7 +86,14 @@ export class GameManager {
     this.animateMove(moveInfo);
   }
   newLevel() {
-    const generator = new Generator(10, 8, Math.random() * 0.1 + 0.2, Math.random() * 10 + 5);
+    const generator = new Generator({
+      width: 20,
+      height: 16,
+      blockPercentMin: 0.2,
+      blockPercentMax: 0.3,
+      minMovesMin: 25,
+      minMovesMax: 35,
+    });
     const newLevel = generator.generateLevels(1, 1000)[0];
     if (newLevel) {
       console.log('solution:', newLevel.soln.printMoves());
