@@ -13,6 +13,23 @@ function randomInRange(min: number, max: number) {
   return min + (Math.random() * (max - min));
 }
 
+export class BlockAllocator {
+  spaces: Array<Point> = [];
+
+  constructor(width: number, height: number) {
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        this.spaces.push(new Point(x, y));
+      }
+    }
+  }
+
+  pop(): Point {
+    const index = Math.floor(Math.random() * this.spaces.length);
+    return this.spaces.splice(index, 1)[0];
+  }
+}
+
 export interface GeneratorSettings {
   width: number;
   height: number;
@@ -31,10 +48,10 @@ export class Generator {
 
   tryGenerateLevel(numBlocks: number, minMoves: number): (SolvableLevel | null) {
     const { width, height } = this.settings;
-    const bound = new Point(width, height);
-    const win = bound.randomWithin([]);
-    const start = bound.randomWithin([win]);
-    const blocks = range(numBlocks).map(_ => bound.randomWithin([win, start]));
+    const allocator = new BlockAllocator(width, height);
+    const win = allocator.pop();
+    const start = allocator.pop();
+    const blocks = range(numBlocks).map(_ => allocator.pop());
     const level = new Level(width, height, start, win, blocks);
     const solution = level.solve();
     return solution && solution.moves.length > minMoves ? new SolvableLevel(level, solution) : null;
