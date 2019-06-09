@@ -8,12 +8,24 @@ export interface MoveInformation {
   traveled: Array<Point>,
 }
 
+export enum Block {
+  Start = 1,
+  Win,
+  Block,
+}
+
+interface BlockLookup {
+  [key: string]: Block;
+};
+
 export class Level {
   width: number;
   height: number;
   start: Point;
   win: Point;
   blocks: Array<Point>;
+  blocksByKey: BlockLookup = {};
+
 
   constructor(width: number, height: number, start: Point, win: Point, blocks: Array<Point>) {
     this.width = width;
@@ -21,14 +33,22 @@ export class Level {
     this.start = start;
     this.win = win;
     this.blocks = blocks;
+
+    this.blocksByKey = this.blocks.reduce(
+      (lookup: BlockLookup, b) => {
+        lookup[b.toString()] = Block.Block;
+        return lookup;
+      },
+      {}
+    );
   }
 
   isWinningPoint(loc: Point): boolean {
     return this.win.equals(loc);
   }
   isIllegalPoint(loc: Point): boolean {
-    const { blocks, width, height } = this;
-    const hitBlock = blocks.some(b => b.equals(loc));
+    const { blocksByKey, width, height } = this;
+    const hitBlock = !!blocksByKey[loc.toString()];
     return hitBlock || (
       (loc.x < 0) ||
       (loc.x >= width) ||
