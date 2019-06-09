@@ -3,6 +3,11 @@
 import { Move, PointHistory } from './moves';
 import { Point } from './point';
 
+export interface MoveInformation {
+  point: Point,
+  traveled: Array<Point>,
+}
+
 export class Level {
   width: number;
   height: number;
@@ -18,10 +23,10 @@ export class Level {
     this.blocks = blocks;
   }
 
-  isWinningPoint(loc: Point) {
+  isWinningPoint(loc: Point): boolean {
     return this.win.equals(loc);
   }
-  isIllegalPoint(loc: Point) {
+  isIllegalPoint(loc: Point): boolean {
     const { blocks, width, height } = this;
     const hitBlock = blocks.some(b => b.equals(loc));
     return hitBlock || (
@@ -31,8 +36,9 @@ export class Level {
       (loc.y >= height)
     );
   }
-  applyMove(point: Point, move: Move): Point {
+  applyMove(point: Point, move: Move): MoveInformation {
     let current = point;
+    const traveled = [current];
     while (true) {
       const next = current.clone();
 
@@ -42,16 +48,21 @@ export class Level {
       else if (move === Move.Down) next.y++;
       else throw new Error(`unexpected move: ${move}`);
 
-      if (this.isWinningPoint(next)) {
-        return next;
-      }
       if (this.isIllegalPoint(next)) {
-        return current;
+        break;
       }
+      traveled.push(next);
       current = next;
+      if (this.isWinningPoint(current)) {
+        break;
+      }
     }
+    return {
+      point: current,
+      traveled: traveled,
+    };
   }
-  solve() {
+  solve(): PointHistory | null {
     const spawn = new PointHistory(this.start, [], []);
     const visited: { [key: string]: boolean } = {};
     const queue = [spawn];
@@ -66,7 +77,7 @@ export class Level {
         let nextMoves = next.getNextMoves();
         nextMoves.forEach(m => {
           const { move, history } = m;
-          const newPoint = this.applyMove(history.point, move);
+          const newPoint = this.applyMove(history.point, move).point;
           history.addMove(newPoint, move);
           queue.push(history);
         });
@@ -75,7 +86,7 @@ export class Level {
     return null;
   }
 
-  print() {
+  print(): string {
     const { width, height, start, win, blocks } = this;
     const grid: Array<Array<string>> = [];
     for (let y = 0; y < height; y++) {
@@ -121,13 +132,14 @@ export class PlayableLevel {
     this.hero = new PointHistory(this.level.start, [], []);
   }
 
-  reset() {
+  reset(): void {
     this.hero = new PointHistory(this.level.start, [], []);
   }
 
-  moveHero(move: Move) {
+  moveHero(move: Move): MoveInformation {
     const { level, hero } = this;
-    const newPoint = level.applyMove(hero.point, move);
-    hero.addMove(newPoint, move);
+    const moveInfo = level.applyMove(hero.point, move);
+    hero.addMove(moveInfo.point, move);
+    return moveInfo;
   }
 }

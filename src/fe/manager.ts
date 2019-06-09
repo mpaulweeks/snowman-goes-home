@@ -1,4 +1,4 @@
-import { Generator, Move, PlayableLevel } from "../utils";
+import { Generator, Move, MoveInformation, PlayableLevel, Point, Stopwatch } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -28,12 +28,18 @@ function loadImage(url: string) {
   return state;
 }
 
+export interface Animation {
+  point: Point,
+  stopwatch: Stopwatch,
+}
+
 export class GameManager {
   canvasElm: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   currentLevel: (PlayableLevel | undefined);
   sprites: Sprites;
   ready: Promise<boolean>;
+  pendingAnimations: Array<Animation> = [];
 
   constructor(canvasElm: HTMLCanvasElement) {
     this.canvasElm = canvasElm;
@@ -61,6 +67,14 @@ export class GameManager {
         this.newLevel();
       }
     });
+
+    // setup passive draw loop
+    this.loop();
+  }
+
+  async loop() {
+    await this.draw();
+    window.requestAnimationFrame(() => this.loop());
   }
 
   handleMove(move: Move) {
@@ -68,8 +82,8 @@ export class GameManager {
     if (!currentLevel) {
       return;
     }
-    currentLevel.moveHero(move);
-    this.draw();
+    const moveInfo = currentLevel.moveHero(move);
+    this.animateMove(moveInfo);
   }
   newLevel() {
     const generator = new Generator(10, 8, Math.random() * 0.1 + 0.2, Math.random() * 10 + 5);
@@ -78,9 +92,15 @@ export class GameManager {
       console.log('solution:', newLevel.soln.printMoves());
     }
     this.currentLevel = newLevel && new PlayableLevel(newLevel);
-    this.draw();
   }
 
+  animateMove(moveInfo: MoveInformation) {
+    const animations = moveInfo.traveled.map((p, i, arr) => ({
+      point: p,
+      stopwatch: new Stopwatch(1000 * (1 + (i / arr.length))),
+    }));
+    this.pendingAnimations.push(...animations);
+  }
   async draw() {
     const { canvasElm, ctx, currentLevel, ready, sprites } = this;
     const { width, height } = canvasElm;
@@ -124,6 +144,19 @@ export class GameManager {
     ctx.fillStyle = 'lightgrey';
     currentLevel.level.blocks.forEach(block => {
       ctx.fillRect(block.x * blockWidth, block.y * blockHeight, blockWidth, blockHeight);
+    });
+
+    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getTime() > 0);
+    this.pendingAnimations.forEach(a => {
+      const { point, stopwatch } = a;
+      const blueLevel = stopwatch.getPercent();
+      ctx.fillStyle = `rgba(150, 150, 255, ${blueLevel})`;
+      ctx.fillRect(
+        point.x * blockWidth + blockWidth * 0.2,
+        point.y * blockHeight + blockHeight * 0.2,
+        blockWidth * 0.6,
+        blockHeight * 0.6
+      );
     });
 
     ctx.drawImage(
