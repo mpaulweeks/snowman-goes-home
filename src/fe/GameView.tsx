@@ -1,13 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { GameManager } from './manager';
+import { World } from '../utils';
 
 const Canvas = styled.canvas`
   width: 800px;
   height: 600px;
 `;
 
-interface Props { }
+interface Props {
+  world: World;
+};
 
 export class GameView extends React.Component<Props> {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -21,7 +24,7 @@ export class GameView extends React.Component<Props> {
   componentDidMount() {
     const canvasElm = this.canvasRef.current;
     if (canvasElm) {
-      this.manager = new GameManager(canvasElm);
+      this.manager = new GameManager(canvasElm, this.props.world);
     }
   }
 

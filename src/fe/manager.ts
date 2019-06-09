@@ -1,4 +1,4 @@
-import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
+import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -41,10 +41,9 @@ export class GameManager {
   sprites: Sprites;
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
-  world: (World | undefined);
-  worldLoader: WorldLoader;
+  world: World;
 
-  constructor(canvasElm: HTMLCanvasElement) {
+  constructor(canvasElm: HTMLCanvasElement, world: World) {
     this.canvasElm = canvasElm;
     canvasElm.width = 800;
     canvasElm.height = 600;
@@ -71,18 +70,14 @@ export class GameManager {
       }
     });
 
-    this.worldLoader = new WorldLoader();
-    this.worldLoader.loaders[1].onLoad.then(w => {
-      this.world = w;
-      this.nextLevel();
-    });
+    this.world = world;
+    this.nextLevel();
 
     // setup passive draw loop
     this.loop();
   }
 
   async loop() {
-    this.worldLoader.loadInBackground();
     await this.draw();
     window.requestAnimationFrame(() => this.loop());
   }

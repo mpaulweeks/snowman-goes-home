@@ -100,7 +100,7 @@ export class World {
       blockPercentMax: 0.3,
       minMovesOptions: remainingMinMoves,
     })
-    const levels = gen.generateLevels(100, 100);
+    const levels = gen.generateLevels(100, 50);
     levels.forEach(l => {
       const tier = levelsByMoves[l.soln.moves.length];
       if (tier && tier.length < levelsPerTier) {
