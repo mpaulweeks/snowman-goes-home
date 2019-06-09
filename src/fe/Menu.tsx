@@ -46,18 +46,23 @@ export class MenuView extends React.Component<Props> {
     const { worldLoader } = this.props;
     const { state } = this;
     return (
-      worldLoader.loaders.map(world => (
-        <div
-          key={world.difficulty}
-          onClick={() => this.loadWorld(world)}>
-          <h3>
-            {world.difficulty.toString()}
-          </h3>
-          <h4>
-            {state[world.difficulty] ? 'ready' : 'loading'}
-          </h4>
-        </div>
-      ))
+      <div>
+        <p>
+          select your difficulty level
+        </p>
+        {worldLoader.loaders.map(world => (
+          <div
+            key={world.difficulty}
+            onClick={() => this.loadWorld(world)}>
+            <h3>
+              {world.difficulty.toString()}
+            </h3>
+            <h4>
+              {state[world.difficulty] ? 'ready' : 'loading'}
+            </h4>
+          </div>
+        ))}
+      </div>
     );
   }
 }

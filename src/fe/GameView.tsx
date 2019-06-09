@@ -3,7 +3,17 @@ import styled from 'styled-components';
 import { GameManager } from './manager';
 import { World } from '../utils';
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+`;
+
 const Canvas = styled.canvas`
+  margin: 2rem;
+
   width: 800px;
   height: 600px;
 `;
@@ -30,8 +40,12 @@ export class GameView extends React.Component<Props> {
 
   render() {
     return (
-      <Canvas ref={this.canvasRef} >
-      </Canvas>
+      <Container>
+        <p>
+          use arrow keys to move, R to restart, and N to make new level
+        </p>
+        <Canvas ref={this.canvasRef} />
+      </Container>
     );
   }
 }

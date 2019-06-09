@@ -49,9 +49,6 @@ export class App extends React.Component<any, State> {
         <h1>
           ice slide puzzle game
         </h1>
-        <p>
-          use arrow keys to move, R to restart, and N to make new level
-        </p>
         {world ? (
           <GameView world={world} />
         ) : (
