@@ -14,8 +14,8 @@ const Container = styled.div`
 const Canvas = styled.canvas`
   margin: 2rem;
 
-  width: 800px;
-  height: 600px;
+  width: 100vh;
+  height: 80vh;
 `;
 
 interface Props {
@@ -44,8 +44,7 @@ export class GameView extends React.Component<Props> {
       <Container>
         <p>
           use arrow keys to move. press R to restart the level
-        </p>
-        <p>
+          <br />
           {world.displayName()} has {world.progression.totalLevels} levels, and they get harder as you go. try to beat them all!
         </p>
         <Canvas ref={this.canvasRef} />

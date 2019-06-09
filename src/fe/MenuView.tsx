@@ -78,6 +78,9 @@ export class MenuView extends React.Component<Props> {
     const { state } = this;
     return (
       <div>
+        <h1>
+          ice slide puzzle game
+        </h1>
         <p>
           select your difficulty level
         </p>

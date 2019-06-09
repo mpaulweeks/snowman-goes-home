@@ -5,8 +5,6 @@ import { WorldLoader, World } from '../utils';
 import { MenuView } from './MenuView';
 
 const Container = styled.div`
-  padding: 2rem;
-
   text-align: center;
 
   display: flex;
@@ -48,9 +46,6 @@ export class App extends React.Component<any, State> {
     const { world } = this.state;
     return (
       <Container>
-        <h1>
-          ice slide puzzle game
-        </h1>
         {world ? (
           <GameView world={world} />
         ) : (
