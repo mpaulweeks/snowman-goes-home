@@ -21,15 +21,20 @@ const LevelOption = styled.div`
 `;
 
 const LoadingButton = styled.div`
-  padding: 1em;
-  width: 5em;
+  padding: 0.5em;
+  width: 4em;
+  border-radius: 1em;
 
   border: 2px solid grey;
-  border-radius: 0.5em;
+  font-style: italic;
+  color: grey;
 `;
 const ReadyButton = styled(LoadingButton)`
   cursor: pointer;
-  border: 2px solid white;
+
+  border-color: white;
+  font-style: normal;
+  color: white;
 
   &:hover {
     color: black;
