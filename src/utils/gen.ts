@@ -1,7 +1,7 @@
 import { Level, SolvableLevel } from "./level";
 import { Point } from "./point";
 
-function range(n: number): Array<number> {
+export function range(n: number): Array<number> {
   let arr: Array<number> = [];
   for (let i = 0; i < n; i++) {
     arr.push(i);
@@ -35,8 +35,7 @@ export interface GeneratorSettings {
   height: number;
   blockPercentMin: number;
   blockPercentMax: number;
-  minMovesMin: number;
-  minMovesMax: number;
+  minMoves: number;
 }
 
 export class Generator {
@@ -46,8 +45,8 @@ export class Generator {
     this.settings = settings;
   }
 
-  tryGenerateLevel(numBlocks: number, minMoves: number): (SolvableLevel | null) {
-    const { width, height } = this.settings;
+  tryGenerateLevel(numBlocks: number): (SolvableLevel | null) {
+    const { width, height, minMoves } = this.settings;
     const allocator = new BlockAllocator(width, height);
     const win = allocator.pop();
     const start = allocator.pop();
@@ -63,17 +62,15 @@ export class Generator {
       height,
       blockPercentMin,
       blockPercentMax,
-      minMovesMin,
-      minMovesMax,
     } = this.settings;
     const levels: Array<SolvableLevel> = [];
     let attempts = 0;
-    while (levels.length < max && attempts < tries * 10) {
+    const triesPerMutation = Math.min(tries / 10, 100);
+    while (levels.length < max && attempts < tries) {
       const numBlocks = width * height * randomInRange(blockPercentMin, blockPercentMax);
-      const minMoves = randomInRange(minMovesMin, minMovesMax);
-      for (let i = 0; levels.length < max && i < tries; i++) {
+      for (let i = 0; levels.length < max && i < triesPerMutation; i++) {
         attempts += 1;
-        const level = this.tryGenerateLevel(numBlocks, minMoves);
+        const level = this.tryGenerateLevel(numBlocks);
         if (level) {
           levels.push(level);
         }

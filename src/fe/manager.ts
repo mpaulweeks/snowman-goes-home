@@ -91,8 +91,7 @@ export class GameManager {
       height: 16,
       blockPercentMin: 0.2,
       blockPercentMax: 0.3,
-      minMovesMin: 25,
-      minMovesMax: 35,
+      minMoves: 25,
     });
     const newLevel = generator.generateLevels(1, 1000)[0];
     if (newLevel) {
