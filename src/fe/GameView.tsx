@@ -39,10 +39,14 @@ export class GameView extends React.Component<Props> {
   }
 
   render() {
+    const { world } = this.props;
     return (
       <Container>
         <p>
-          use arrow keys to move, R to restart, and N to make new level
+          use arrow keys to move. press R to restart the level
+        </p>
+        <p>
+          {world.displayName()} has {world.progression.totalLevels} levels, and they get harder as you go. try to beat them all!
         </p>
         <Canvas ref={this.canvasRef} />
       </Container>

@@ -98,12 +98,14 @@ export class GameManager {
     if (!world) {
       throw new Error('todo this should be impossible');
     }
-    const levels = await world.loadNow(); // todo rewrite to not use async?
-    const nextLevel = levels[currentLevelIndex % levels.length];
-    this.currentLevel = new PlayableLevel(nextLevel);
-    console.log(this.currentLevel.soln.printMoves());
-    this.currentLevelIndex += 1;
     this.pendingAnimations = [];
+    const levels = await world.loadNow(); // todo rewrite to not use async?
+    const nextLevel = levels[currentLevelIndex];
+    this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
+    if (nextLevel) {
+      console.log(this.currentLevel.soln.printMoves());
+      this.currentLevelIndex += 1;
+    }
   }
 
   animateMove(moveInfo: MoveInformation) {
@@ -125,7 +127,7 @@ export class GameManager {
     if (!currentLevel) {
       ctx.font = '20px monospace';
       ctx.fillStyle = 'white';
-      ctx.fillText('making level failed, try again', 100, 100);
+      ctx.fillText('you win! refresh the page to start over', 100, 100);
       return;
     }
 

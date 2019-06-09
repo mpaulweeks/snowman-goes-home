@@ -84,10 +84,13 @@ export class MenuView extends React.Component<Props> {
         <LevelOptionContainer>
           {worldLoader.loaders.map(world => (
             <LevelOption key={world.difficulty}>
-              <h3>
+              <h2>
                 {world.displayName()}
-              </h3>
-              <h4>
+              </h2>
+              <div>
+                {world.progression.totalLevels} levels
+              </div>
+              <h3>
                 {state[world.difficulty] ? (
                   <ReadyButton onClick={() => this.loadWorld(world)}>
                     PLAY
@@ -97,7 +100,7 @@ export class MenuView extends React.Component<Props> {
                       loading
                 </LoadingButton>
                   )}
-              </h4>
+              </h3>
             </LevelOption>
           ))}
         </LevelOptionContainer>
