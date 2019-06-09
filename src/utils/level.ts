@@ -55,9 +55,7 @@ export class Level {
     const spawn = new PointHistory(this.start, [], []);
     const visited: { [key: string]: boolean } = {};
     const queue = [spawn];
-    let counter = 0; // while debugging
-    while (counter < 8000 && queue.length) {
-      counter++;
+    while (queue.length) {
       const next = queue.shift() as PointHistory;
       const key = next.point.toString();
       if (!visited[key]) {
