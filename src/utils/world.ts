@@ -35,16 +35,16 @@ const ProgressionByDifficulty = {
   },
   [Difficulty.Medium]: {
     dimensions: new Point(15, 12),
-    minMoves: 10,
-    levelsPerTier: 2,
-    totalLevels: 20,
+    minMoves: 7,
+    levelsPerTier: 1,
+    totalLevels: 15,
     secondsPerLevel: 7,
   },
   [Difficulty.Hard]: {
     dimensions: new Point(20, 16),
     minMoves: 10,
     levelsPerTier: 2,
-    totalLevels: 30,
+    totalLevels: 20,
     secondsPerLevel: 7,
   },
 }
@@ -96,7 +96,7 @@ export class World {
     const gen = new Generator({
       width: dimensions.x,
       height: dimensions.y,
-      blockPercentMin: 0.2,
+      blockPercentMin: 0.05,
       blockPercentMax: 0.3,
       minMovesOptions: remainingMinMoves,
     })
