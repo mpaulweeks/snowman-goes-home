@@ -1,6 +1,6 @@
 // https://repl.it/@mpaulweeks/ice
 
-import { Move, MoveHistory } from './moves';
+import { Move, PointHistory } from './moves';
 import { Point } from './point';
 
 export class Level {
@@ -31,9 +31,8 @@ export class Level {
       (loc.y >= height)
     );
   }
-  applyMove(moveHistory: MoveHistory): Point {
-    let move = moveHistory.moves[moveHistory.moves.length - 1];
-    let current = moveHistory.point;
+  applyMove(point: Point, move: Move): Point {
+    let current = point;
     while (true) {
       const next = current.clone();
 
@@ -53,21 +52,26 @@ export class Level {
     }
   }
   solve() {
-    const spawn = new MoveHistory(this.start, []);
-    const visited = {};
-    const queue = [...spawn.getNextMoves()];
-    let counter = 0;
+    const spawn = new PointHistory(this.start, [], []);
+    const visited: { [key: string]: boolean } = {};
+    const queue = [spawn];
+    let counter = 0; // while debugging
     while (counter < 8000 && queue.length) {
       counter++;
-      let next = queue.shift() as MoveHistory;
-      next.point = this.applyMove(next);
-      if (this.isWinningPoint(next.point)) {
-        return next;
-      }
+      const next = queue.shift() as PointHistory;
       const key = next.point.toString();
       if (!visited[key]) {
-        queue.push(...next.getNextMoves());
-        visited[key] = next;
+        visited[key] = true;
+        if (this.isWinningPoint(next.point)) {
+          return next;
+        }
+        let nextMoves = next.getNextMoves();
+        nextMoves.forEach(m => {
+          const { move, history } = m;
+          const newPoint = this.applyMove(history.point, move);
+          history.addMove(newPoint, move);
+          queue.push(history);
+        });
       }
     }
     return null;
@@ -101,8 +105,8 @@ export class Level {
 
 export class SolvableLevel {
   level: Level;
-  soln: MoveHistory;
-  constructor(level: Level, soln: MoveHistory) {
+  soln: PointHistory;
+  constructor(level: Level, soln: PointHistory) {
     this.level = level;
     this.soln = soln;
   }
@@ -110,23 +114,22 @@ export class SolvableLevel {
 
 export class PlayableLevel {
   level: Level;
-  soln: MoveHistory;
-  hero: MoveHistory;
+  soln: PointHistory;
+  hero: PointHistory;
 
   constructor(solved: SolvableLevel) {
     this.level = solved.level;
     this.soln = solved.soln;
-    this.hero = new MoveHistory(this.level.start, []);
+    this.hero = new PointHistory(this.level.start, [], []);
   }
 
   reset() {
-    this.hero = new MoveHistory(this.level.start, []);
+    this.hero = new PointHistory(this.level.start, [], []);
   }
 
   moveHero(move: Move) {
     const { level, hero } = this;
-    hero.addMove(move);
-    const newPoint = level.applyMove(hero);
-    hero.updatePoint(newPoint);
+    const newPoint = level.applyMove(hero.point, move);
+    hero.addMove(newPoint, move);
   }
 }

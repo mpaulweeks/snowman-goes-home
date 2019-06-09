@@ -11,34 +11,42 @@ export const Moves = Object
   .filter(k => isNaN(Number(k)))
   .map(k => Move[k]);
 
-export class MoveHistory {
+export interface PotentialMove {
+  move: Move,
+  history: PointHistory,
+};
+
+export class PointHistory {
   point: Point;
+  points: Array<Point>;
   moves: Array<Move>;
 
-  constructor(point: Point, moves: Array<Move>) {
+  constructor(point: Point, points: Array<Point>, moves: Array<Move>) {
     this.point = point;
+    this.points = points;
     this.moves = moves;
   }
 
-  last() {
-    return this.moves[this.moves.length - 1]
-  }
-  addMove(move: Move) {
+  addMove(newPoint: Point, move: Move) {
+    this.points.push(this.point);
     this.moves.push(move);
-  }
-  updatePoint(point: Point) {
-    // todo point history?
-    this.point = point;
+    this.point = newPoint;
   }
 
-  getNextMoves() {
-    const last = this.last();
+  getNextMoves(): Array<PotentialMove> {
     return Moves
-      .filter(m => m !== last)
-      .map(m => new MoveHistory(
-        this.point,
-        [...this.moves, m]
-      ));
+      .map(m => ({
+        move: m,
+        history: this.clone(),
+      }));
+  }
+
+  clone() {
+    return new PointHistory(
+      this.point,
+      [...this.points],
+      [...this.moves]
+    );
   }
 
   printMoves() {
