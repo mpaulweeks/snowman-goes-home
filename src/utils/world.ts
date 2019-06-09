@@ -100,7 +100,7 @@ export class World {
       blockPercentMax: 0.3,
       minMovesOptions: remainingMinMoves,
     })
-    const levels = gen.generateLevels(100, 50);
+    const levels = gen.generateLevels(500, 500);
     levels.forEach(l => {
       const tier = levelsByMoves[l.soln.moves.length];
       if (tier && tier.length < levelsPerTier) {
@@ -118,6 +118,10 @@ export class World {
       return arr;
     }, []);
     return levels;
+  }
+
+  displayName() {
+    return Difficulty[this.difficulty];
   }
 }
 

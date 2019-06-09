@@ -2,10 +2,12 @@ import React from 'react';
 import { GameView } from './GameView';
 import styled from 'styled-components';
 import { WorldLoader, World } from '../utils';
-import { MenuView } from './Menu';
+import { MenuView } from './MenuView';
 
 const Container = styled.div`
   padding: 2rem;
+
+  text-align: center;
 
   display: flex;
   flex-direction: column;
