@@ -102,13 +102,13 @@ export class GameManager {
 
     // grid
     ctx.strokeStyle = 'white';
-    for (let y = 0; y < currentLevel.level.height; y++) {
+    for (let y = 1; y < currentLevel.level.height; y++) {
       ctx.beginPath();
       ctx.moveTo(0, y * blockHeight);
       ctx.lineTo(width, y * blockHeight);
       ctx.stroke();
     }
-    for (let x = 0; x < currentLevel.level.width; x++) {
+    for (let x = 1; x < currentLevel.level.width; x++) {
       ctx.beginPath();
       ctx.moveTo(x * blockWidth, 0);
       ctx.lineTo(x * blockWidth, height);
