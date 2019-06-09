@@ -22,7 +22,6 @@ export class GameView extends React.Component<Props> {
     const canvasElm = this.canvasRef.current;
     if (canvasElm) {
       this.manager = new GameManager(canvasElm);
-      this.manager.newLevel();
     }
   }
 

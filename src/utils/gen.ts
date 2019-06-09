@@ -35,7 +35,7 @@ export interface GeneratorSettings {
   height: number;
   blockPercentMin: number;
   blockPercentMax: number;
-  minMoves: number;
+  minMovesOptions: Array<number>;
 }
 
 export class Generator {
@@ -46,14 +46,14 @@ export class Generator {
   }
 
   tryGenerateLevel(numBlocks: number): (SolvableLevel | null) {
-    const { width, height, minMoves } = this.settings;
+    const { width, height, minMovesOptions } = this.settings;
     const allocator = new BlockAllocator(width, height);
     const win = allocator.pop();
     const start = allocator.pop();
     const blocks = range(numBlocks).map(_ => allocator.pop());
     const level = new Level(width, height, start, win, blocks);
     const solution = level.solve();
-    return solution && solution.moves.length > minMoves ? new SolvableLevel(level, solution) : null;
+    return solution && minMovesOptions.includes(solution.moves.length) ? new SolvableLevel(level, solution) : null;
   }
 
   generateLevels(max: number, tries: number): Array<SolvableLevel> {
@@ -76,7 +76,7 @@ export class Generator {
         }
       }
     }
-    console.log(attempts);
+    // console.log(attempts);
     return levels;
   }
 }

@@ -3,9 +3,10 @@ import { SolvableLevel } from "./level";
 import { Point } from "./point";
 
 export enum Difficulty {
-  Easy = 1,
-  Medium,
-  Hard,
+  Test = 1,
+  Easy, // 1s
+  Medium, // 2s
+  Hard, // 9s
 };
 
 // race against time to get far, then get score based on how quick
@@ -18,6 +19,13 @@ export interface Progression {
 }
 
 const ProgressionByDifficulty = {
+  [Difficulty.Test]: {
+    dimensions: new Point(10, 8),
+    minMoves: 7,
+    levelsPerTier: 1,
+    totalLevels: 2,
+    secondsPerLevel: 10,
+  },
   [Difficulty.Easy]: {
     dimensions: new Point(10, 8),
     minMoves: 7,
@@ -54,20 +62,26 @@ export class World {
     this.progression = ProgressionByDifficulty[difficulty];
     this.levelsByMoves = range(this.progression.totalLevels / this.progression.levelsPerTier)
       .reduce((obj: LevelsByMoves, num) => {
-        obj[num] = [];
+        obj[num + this.progression.minMoves] = [];
         return obj;
       }, {});
   }
 
   getLevelKeys() {
-    return Object.keys(this.levelsByMoves).map(parseFloat).sort();
+    // for some reason, array.sort() on numbers will sort like strings
+    function compareNums(a: number, b: number) {
+      if (a < b) return -1;
+      if (a > b) return 1;
+      return 0;
+    }
+    return Object.keys(this.levelsByMoves).map(parseFloat).sort(compareNums);
   }
 
   generateLevels() {
     const { levelsByMoves, progression } = this;
     const { dimensions, levelsPerTier } = progression;
-    const minLevelRemaining = this.getLevelKeys().filter(k => levelsByMoves[k].length < levelsPerTier)[0];
-    if (minLevelRemaining === undefined) {
+    const remainingMinMoves = this.getLevelKeys().filter(k => levelsByMoves[k].length < levelsPerTier);
+    if (remainingMinMoves.length === 0) {
       this.loaded = true;
       return;
     }
@@ -76,29 +90,31 @@ export class World {
       height: dimensions.y,
       blockPercentMin: 0.2,
       blockPercentMax: 0.3,
-      minMoves: minLevelRemaining,
+      minMovesOptions: remainingMinMoves,
     })
     const levels = gen.generateLevels(100, 100);
     levels.forEach(l => {
       const tier = levelsByMoves[l.soln.moves.length];
       if (tier && tier.length < levelsPerTier) {
         tier.push(l);
-        console.log('level pushed for:', l.soln.moves.length);
       }
     });
   }
 
   async load() {
     let runs = 0;
+    const started = new Date();
     while (!this.loaded) {
       this.generateLevels();
       runs++;
     }
     console.log('loaded in runs:', runs);
+    console.log('loaded in time:', new Date().getTime() - started.getTime());
     const levels = this.getLevelKeys().reduce((arr: Array<SolvableLevel>, key) => {
       arr.push(...this.levelsByMoves[key]);
       return arr;
     }, []);
+    console.log(levels);
     return levels;
   }
 }

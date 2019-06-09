@@ -1,4 +1,5 @@
-import { Generator, Move, MoveInformation, PlayableLevel, Point, Stopwatch } from "../utils";
+import { Move, MoveInformation, PlayableLevel, Point, Stopwatch } from "../utils";
+import { Difficulty, World } from "../utils/world";
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -37,9 +38,11 @@ export class GameManager {
   canvasElm: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   currentLevel: (PlayableLevel | undefined);
+  currentLevelIndex = 0;
   sprites: Sprites;
   ready: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
+  world: World;
 
   constructor(canvasElm: HTMLCanvasElement) {
     this.canvasElm = canvasElm;
@@ -64,12 +67,15 @@ export class GameManager {
         this.draw();
       }
       if (e.code === 'KeyN') {
-        this.newLevel();
+        this.nextLevel();
       }
     });
 
     // setup passive draw loop
     this.loop();
+
+    this.world = new World(Difficulty.Easy);
+    this.nextLevel();
   }
 
   async loop() {
@@ -84,20 +90,18 @@ export class GameManager {
     }
     const moveInfo = currentLevel.moveHero(move);
     this.animateMove(moveInfo);
-  }
-  newLevel() {
-    const generator = new Generator({
-      width: 20,
-      height: 16,
-      blockPercentMin: 0.2,
-      blockPercentMax: 0.3,
-      minMoves: 25,
-    });
-    const newLevel = generator.generateLevels(1, 1000)[0];
-    if (newLevel) {
-      console.log('solution:', newLevel.soln.printMoves());
+    if (currentLevel.level.isWinningPoint(moveInfo.point)) {
+      this.nextLevel();
     }
-    this.currentLevel = newLevel && new PlayableLevel(newLevel);
+  }
+  async nextLevel() {
+    const { currentLevelIndex, world } = this;
+    const levels = await world.load();
+    const nextLevel = levels[currentLevelIndex % levels.length];
+    this.currentLevel = new PlayableLevel(nextLevel);
+    console.log(this.currentLevel.soln.printMoves());
+    this.currentLevelIndex += 1;
+    this.pendingAnimations = [];
   }
 
   animateMove(moveInfo: MoveInformation) {
