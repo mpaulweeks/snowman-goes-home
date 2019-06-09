@@ -45,8 +45,8 @@ export class GameManager {
 
   constructor(canvasElm: HTMLCanvasElement, world: World) {
     this.canvasElm = canvasElm;
-    canvasElm.width = 800;
-    canvasElm.height = 600;
+    canvasElm.width = document.body.clientHeight;
+    canvasElm.height = document.body.clientHeight * 0.8;
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
 
     this.sprites = {
