@@ -54,17 +54,24 @@ export interface LevelsByMoves {
 }
 
 export class World {
+  difficulty: Difficulty;
   progression: Progression;
   levelsByMoves: LevelsByMoves;
   loaded = false;
+  onLoad: Promise<World>;
+  private registerLoaded = () => { };
 
   constructor(difficulty: Difficulty) {
+    this.difficulty = difficulty;
     this.progression = ProgressionByDifficulty[difficulty];
     this.levelsByMoves = range(this.progression.totalLevels / this.progression.levelsPerTier)
       .reduce((obj: LevelsByMoves, num) => {
         obj[num + this.progression.minMoves] = [];
         return obj;
       }, {});
+    this.onLoad = new Promise((resolve, reject) => {
+      this.registerLoaded = () => resolve(this);
+    });
   }
 
   getLevelKeys() {
@@ -83,6 +90,7 @@ export class World {
     const remainingMinMoves = this.getLevelKeys().filter(k => levelsByMoves[k].length < levelsPerTier);
     if (remainingMinMoves.length === 0) {
       this.loaded = true;
+      this.registerLoaded();
       return;
     }
     const gen = new Generator({
@@ -101,20 +109,37 @@ export class World {
     });
   }
 
-  async load() {
-    let runs = 0;
-    const started = new Date();
+  async loadNow() {
     while (!this.loaded) {
       this.generateLevels();
-      runs++;
     }
-    console.log('loaded in runs:', runs);
-    console.log('loaded in time:', new Date().getTime() - started.getTime());
     const levels = this.getLevelKeys().reduce((arr: Array<SolvableLevel>, key) => {
       arr.push(...this.levelsByMoves[key]);
       return arr;
     }, []);
-    console.log(levels);
     return levels;
+  }
+}
+
+export class WorldLoader {
+  loaders: Array<World>;
+
+  constructor() {
+    this.loaders = [
+      Difficulty.Test,
+      Difficulty.Easy,
+      Difficulty.Medium,
+      Difficulty.Hard,
+    ].map(d => new World(d));
+  }
+
+  loadInBackground() {
+    const toLoad = this.loaders.filter(w => !w.loaded)[0];
+    if (toLoad) {
+      toLoad.generateLevels();
+      if (toLoad.loaded) {
+        console.log('loaded:', Difficulty[toLoad.difficulty]);
+      }
+    }
   }
 }

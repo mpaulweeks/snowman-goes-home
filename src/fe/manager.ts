@@ -1,5 +1,4 @@
-import { Move, MoveInformation, PlayableLevel, Point, Stopwatch } from "../utils";
-import { Difficulty, World } from "../utils/world";
+import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -40,9 +39,10 @@ export class GameManager {
   currentLevel: (PlayableLevel | undefined);
   currentLevelIndex = 0;
   sprites: Sprites;
-  ready: Promise<boolean>;
+  loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
-  world: World;
+  world: (World | undefined);
+  worldLoader: WorldLoader;
 
   constructor(canvasElm: HTMLCanvasElement) {
     this.canvasElm = canvasElm;
@@ -54,7 +54,7 @@ export class GameManager {
       hero: loadImage('img/ice_blue.png'),
     };
     const allSprites = Object.values(this.sprites);
-    this.ready = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
+    this.loadedAssets = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
 
     window.addEventListener('keydown', e => {
       // console.log(e);
@@ -71,14 +71,18 @@ export class GameManager {
       }
     });
 
+    this.worldLoader = new WorldLoader();
+    this.worldLoader.loaders[1].onLoad.then(w => {
+      this.world = w;
+      this.nextLevel();
+    });
+
     // setup passive draw loop
     this.loop();
-
-    this.world = new World(Difficulty.Easy);
-    this.nextLevel();
   }
 
   async loop() {
+    this.worldLoader.loadInBackground();
     await this.draw();
     window.requestAnimationFrame(() => this.loop());
   }
@@ -96,7 +100,10 @@ export class GameManager {
   }
   async nextLevel() {
     const { currentLevelIndex, world } = this;
-    const levels = await world.load();
+    if (!world) {
+      throw new Error('todo this should be impossible');
+    }
+    const levels = await world.loadNow(); // todo rewrite to not use async?
     const nextLevel = levels[currentLevelIndex % levels.length];
     this.currentLevel = new PlayableLevel(nextLevel);
     console.log(this.currentLevel.soln.printMoves());
@@ -112,10 +119,10 @@ export class GameManager {
     this.pendingAnimations.push(...animations);
   }
   async draw() {
-    const { canvasElm, ctx, currentLevel, ready, sprites } = this;
+    const { canvasElm, ctx, currentLevel, loadedAssets, sprites } = this;
     const { width, height } = canvasElm;
 
-    await ready;
+    await loadedAssets;
 
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
