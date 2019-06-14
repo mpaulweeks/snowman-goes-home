@@ -1,6 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 import { World, Difficulty, WorldLoader } from '../utils';
+import { connect } from 'react-redux';
+import { DataState } from '../redux/reducers';
+import { setWorld } from '../redux/actions';
+import { Dispatch } from 'redux';
+
+const Container = styled.div`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+
+  background-color: black;
+`;
 
 const LevelOptionContainer = styled.div`
   display: flex;
@@ -44,7 +59,8 @@ const ReadyButton = styled(LoadingButton)`
 
 interface Props {
   worldLoader: WorldLoader;
-  loadWorld: (w: World) => void;
+  store: DataState;
+  dispatch: Dispatch;
 };
 
 interface State {
@@ -54,7 +70,7 @@ interface State {
   [Difficulty.Hard]: boolean,
 };
 
-export class MenuView extends React.Component<Props> {
+class _MenuView extends React.Component<Props, State> {
   state = {
     [Difficulty.Test]: false,
     [Difficulty.Easy]: false,
@@ -74,15 +90,18 @@ export class MenuView extends React.Component<Props> {
 
   loadWorld(world: World) {
     if (world.loaded) {
-      this.props.loadWorld(world);
+      this.props.dispatch(setWorld(world));
     }
   }
 
   render() {
-    const { worldLoader } = this.props;
+    const { worldLoader, store } = this.props;
     const { state } = this;
+    if (store.world) {
+      return '';
+    }
     return (
-      <div>
+      <Container>
         <h1>
           ice slide puzzle game
         </h1>
@@ -112,7 +131,13 @@ export class MenuView extends React.Component<Props> {
             </LevelOption>
           ))}
         </LevelOptionContainer>
-      </div>
+      </Container>
     );
   }
 }
+
+export const MenuView = connect(
+  (store: DataState) => ({
+    store,
+  })
+)(_MenuView);

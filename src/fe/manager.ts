@@ -1,3 +1,5 @@
+import { store } from "../redux";
+import { setLevel } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
@@ -33,29 +35,23 @@ export interface Animation {
   stopwatch: Stopwatch,
 }
 
-export class GameManager {
-  canvasElm: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
+class _GameManager {
+  dispatch = store.dispatch;
+  canvasElm?: HTMLCanvasElement;
+  ctx?: CanvasRenderingContext2D;
+  world?: World;
   currentLevel: (PlayableLevel | undefined);
   currentLevelIndex = 0;
   sprites: Sprites;
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
-  world: World;
-  setLevel: (n: number) => void;
 
-  constructor(canvasElm: HTMLCanvasElement, world: World, setLevel: (n: number) => void) {
-    this.canvasElm = canvasElm;
-    canvasElm.width = document.body.clientHeight;
-    canvasElm.height = document.body.clientHeight * 0.8;
-    this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
-
+  constructor() {
     this.sprites = {
       hero: loadImage('img/ice_blue.png'),
     };
     const allSprites = Object.values(this.sprites);
     this.loadedAssets = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
-    this.setLevel = setLevel;
 
     window.addEventListener('keydown', e => {
       // console.log(e);
@@ -72,16 +68,23 @@ export class GameManager {
       }
     });
 
-    this.world = world;
-    this.nextLevel();
-
     // setup passive draw loop
     this.loop();
   }
-
-  async loop() {
+  private async loop() {
     await this.draw();
     window.requestAnimationFrame(() => this.loop());
+  }
+
+  setup(canvasElm: HTMLCanvasElement) {
+    this.canvasElm = canvasElm;
+    canvasElm.width = document.body.clientHeight;
+    canvasElm.height = document.body.clientHeight * 0.8;
+    this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
+  }
+  setWorld(world: World) {
+    this.world = world;
+    this.nextLevel();
   }
 
   handleMove(move: Move) {
@@ -106,7 +109,7 @@ export class GameManager {
     this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
     if (nextLevel) {
       console.log(this.currentLevel.soln.printMoves());
-      this.setLevel(this.currentLevelIndex);
+      this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;
     }
   }
@@ -120,6 +123,9 @@ export class GameManager {
   }
   async draw() {
     const { canvasElm, ctx, currentLevel, loadedAssets, sprites } = this;
+    if (!canvasElm || !ctx) {
+      return;
+    }
     const { width, height } = canvasElm;
 
     await loadedAssets;
@@ -185,3 +191,5 @@ export class GameManager {
     );
   }
 }
+
+export const GameManager = new _GameManager();

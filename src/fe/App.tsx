@@ -1,10 +1,12 @@
 import React from 'react';
 import { GameView } from './GameView';
 import styled from 'styled-components';
-import { WorldLoader, World } from '../utils';
+import { WorldLoader } from '../utils';
 import { MenuView } from './MenuView';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
+import { GameManager } from './manager';
+import { Dispatch } from 'redux';
 
 const Container = styled.div`
   text-align: center;
@@ -16,49 +18,56 @@ const Container = styled.div`
   flex-wrap: nowrap;
 `;
 
-interface State {
-  world?: World;
-};
+const Canvas = styled.canvas`
+  margin: 2rem;
 
-class _App extends React.Component<any, State> {
+  width: 100vh;
+  height: 80vh;
+`;
+
+interface Props {
+  dispatch: Dispatch;
+  store: DataState;
+}
+
+class _App extends React.Component<Props> {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
   worldLoader = new WorldLoader();
-  state = {
-    world: undefined,
-  };
 
-  componentDidMount() {
-    this.loop();
+  constructor(props: Props) {
+    super(props);
+    this.canvasRef = React.createRef();
   }
 
-  loop() {
-    if (!this.state.world) {
+  componentDidMount() {
+    const canvasElm = this.canvasRef.current;
+    if (canvasElm) {
+      GameManager.setup(canvasElm);
+    }
+    this.loop();
+  }
+  private loop() {
+    if (!this.props.store.world) {
       this.worldLoader.loadInBackground();
       window.requestAnimationFrame(() => this.loop());
     }
   }
 
-  loadWorld(world: World) {
-    this.setState({
-      world,
-    });
-  }
-
   render() {
     const { worldLoader } = this;
-    const { world } = this.state;
     return (
       <Container>
-        {world ? (
-          <GameView world={world} />
-        ) : (
-            <MenuView worldLoader={worldLoader} loadWorld={w => this.loadWorld(w)} />
-          )}
+        <GameView>
+          <Canvas ref={this.canvasRef} />
+        </GameView>
+        <MenuView
+          worldLoader={worldLoader}
+        />
       </Container>
     );
   }
 }
 
 export const App = connect(
-  (state: DataState) => state,
-  {},
+  (store: DataState) => ({ store })
 )(_App);
