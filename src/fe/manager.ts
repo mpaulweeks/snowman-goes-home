@@ -42,8 +42,9 @@ export class GameManager {
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
   world: World;
+  setLevel: (n: number) => void;
 
-  constructor(canvasElm: HTMLCanvasElement, world: World) {
+  constructor(canvasElm: HTMLCanvasElement, world: World, setLevel: (n: number) => void) {
     this.canvasElm = canvasElm;
     canvasElm.width = document.body.clientHeight;
     canvasElm.height = document.body.clientHeight * 0.8;
@@ -54,6 +55,7 @@ export class GameManager {
     };
     const allSprites = Object.values(this.sprites);
     this.loadedAssets = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
+    this.setLevel = setLevel;
 
     window.addEventListener('keydown', e => {
       // console.log(e);
@@ -104,6 +106,7 @@ export class GameManager {
     this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
     if (nextLevel) {
       console.log(this.currentLevel.soln.printMoves());
+      this.setLevel(this.currentLevelIndex);
       this.currentLevelIndex += 1;
     }
   }

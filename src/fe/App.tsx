@@ -3,6 +3,8 @@ import { GameView } from './GameView';
 import styled from 'styled-components';
 import { WorldLoader, World } from '../utils';
 import { MenuView } from './MenuView';
+import { connect } from 'react-redux';
+import { DataState } from '../redux/reducers';
 
 const Container = styled.div`
   text-align: center;
@@ -18,7 +20,7 @@ interface State {
   world?: World;
 };
 
-export class App extends React.Component<any, State> {
+class _App extends React.Component<any, State> {
   worldLoader = new WorldLoader();
   state = {
     world: undefined,
@@ -55,3 +57,8 @@ export class App extends React.Component<any, State> {
     );
   }
 }
+
+export const App = connect(
+  (state: DataState) => state,
+  {},
+)(_App);

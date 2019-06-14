@@ -2,6 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { GameManager } from './manager';
 import { World } from '../utils';
+import { DataState } from '../redux/reducers';
+import { connect } from 'react-redux';
+import { setLevel } from '../redux/actions';
 
 const Container = styled.div`
   display: flex;
@@ -19,10 +22,12 @@ const Canvas = styled.canvas`
 `;
 
 interface Props {
+  store: DataState;
+  setLevel: (level: number) => void;
   world: World;
 };
 
-export class GameView extends React.Component<Props> {
+class _GameView extends React.Component<Props> {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   manager: (GameManager | undefined) = undefined;
 
@@ -34,21 +39,33 @@ export class GameView extends React.Component<Props> {
   componentDidMount() {
     const canvasElm = this.canvasRef.current;
     if (canvasElm) {
-      this.manager = new GameManager(canvasElm, this.props.world);
+      this.manager = new GameManager(canvasElm, this.props.world, this.props.setLevel);
     }
   }
 
   render() {
-    const { world } = this.props;
+    const { world, store } = this.props;
     return (
       <Container>
         <p>
           use arrow keys to move. press R to restart the level
           <br />
           {world.displayName()} has {world.progression.totalLevels} levels, and they get harder as you go. try to beat them all!
+          <br />
+          you are on level {store.level + 1}
         </p>
         <Canvas ref={this.canvasRef} />
       </Container>
     );
   }
 }
+
+
+export const GameView = connect(
+  (state: DataState) => ({
+    store: state,
+  }),
+  {
+    setLevel,
+  },
+)(_GameView);
