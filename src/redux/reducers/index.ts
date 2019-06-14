@@ -1,4 +1,3 @@
-import { GameManager } from "../../fe/manager";
 import { World } from "../../utils";
 import { SET_LEVEL, SET_TIMER, SET_WORLD } from "../actionTypes";
 
@@ -41,9 +40,6 @@ function reducer(state = initialState, action: DataAction) {
     }
     case SET_WORLD: {
       const { world } = action.payload;
-      if (world) {
-        GameManager.setWorld(world);
-      }
       return {
         ...state,
         world,

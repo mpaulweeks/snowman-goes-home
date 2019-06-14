@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { World, Difficulty, WorldLoader } from '../utils';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
-import { setWorld } from '../redux/actions';
-import { Dispatch } from 'redux';
+import { GameManager } from './manager';
 
 const Container = styled.div`
   position: absolute;
@@ -58,9 +57,7 @@ const ReadyButton = styled(LoadingButton)`
 `;
 
 interface Props {
-  worldLoader: WorldLoader;
   store: DataState;
-  dispatch: Dispatch;
 };
 
 interface State {
@@ -70,33 +67,43 @@ interface State {
   [Difficulty.Hard]: boolean,
 };
 
+const defaultState = {
+  [Difficulty.Test]: false,
+  [Difficulty.Easy]: false,
+  [Difficulty.Medium]: false,
+  [Difficulty.Hard]: false,
+};
+
 class _MenuView extends React.Component<Props, State> {
-  state = {
-    [Difficulty.Test]: false,
-    [Difficulty.Easy]: false,
-    [Difficulty.Medium]: false,
-    [Difficulty.Hard]: false,
-  }
+  state = { ...defaultState };
 
   componentDidMount() {
-    this.props.worldLoader.loaders.forEach(world => {
-      world.onLoad.then(() => {
-        this.setState({
-          [world.difficulty]: true,
+    this.reset();
+  }
+  reset() {
+    this.setState({
+      ...defaultState,
+    }, () => {
+      GameManager.worldLoader.loaders.forEach(world => {
+        world.onLoad.then(() => {
+          this.setState({
+            [world.difficulty]: true,
+          });
         });
       });
     });
   }
-
   loadWorld(world: World) {
     if (world.loaded) {
-      this.props.dispatch(setWorld(world));
+      GameManager.setWorld(world);
+      this.reset();
     }
   }
 
   render() {
-    const { worldLoader, store } = this.props;
+    const { store } = this.props;
     const { state } = this;
+    const { worldLoader } = GameManager;
     if (store.world) {
       return '';
     }

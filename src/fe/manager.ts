@@ -1,6 +1,6 @@
 import { store } from "../redux";
-import { setLevel } from "../redux/actions";
-import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World } from "../utils";
+import { setLevel, setWorld } from "../redux/actions";
+import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -37,6 +37,7 @@ export interface Animation {
 
 class _GameManager {
   dispatch = store.dispatch;
+  worldLoader = new WorldLoader();
   canvasElm?: HTMLCanvasElement;
   ctx?: CanvasRenderingContext2D;
   world?: World;
@@ -68,11 +69,15 @@ class _GameManager {
       }
     });
 
-    // setup passive draw loop
+    // setup passive draw/load loop
     this.loop();
   }
   private async loop() {
-    await this.draw();
+    if (this.world) {
+      await this.draw();
+    } else {
+      this.worldLoader.loadInBackground();
+    }
     window.requestAnimationFrame(() => this.loop());
   }
 
@@ -83,8 +88,15 @@ class _GameManager {
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
   }
   setWorld(world: World) {
+    this.worldLoader = new WorldLoader();
     this.world = world;
+    this.currentLevelIndex = 0;
     this.nextLevel();
+    this.dispatch(setWorld(world));
+  }
+  unsetWorld() {
+    this.world = undefined;
+    this.dispatch(setWorld(undefined));
   }
 
   handleMove(move: Move) {
@@ -111,6 +123,8 @@ class _GameManager {
       console.log(this.currentLevel.soln.printMoves());
       this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;
+    } else {
+      setTimeout(() => this.unsetWorld(), 2000);
     }
   }
 
@@ -136,7 +150,7 @@ class _GameManager {
     if (!currentLevel) {
       ctx.font = '20px monospace';
       ctx.fillStyle = 'white';
-      ctx.fillText('you win! refresh the page to start over', 100, 100);
+      ctx.fillText('you win! returning to the main menu...', 100, 100);
       return;
     }
 

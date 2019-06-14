@@ -15,7 +15,7 @@ export const setTimer = (secondsRemaining: number) => ({
   },
 });
 
-export const setWorld = (world: World) => ({
+export const setWorld = (world?: World) => ({
   type: SET_WORLD,
   payload: {
     world,
