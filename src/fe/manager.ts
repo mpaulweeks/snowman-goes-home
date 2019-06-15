@@ -62,8 +62,7 @@ class _GameManager {
         this.handleMove(move);
       }
       if (e.code === 'KeyR') {
-        this.currentLevel && this.currentLevel.reset();
-        this.draw();
+        this.clickReset();
       }
       if (e.code === 'KeyN') {
         this.nextLevel();
@@ -83,6 +82,23 @@ class _GameManager {
       this.worldLoader.loadInBackground();
     }
     window.requestAnimationFrame(() => this.loop());
+  }
+
+  clickReset = () => {
+    this.currentLevel && this.currentLevel.reset();
+    this.draw();
+  }
+  clickUp = () => {
+    this.handleMove(Move.Up);
+  }
+  clickDown = () => {
+    this.handleMove(Move.Down);
+  }
+  clickLeft = () => {
+    this.handleMove(Move.Left);
+  }
+  clickRight = () => {
+    this.handleMove(Move.Right);
   }
 
   setup(canvasElm: HTMLCanvasElement) {

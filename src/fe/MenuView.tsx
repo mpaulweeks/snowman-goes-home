@@ -64,14 +64,12 @@ interface Props {
 };
 
 interface State {
-  [Difficulty.Test]: boolean,
   [Difficulty.Easy]: boolean,
   [Difficulty.Medium]: boolean,
   [Difficulty.Hard]: boolean,
 };
 
 const defaultState = {
-  [Difficulty.Test]: false,
   [Difficulty.Easy]: false,
   [Difficulty.Medium]: false,
   [Difficulty.Hard]: false,
