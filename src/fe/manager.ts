@@ -177,8 +177,8 @@ class _GameManager {
       ctx.stroke();
     }
 
-    ctx.fillStyle = 'grey';
-    ctx.fillRect(currentLevel.level.start.x * blockWidth, currentLevel.level.start.y * blockHeight, blockWidth, blockHeight);
+    // ctx.fillStyle = 'grey';
+    // ctx.fillRect(currentLevel.level.start.x * blockWidth, currentLevel.level.start.y * blockHeight, blockWidth, blockHeight);
 
     ctx.fillStyle = 'lightgreen';
     ctx.fillRect(currentLevel.level.win.x * blockWidth, currentLevel.level.win.y * blockHeight, blockWidth, blockHeight);
