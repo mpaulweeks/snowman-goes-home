@@ -7,6 +7,8 @@ import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
 
 const Container = styled.div`
+  max-width: 50vh;
+  margin: 0px auto;
   text-align: center;
   display: flex;
   flex-direction: column;
