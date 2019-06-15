@@ -24,15 +24,10 @@ const Canvas = styled.canvas`
 interface Props {
   store: DataState;
 }
-interface State {
-  gm: GameManager;
-}
 
-class _App extends React.Component<Props, State> {
+class _App extends React.Component<Props> {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  state: State = {
-    gm: new GameManager(),
-  };
+  gm = new GameManager();
 
   constructor(props: Props) {
     super(props);
@@ -42,12 +37,12 @@ class _App extends React.Component<Props, State> {
   componentDidMount() {
     const canvasElm = this.canvasRef.current;
     if (canvasElm) {
-      this.state.gm.setup(canvasElm);
+      this.gm.setup(canvasElm);
     }
   }
 
   render() {
-    const { gm } = this.state;
+    const { gm } = this;
     return (
       <Container>
         <GameView gm={gm}>

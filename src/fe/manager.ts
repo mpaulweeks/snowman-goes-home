@@ -51,6 +51,7 @@ export class GameManager {
   pendingAnimations: Array<Animation> = [];
 
   constructor() {
+    // determine canvas size
     const screenHeight = document.body.clientHeight;
     const screenWidth = document.body.clientWidth;
     const isMobile = screenHeight > screenWidth;
@@ -65,12 +66,14 @@ export class GameManager {
     this.worldLoader = new WorldLoader(this.worldDimensions);
     this.canvasDimensions = new Point(width, height);
 
+    // load sprites
     this.sprites = {
       hero: loadImage('img/ice_blue.png'),
     };
     const allSprites = Object.values(this.sprites);
     this.loadedAssets = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
 
+    // setup key listeners
     window.addEventListener('keydown', e => {
       // console.log(e);
       const move = moveMap[e.code] || undefined;
