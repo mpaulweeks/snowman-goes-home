@@ -60,6 +60,7 @@ const ReadyButton = styled(LoadingButton)`
 `;
 
 interface Props {
+  gm: GameManager;
   store: DataState;
 };
 
@@ -85,7 +86,7 @@ class _MenuView extends React.Component<Props, State> {
     this.setState({
       ...defaultState,
     }, () => {
-      GameManager.worldLoader.loaders.forEach(world => {
+      this.props.gm.worldLoader.loaders.forEach(world => {
         world.onLoad.then(() => {
           this.setState({
             [world.difficulty]: true,
@@ -96,7 +97,7 @@ class _MenuView extends React.Component<Props, State> {
   }
   loadWorld(world: World) {
     if (world.loaded) {
-      GameManager.setWorld(world);
+      this.props.gm.setWorld(world);
       this.reset();
     }
   }
@@ -104,7 +105,7 @@ class _MenuView extends React.Component<Props, State> {
   render() {
     const { store } = this.props;
     const { state } = this;
-    const { worldLoader } = GameManager;
+    const { worldLoader } = this.props.gm;
     if (store.world) {
       return '';
     }

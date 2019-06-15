@@ -18,16 +18,21 @@ const Container = styled.div`
 `;
 
 const Canvas = styled.canvas`
-  width: 90%;
   height: 70vh;
 `;
 
 interface Props {
   store: DataState;
 }
+interface State {
+  gm: GameManager;
+}
 
-class _App extends React.Component<Props> {
+class _App extends React.Component<Props, State> {
   canvasRef: React.RefObject<HTMLCanvasElement>;
+  state: State = {
+    gm: new GameManager(),
+  };
 
   constructor(props: Props) {
     super(props);
@@ -37,17 +42,18 @@ class _App extends React.Component<Props> {
   componentDidMount() {
     const canvasElm = this.canvasRef.current;
     if (canvasElm) {
-      GameManager.setup(canvasElm);
+      this.state.gm.setup(canvasElm);
     }
   }
 
   render() {
+    const { gm } = this.state;
     return (
       <Container>
-        <GameView>
+        <GameView gm={gm}>
           <Canvas ref={this.canvasRef} />
         </GameView>
-        <MenuView />
+        <MenuView gm={gm} />
       </Container>
     );
   }

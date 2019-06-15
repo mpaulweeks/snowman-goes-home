@@ -18,8 +18,6 @@ export interface Progression {
   secondsPerLevel: number;
 }
 
-const defaultDimensions = new Point(8, 10);
-
 const ProgressionByDifficulty = {
   // [Difficulty.Test]: {
   //   gridSize: 1,
@@ -56,6 +54,7 @@ export interface LevelsByMoves {
 }
 
 export class World {
+  dimensions: Point;
   difficulty: Difficulty;
   progression: Progression;
   levelsByMoves: LevelsByMoves;
@@ -63,7 +62,8 @@ export class World {
   onLoad: Promise<World>;
   private registerLoaded = () => { };
 
-  constructor(difficulty: Difficulty) {
+  constructor(dimensions: Point, difficulty: Difficulty) {
+    this.dimensions = dimensions;
     this.difficulty = difficulty;
     this.progression = ProgressionByDifficulty[difficulty];
     this.levelsByMoves = range(this.progression.totalLevels / this.progression.levelsPerTier)
@@ -87,7 +87,7 @@ export class World {
   }
 
   generateLevels() {
-    const { levelsByMoves, progression } = this;
+    const { dimensions, levelsByMoves, progression } = this;
     const { gridSize, levelsPerTier } = progression;
     const remainingMinMoves = this.getLevelKeys().filter(k => levelsByMoves[k].length < levelsPerTier);
     if (remainingMinMoves.length === 0) {
@@ -95,10 +95,10 @@ export class World {
       this.registerLoaded();
       return;
     }
-    const dimensions = new Point(defaultDimensions.x * gridSize, defaultDimensions.y * gridSize);
+    const scaledDimensions = new Point(dimensions.x * gridSize, dimensions.y * gridSize);
     const gen = new Generator({
-      width: dimensions.x,
-      height: dimensions.y,
+      width: scaledDimensions.x,
+      height: scaledDimensions.y,
       blockPercentMin: 0.05,
       blockPercentMax: 0.3,
       minMovesOptions: remainingMinMoves,
@@ -131,13 +131,13 @@ export class World {
 export class WorldLoader {
   loaders: Array<World>;
 
-  constructor() {
+  constructor(dimensions: Point) {
     this.loaders = [
       // Difficulty.Test,
       Difficulty.Easy,
       Difficulty.Medium,
       Difficulty.Hard,
-    ].map(d => new World(d));
+    ].map(d => new World(dimensions, d));
   }
 
   loadInBackground() {

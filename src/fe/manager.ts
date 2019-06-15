@@ -35,9 +35,11 @@ export interface Animation {
   stopwatch: Stopwatch,
 }
 
-class _GameManager {
+export class GameManager {
   dispatch = store.dispatch;
-  worldLoader = new WorldLoader();
+  worldLoader: WorldLoader;
+  worldDimensions: Point;
+  canvasDimensions: Point;
   canvasElm?: HTMLCanvasElement;
   ctx?: CanvasRenderingContext2D;
   world?: World;
@@ -49,6 +51,20 @@ class _GameManager {
   pendingAnimations: Array<Animation> = [];
 
   constructor() {
+    const screenHeight = document.body.clientHeight;
+    const screenWidth = document.body.clientWidth;
+    const isMobile = screenHeight > screenWidth;
+    const dimensions = isMobile ? new Point(8, 10) : new Point(10, 8);
+    const height = document.body.clientHeight * 0.7; // matching css of 70vh
+    let width = height * dimensions.x / dimensions.y;
+    while (width > screenWidth) {
+      dimensions.x -= 1;
+      width = height * dimensions.x / dimensions.y;
+    }
+    this.worldDimensions = dimensions;
+    this.worldLoader = new WorldLoader(this.worldDimensions);
+    this.canvasDimensions = new Point(width, height);
+
     this.sprites = {
       hero: loadImage('img/ice_blue.png'),
     };
@@ -103,12 +119,12 @@ class _GameManager {
 
   setup(canvasElm: HTMLCanvasElement) {
     this.canvasElm = canvasElm;
-    canvasElm.width = document.body.clientWidth * 0.9;
-    canvasElm.height = document.body.clientHeight * 0.7;
+    canvasElm.width = this.canvasDimensions.x;
+    canvasElm.height = this.canvasDimensions.y;
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
   }
   setWorld(world: World) {
-    this.worldLoader = new WorldLoader();
+    this.worldLoader = new WorldLoader(this.worldDimensions);
     this.world = world;
     this.currentLevelIndex = 0;
     this.stopwatch = new Stopwatch();
@@ -226,5 +242,3 @@ class _GameManager {
     );
   }
 }
-
-export const GameManager = new _GameManager();

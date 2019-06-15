@@ -64,28 +64,30 @@ const KeyButton = styled.div`
 `;
 
 interface Props {
+  gm: GameManager;
   store: DataState;
 };
 
 class _GameView extends React.Component<Props> {
   render() {
+    const { gm} = this.props;
     const { level, secondsElapsed } = this.props.store;
     return (
       <Container>
         <Header>
           <Column>
-            <KeyButton onClick={GameManager.clickReset}>reset</KeyButton>
+            <KeyButton onClick={gm.clickReset}>reset</KeyButton>
           </Column>
           <Column>
             <Row>
-              <KeyButton onClick={GameManager.clickUp}>up</KeyButton>
+              <KeyButton onClick={gm.clickUp}>up</KeyButton>
             </Row>
             <Row>
-              <KeyButton onClick={GameManager.clickLeft}>left</KeyButton>
-              <KeyButton onClick={GameManager.clickRight}>right</KeyButton>
+              <KeyButton onClick={gm.clickLeft}>left</KeyButton>
+              <KeyButton onClick={gm.clickRight}>right</KeyButton>
             </Row>
             <Row>
-              <KeyButton onClick={GameManager.clickDown}>down</KeyButton>
+              <KeyButton onClick={gm.clickDown}>down</KeyButton>
             </Row>
           </Column>
         </Header>
