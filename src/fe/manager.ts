@@ -156,10 +156,9 @@ export class GameManager {
       throw new Error('todo this should be impossible');
     }
     this.pendingAnimations = [];
-    const levels = await world.loadNow(); // todo rewrite to not use async?
-    const nextLevel = levels[currentLevelIndex];
+    const nextLevel = await world.loadLevel(currentLevelIndex);
     this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
-    if (nextLevel) {
+    if (this.currentLevel) {
       console.log(this.currentLevel.soln.printMoves());
       this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;

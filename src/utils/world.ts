@@ -1,4 +1,4 @@
-import { Generator, range } from "./gen";
+import { Generator, range, rangeFrom } from "./gen";
 import { SolvableLevel } from "./level";
 import { Point } from "./point";
 
@@ -43,7 +43,7 @@ const ProgressionByDifficulty = {
     minMoves: 7,
     levelsPerTier: 3,
     totalLevels: 20,
-    secondsPerLevel: 7,
+    secondsPerLevel: 5,
   },
 }
 
@@ -56,8 +56,9 @@ export interface World {
   totalLevels: number;
   loaded: boolean;
   onLoad: Promise<World>;
-  generateLevels: () => void;
   displayName: () => string;
+  generateLevels: () => void;
+  loadLevel: (i: number) => Promise<SolvableLevel | undefined>;
 }
 
 class BasicWorld implements World {
@@ -78,11 +79,14 @@ class BasicWorld implements World {
     });
     this.totalLevels = this.progression.totalLevels;
   }
+  displayName() {
+    return Difficulty[this.difficulty];
+  }
 
   generateLevels() {
     throw new Error('base class');
   }
-  displayName(): string {
+  loadLevel(index: number): Promise<SolvableLevel | undefined> {
     throw new Error('base class');
   }
 }
@@ -135,7 +139,7 @@ class FiniteWorld extends BasicWorld {
     });
   }
 
-  async loadNow() {
+  async loadLevel(index: number) {
     while (!this.loaded) {
       this.generateLevels();
     }
@@ -143,17 +147,44 @@ class FiniteWorld extends BasicWorld {
       arr.push(...this.levelsByMoves[key]);
       return arr;
     }, []);
-    return levels;
-  }
-
-  displayName() {
-    return Difficulty[this.difficulty];
+    return levels[index];
   }
 }
 
-class InfiniteWorld extends FiniteWorld {
+class InfiniteWorld extends BasicWorld {
+  levels: Array<SolvableLevel> = [];
+  lastIndex = 0;
+
   constructor(dimensions: Point) {
     super(dimensions, Difficulty.Infinite);
+  }
+
+  generateLevels() {
+    const { dimensions, levels, progression, lastIndex } = this;
+    const { gridSize } = progression;
+    if (levels.length > lastIndex + 10) {
+      this.loaded = true;
+      this.registerLoaded();
+      return;
+    }
+    // todo randomize gridSize, minMoves
+    const scaledDimensions = new Point(dimensions.x * gridSize, dimensions.y * gridSize);
+    const gen = new Generator({
+      width: scaledDimensions.x,
+      height: scaledDimensions.y,
+      blockPercentMin: 0.05,
+      blockPercentMax: 0.3,
+      minMovesOptions: rangeFrom(progression.minMoves, 10),
+    })
+    this.levels.push(...gen.generateLevels(500, 500));
+  }
+
+  async loadLevel(index: number) {
+    while (index > this.levels.length) {
+      this.generateLevels();
+    }
+    this.lastIndex = index;
+    return this.levels[index];
   }
 }
 
