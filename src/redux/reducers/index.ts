@@ -1,4 +1,4 @@
-import { World } from "../../utils";
+import { Stopwatch, World } from "../../utils";
 import { SET_LEVEL, SET_TIMER, SET_WORLD } from "../actionTypes";
 
 export interface DataState {
@@ -37,8 +37,8 @@ function reducer(state = initialState, action: DataAction) {
       const { stopwatch } = action.payload;
       return {
         ...state,
-        secondsElapsed: stopwatch.formatElapsed(),
-        secondsRemaining: stopwatch.formatRemaining(),
+        secondsElapsed: stopwatch && stopwatch.formatElapsed(),
+        secondsRemaining: stopwatch && stopwatch.formatRemaining(),
       };
     }
     case SET_WORLD: {

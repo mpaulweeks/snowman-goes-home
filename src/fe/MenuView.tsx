@@ -68,12 +68,14 @@ interface State {
   [Difficulty.Easy]: boolean,
   [Difficulty.Medium]: boolean,
   [Difficulty.Hard]: boolean,
+  [Difficulty.Infinite]: boolean,
 };
 
 const defaultState = {
   [Difficulty.Easy]: false,
   [Difficulty.Medium]: false,
   [Difficulty.Hard]: false,
+  [Difficulty.Infinite]: false,
 };
 
 class _MenuView extends React.Component<Props, State> {
@@ -109,6 +111,12 @@ class _MenuView extends React.Component<Props, State> {
     if (store.world) {
       return '';
     }
+    const displayOrder = [
+      Difficulty.Easy,
+      Difficulty.Medium,
+      Difficulty.Hard,
+      Difficulty.Infinite,
+    ];
     return (
       <Container>
         <h1>
@@ -118,7 +126,7 @@ class _MenuView extends React.Component<Props, State> {
           select your difficulty level
         </p>
         <WorldOptionContainer>
-          {worldLoader.loaders.map(world => (
+          {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map(world => (
             <WorldOption key={world.difficulty}>
               <WorldTitle>
                 {world.displayName()}
