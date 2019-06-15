@@ -8,7 +8,6 @@ import { GameManager } from './manager';
 
 const Container = styled.div`
   text-align: center;
-
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -17,10 +16,8 @@ const Container = styled.div`
 `;
 
 const Canvas = styled.canvas`
-  margin: 2rem;
-
-  width: 100vh;
-  height: 80vh;
+  width: 90%;
+  height: 70vh;
 `;
 
 interface Props {

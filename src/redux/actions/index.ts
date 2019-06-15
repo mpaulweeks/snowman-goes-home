@@ -1,4 +1,4 @@
-import { World } from '../../utils';
+import { Stopwatch, World } from '../../utils';
 import { SET_LEVEL, SET_TIMER, SET_WORLD } from '../actionTypes';
 
 export const setLevel = (level: number) => ({
@@ -8,10 +8,10 @@ export const setLevel = (level: number) => ({
   },
 });
 
-export const setTimer = (secondsRemaining: number) => ({
+export const setTimer = (stopwatch: Stopwatch) => ({
   type: SET_TIMER,
   payload: {
-    secondsRemaining,
+    stopwatch,
   },
 });
 

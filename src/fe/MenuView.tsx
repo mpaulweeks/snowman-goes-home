@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { World, Difficulty, WorldLoader } from '../utils';
+import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
@@ -16,22 +16,25 @@ const Container = styled.div`
   background-color: black;
 `;
 
-const LevelOptionContainer = styled.div`
+const WorldOptionContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 `;
 
-const LevelOption = styled.div`
-  margin: 2em;
+const WorldOption = styled.div`
+  margin: 1em;
 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   flex-wrap: nowrap;
+`;
+const WorldTitle = styled.h2`
+  margin-bottom: 0.5rem;
 `;
 
 const LoadingButton = styled.div`
@@ -115,12 +118,12 @@ class _MenuView extends React.Component<Props, State> {
         <p>
           select your difficulty level
         </p>
-        <LevelOptionContainer>
+        <WorldOptionContainer>
           {worldLoader.loaders.map(world => (
-            <LevelOption key={world.difficulty}>
-              <h2>
+            <WorldOption key={world.difficulty}>
+              <WorldTitle>
                 {world.displayName()}
-              </h2>
+              </WorldTitle>
               <div>
                 {world.progression.totalLevels} levels
               </div>
@@ -135,9 +138,9 @@ class _MenuView extends React.Component<Props, State> {
                 </LoadingButton>
                   )}
               </h3>
-            </LevelOption>
+            </WorldOption>
           ))}
-        </LevelOptionContainer>
+        </WorldOptionContainer>
       </Container>
     );
   }

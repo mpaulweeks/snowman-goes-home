@@ -3,6 +3,7 @@ import { SET_LEVEL, SET_TIMER, SET_WORLD } from "../actionTypes";
 
 export interface DataState {
   world?: World;
+  secondsElapsed: number;
   secondsRemaining: number;
   level: number;
 }
@@ -10,7 +11,7 @@ export interface DataState {
 interface DataAction {
   type: string;
   payload: {
-    secondsRemaining?: number;
+    stopwatch?: Stopwatch;
     level?: number;
     world?: World;
   };
@@ -18,6 +19,7 @@ interface DataAction {
 
 const initialState: DataState = {
   secondsRemaining: 0,
+  secondsElapsed: 0,
   level: 0,
   world: undefined,
 };
@@ -32,10 +34,11 @@ function reducer(state = initialState, action: DataAction) {
       };
     }
     case SET_TIMER: {
-      const { secondsRemaining } = action.payload;
+      const { stopwatch } = action.payload;
       return {
         ...state,
-        secondsRemaining,
+        secondsElapsed: stopwatch.formatElapsed(),
+        secondsRemaining: stopwatch.formatRemaining(),
       };
     }
     case SET_WORLD: {

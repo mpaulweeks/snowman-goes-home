@@ -1,5 +1,5 @@
 import { store } from "../redux";
-import { setLevel, setWorld } from "../redux/actions";
+import { setLevel, setTimer, setWorld } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
@@ -41,6 +41,7 @@ class _GameManager {
   canvasElm?: HTMLCanvasElement;
   ctx?: CanvasRenderingContext2D;
   world?: World;
+  stopwatch = new Stopwatch();
   currentLevel: (PlayableLevel | undefined);
   currentLevelIndex = 0;
   sprites: Sprites;
@@ -75,6 +76,9 @@ class _GameManager {
   private async loop() {
     if (this.world) {
       await this.draw();
+      if (this.stopwatch.getElapsed() !== store.getState().secondsElapsed) {
+        this.dispatch(setTimer(this.stopwatch));
+      }
     } else {
       this.worldLoader.loadInBackground();
     }
@@ -83,14 +87,15 @@ class _GameManager {
 
   setup(canvasElm: HTMLCanvasElement) {
     this.canvasElm = canvasElm;
-    canvasElm.width = document.body.clientHeight;
-    canvasElm.height = document.body.clientHeight * 0.8;
+    canvasElm.width = document.body.clientWidth * 0.9;
+    canvasElm.height = document.body.clientHeight * 0.7;
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
   }
   setWorld(world: World) {
     this.worldLoader = new WorldLoader();
     this.world = world;
     this.currentLevelIndex = 0;
+    this.stopwatch = new Stopwatch();
     this.nextLevel();
     this.dispatch(setWorld(world));
   }

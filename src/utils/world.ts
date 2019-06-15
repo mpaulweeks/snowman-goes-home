@@ -3,45 +3,47 @@ import { SolvableLevel } from "./level";
 import { Point } from "./point";
 
 export enum Difficulty {
-  Test = 1,
-  Easy, // 1s
+  Easy = 1, // 1s
   Medium, // 2s
   Hard, // 9s
+  // Test,
 };
 
 // race against time to get far, then get score based on how quick
 export interface Progression {
-  dimensions: Point,
+  gridSize: number,
   minMoves: number;
   levelsPerTier: number;
   totalLevels: number;
   secondsPerLevel: number;
 }
 
+const defaultDimensions = new Point(8, 10);
+
 const ProgressionByDifficulty = {
-  [Difficulty.Test]: {
-    dimensions: new Point(10, 8),
-    minMoves: 7,
-    levelsPerTier: 1,
-    totalLevels: 2,
-    secondsPerLevel: 10,
-  },
+  // [Difficulty.Test]: {
+  //   gridSize: 1,
+  //   minMoves: 7,
+  //   levelsPerTier: 1,
+  //   totalLevels: 2,
+  //   secondsPerLevel: 10,
+  // },
   [Difficulty.Easy]: {
-    dimensions: new Point(10, 8),
+    gridSize: 1,
     minMoves: 7,
     levelsPerTier: 2,
     totalLevels: 10,
     secondsPerLevel: 10,
   },
   [Difficulty.Medium]: {
-    dimensions: new Point(15, 12),
+    gridSize: 1.5,
     minMoves: 7,
     levelsPerTier: 1,
     totalLevels: 15,
     secondsPerLevel: 7,
   },
   [Difficulty.Hard]: {
-    dimensions: new Point(20, 16),
+    gridSize: 2,
     minMoves: 10,
     levelsPerTier: 2,
     totalLevels: 20,
@@ -86,13 +88,14 @@ export class World {
 
   generateLevels() {
     const { levelsByMoves, progression } = this;
-    const { dimensions, levelsPerTier } = progression;
+    const { gridSize, levelsPerTier } = progression;
     const remainingMinMoves = this.getLevelKeys().filter(k => levelsByMoves[k].length < levelsPerTier);
     if (remainingMinMoves.length === 0) {
       this.loaded = true;
       this.registerLoaded();
       return;
     }
+    const dimensions = new Point(defaultDimensions.x * gridSize, defaultDimensions.y * gridSize);
     const gen = new Generator({
       width: dimensions.x,
       height: dimensions.y,
@@ -130,7 +133,7 @@ export class WorldLoader {
 
   constructor() {
     this.loaders = [
-      Difficulty.Test,
+      // Difficulty.Test,
       Difficulty.Easy,
       Difficulty.Medium,
       Difficulty.Hard,
