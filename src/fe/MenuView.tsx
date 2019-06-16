@@ -132,7 +132,7 @@ class _MenuView extends React.Component<Props, State> {
                 {world.displayName()}
               </WorldTitle>
               <div>
-                {world.progression.totalLevels} levels
+                {world.totalLevels} levels
               </div>
               <h3>
                 {state[world.difficulty] ? (
@@ -148,6 +148,9 @@ class _MenuView extends React.Component<Props, State> {
             </WorldOption>
           ))}
         </WorldOptionContainer>
+        <p>
+          made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
+        </p>
       </Container>
     );
   }
