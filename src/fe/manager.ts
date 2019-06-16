@@ -1,6 +1,6 @@
 import { store } from "../redux";
 import { setLevel, setTimer, setWorld } from "../redux/actions";
-import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
+import { Difficulty, Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -96,6 +96,9 @@ export class GameManager {
       await this.draw();
       if (this.stopwatch.getElapsed() !== store.getState().secondsElapsed) {
         this.dispatch(setTimer(this.stopwatch));
+      }
+      if (this.world.difficulty === Difficulty.Infinite) {
+        this.world.generateLevels();
       }
     } else {
       this.worldLoader.loadInBackground();

@@ -176,7 +176,10 @@ class InfiniteWorld extends BasicWorld {
       blockPercentMax: 0.3,
       minMovesOptions: rangeFrom(progression.minMoves, 10),
     })
-    this.levels.push(...gen.generateLevels(500, 500));
+    this.levels.push(...gen.generateLevels(10, 10));
+    if (levels.length > lastIndex + 10) {
+      console.log('infinite loaded!');
+    }
   }
 
   async loadLevel(index: number) {
