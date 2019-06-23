@@ -10,11 +10,11 @@ export class Stopwatch {
   getElapsed(): number {
     return new Date().getTime() - this.started.getTime();
   }
-  getTime(): number {
+  getRemaining(): number {
     return this.milliseconds - this.getElapsed();
   }
   getPercent(): number {
-    return this.getTime() / this.milliseconds;
+    return this.getRemaining() / this.milliseconds;
   }
   addTime(time: number) {
     this.milliseconds += time;
@@ -23,6 +23,6 @@ export class Stopwatch {
     return Math.floor(this.getElapsed() / 1000).toString(10);
   }
   formatRemaining(): string {
-    return Math.floor(this.getTime() / 1000).toString(10);
+    return Math.floor(this.getRemaining() / 1000).toString(10);
   }
 }

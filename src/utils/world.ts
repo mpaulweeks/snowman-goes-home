@@ -1,6 +1,7 @@
 import { Generator, range, rangeFrom } from "./gen";
 import { SolvableLevel } from "./level";
 import { Point } from "./point";
+import { Stopwatch } from "./stopwatch";
 
 export enum Difficulty {
   Easy = 1,
@@ -43,7 +44,7 @@ const ProgressionByDifficulty = {
     minMoves: 7,
     levelsPerTier: 3,
     totalLevels: 20,
-    secondsPerLevel: 5,
+    secondsPerLevel: 10,
   },
 }
 
@@ -54,10 +55,12 @@ export interface LevelsByMoves {
 export interface World {
   difficulty: Difficulty;
   totalLevels: number;
+  progression: Progression;
   loaded: boolean;
   onLoad: Promise<World>;
   displayName: () => string;
   isInfinite: () => boolean;
+  createStopwatch: () => Stopwatch;
   generateLevels: () => void;
   loadLevel: (i: number) => Promise<SolvableLevel | undefined>;
 }
@@ -85,6 +88,11 @@ class BasicWorld implements World {
   }
   isInfinite() {
     return this.difficulty === Difficulty.Infinite;
+  }
+  createStopwatch() {
+    const secondsPerLevel = this.progression.secondsPerLevel || 0;
+    const startTime = 1000 * (60 - secondsPerLevel);
+    return new Stopwatch(this.isInfinite() ? startTime : undefined);
   }
 
   generateLevels() {

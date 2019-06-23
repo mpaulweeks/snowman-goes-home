@@ -92,13 +92,21 @@ export class GameManager {
     this.loop();
   }
   private async loop() {
-    if (this.world) {
+    const { world, stopwatch } = this;
+    if (world) {
       await this.draw();
-      if (this.stopwatch.getElapsed() !== store.getState().secondsElapsed) {
-        this.dispatch(setTimer(this.stopwatch));
+      if (world.isInfinite()) {
+        world.generateLevels();
+        if (stopwatch.getRemaining() !== store.getState().secondsRemaining) {
+          this.dispatch(setTimer(stopwatch));
+        }
+      } else {
+        if (stopwatch.getElapsed() !== store.getState().secondsElapsed) {
+          this.dispatch(setTimer(stopwatch));
+        }
       }
-      if (this.world.isInfinite()) {
-        this.world.generateLevels();
+      if (stopwatch.getRemaining() < 0) {
+        // todo end game
       }
     } else {
       this.worldLoader.loadInBackground();
@@ -133,7 +141,7 @@ export class GameManager {
     this.worldLoader = new WorldLoader(this.worldDimensions);
     this.world = world;
     this.currentLevelIndex = 0;
-    this.stopwatch = new Stopwatch();
+    this.stopwatch = world.createStopwatch();
     this.nextLevel();
     this.dispatch(setWorld(world));
   }
@@ -165,6 +173,7 @@ export class GameManager {
       console.log(this.currentLevel.soln.printMoves());
       this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;
+      this.stopwatch.addTime(1000 * (world.progression.secondsPerLevel || 0));
     } else {
       setTimeout(() => this.unsetWorld(), 2000);
     }
@@ -225,7 +234,7 @@ export class GameManager {
       ctx.fillRect(block.x * blockWidth, block.y * blockHeight, blockWidth, blockHeight);
     });
 
-    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getTime() > 0);
+    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
     this.pendingAnimations.forEach(a => {
       const { point, stopwatch } = a;
       const blueLevel = stopwatch.getPercent();

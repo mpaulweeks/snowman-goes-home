@@ -70,8 +70,8 @@ interface Props {
 
 class _GameView extends React.Component<Props> {
   render() {
-    const { gm} = this.props;
-    const { level, secondsElapsed } = this.props.store;
+    const { gm } = this.props;
+    const { world, level, secondsRemaining, secondsElapsed } = this.props.store;
     return (
       <Container>
         <Header>
@@ -97,7 +97,7 @@ class _GameView extends React.Component<Props> {
             <div>Level {level + 1}</div>
           </Column>
           <Column>
-            <Timer>{secondsElapsed}s</Timer>
+            <Timer>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</Timer>
           </Column>
         </Footer>
       </Container>
