@@ -57,6 +57,7 @@ export interface World {
   loaded: boolean;
   onLoad: Promise<World>;
   displayName: () => string;
+  isInfinite: () => boolean;
   generateLevels: () => void;
   loadLevel: (i: number) => Promise<SolvableLevel | undefined>;
 }
@@ -81,6 +82,9 @@ class BasicWorld implements World {
   }
   displayName() {
     return Difficulty[this.difficulty];
+  }
+  isInfinite() {
+    return this.difficulty === Difficulty.Infinite;
   }
 
   generateLevels() {

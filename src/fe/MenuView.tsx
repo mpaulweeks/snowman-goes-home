@@ -132,7 +132,7 @@ class _MenuView extends React.Component<Props, State> {
                 {world.displayName()}
               </WorldTitle>
               <div>
-                {world.difficulty === Difficulty.Infinite ? '∞' : world.totalLevels} levels
+                {world.isInfinite() ? '∞' : world.totalLevels} levels
               </div>
               <h3>
                 {state[world.difficulty] ? (
