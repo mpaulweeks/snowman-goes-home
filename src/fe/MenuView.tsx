@@ -13,7 +13,7 @@ const Container = styled.div`
   width: 100%;
   height: 100vh;
 
-  background-color: black;
+  background-color: var(--background);
 `;
 
 const WorldOptionContainer = styled.div`
@@ -49,13 +49,13 @@ const LoadingButton = styled.div`
 const ReadyButton = styled(LoadingButton)`
   cursor: pointer;
 
-  border-color: white;
+  border-color: var(--foreground);
   font-style: normal;
-  color: white;
+  color: var(--foreground);
 
   &:hover {
-    color: black;
-    background-color: white;
+    color: var(--background);
+    background-color: var(--foreground);
   }
 `;
 

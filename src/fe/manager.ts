@@ -2,6 +2,9 @@ import { store } from "../redux";
 import { setLevel, setTimer, setWorld } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
+const cssBackground = 'white'
+const cssForeground = 'black';
+
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
   'ArrowRight': Move.Right,
@@ -195,12 +198,12 @@ export class GameManager {
 
     await loadedAssets;
 
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = cssBackground;
     ctx.fillRect(0, 0, width, height);
 
     if (!currentLevel) {
       ctx.font = '20px monospace';
-      ctx.fillStyle = 'white';
+      ctx.fillStyle = cssForeground;
       ctx.fillText('you win! returning to the main menu...', 100, 100);
       return;
     }
@@ -209,7 +212,7 @@ export class GameManager {
     const blockHeight = height / currentLevel.level.height;
 
     // grid
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = cssForeground;
     for (let y = 1; y < currentLevel.level.height; y++) {
       ctx.beginPath();
       ctx.moveTo(0, y * blockHeight);

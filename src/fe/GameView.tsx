@@ -47,9 +47,9 @@ const KeyButton = styled.div`
   width: 3em;
   border-radius: 1em;
 
-  border: 2px solid white;
+  border: 2px solid var(--foreground);
   font-style: normal;
-  color: white;
+  color: var(--foreground);
 
   display: flex;
   flex-direction: column;
@@ -58,8 +58,8 @@ const KeyButton = styled.div`
   flex-wrap: nowrap;
 
   &:hover {
-    color: black;
-    background-color: white;
+    color: var(--background);
+    background-color: var(--foreground);
   }
 `;
 
