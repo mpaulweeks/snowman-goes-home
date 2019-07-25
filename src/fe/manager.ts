@@ -2,8 +2,9 @@ import { store } from "../redux";
 import { setLevel, setTimer, setWorld } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
-const cssBackground = 'white'
+const cssBackground = 'white';
 const cssForeground = 'black';
+const cssGameBackground = 'linear-gradient(150deg, rgba(204,204,221,1) 0%, rgba(0,212,255,1) 100%)';
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -71,7 +72,7 @@ export class GameManager {
 
     // load sprites
     this.sprites = {
-      hero: loadImage('img/ice_blue.png'),
+      hero: loadImage('img/ice_white.png'),
     };
     const allSprites = Object.values(this.sprites);
     this.loadedAssets = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
@@ -198,7 +199,10 @@ export class GameManager {
 
     await loadedAssets;
 
-    ctx.fillStyle = cssBackground;
+    const grd = ctx.createLinearGradient(0, 0, width, height);
+    grd.addColorStop(0, '#aaddff');
+    grd.addColorStop(1, '#44ddff');
+    ctx.fillStyle = grd;
     ctx.fillRect(0, 0, width, height);
 
     if (!currentLevel) {
@@ -232,7 +236,7 @@ export class GameManager {
     ctx.fillStyle = 'lightgreen';
     ctx.fillRect(currentLevel.level.win.x * blockWidth, currentLevel.level.win.y * blockHeight, blockWidth, blockHeight);
 
-    ctx.fillStyle = 'lightgrey';
+    ctx.fillStyle = 'darkgrey';
     currentLevel.level.blocks.forEach(block => {
       ctx.fillRect(block.x * blockWidth, block.y * blockHeight, blockWidth, blockHeight);
     });

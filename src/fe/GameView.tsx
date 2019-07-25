@@ -63,6 +63,22 @@ const KeyButton = styled.div`
   }
 `;
 
+
+const CanvasContainer = styled.div`
+  position: relative;
+`;
+
+const CanvasOverlay = styled.div`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-image: url('img/snow_loose.gif');
+  background-size: contain;
+  background-repeat: none;
+`;
+
 interface Props {
   gm: GameManager;
   store: DataState;
@@ -91,7 +107,10 @@ class _GameView extends React.Component<Props> {
             </Row>
           </Column>
         </Header>
-        {this.props.children}
+        <CanvasContainer>
+          {this.props.children}
+          <CanvasOverlay />
+        </CanvasContainer>
         <Footer>
           <Column>
             <div>Level {level + 1}</div>
