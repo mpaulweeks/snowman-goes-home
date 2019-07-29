@@ -4,17 +4,7 @@ import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
-
-const Container = styled.div`
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 1;
-  width: 100%;
-  height: 100vh;
-
-  background-color: black;
-`;
+import { AbsoluteContainer, LoadingButton, ReadyButton } from './common';
 
 const WorldOptionContainer = styled.div`
   display: flex;
@@ -37,28 +27,6 @@ const WorldTitle = styled.h2`
   margin-bottom: 0.5rem;
 `;
 
-const LoadingButton = styled.div`
-  padding: 0.5em;
-  width: 4em;
-  border-radius: 1em;
-
-  border: 2px solid grey;
-  font-style: italic;
-  color: grey;
-`;
-const ReadyButton = styled(LoadingButton)`
-  cursor: pointer;
-
-  border-color: white;
-  font-style: normal;
-  color: white;
-
-  &:hover {
-    color: black;
-    background-color: white;
-  }
-`;
-
 interface Props {
   gm: GameManager;
   store: DataState;
@@ -68,12 +36,14 @@ interface State {
   [Difficulty.Easy]: boolean,
   [Difficulty.Medium]: boolean,
   [Difficulty.Hard]: boolean,
+  [Difficulty.Infinite]: boolean,
 };
 
 const defaultState = {
   [Difficulty.Easy]: false,
   [Difficulty.Medium]: false,
   [Difficulty.Hard]: false,
+  [Difficulty.Infinite]: false,
 };
 
 class _MenuView extends React.Component<Props, State> {
@@ -109,8 +79,14 @@ class _MenuView extends React.Component<Props, State> {
     if (store.world) {
       return '';
     }
+    const displayOrder = [
+      Difficulty.Easy,
+      Difficulty.Medium,
+      Difficulty.Hard,
+      Difficulty.Infinite,
+    ];
     return (
-      <Container>
+      <AbsoluteContainer>
         <h1>
           ice slide puzzle game
         </h1>
@@ -118,13 +94,13 @@ class _MenuView extends React.Component<Props, State> {
           select your difficulty level
         </p>
         <WorldOptionContainer>
-          {worldLoader.loaders.map(world => (
+          {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map(world => (
             <WorldOption key={world.difficulty}>
               <WorldTitle>
                 {world.displayName()}
               </WorldTitle>
               <div>
-                {world.progression.totalLevels} levels
+                {world.isInfinite() ? '∞' : world.totalLevels} levels
               </div>
               <h3>
                 {state[world.difficulty] ? (
@@ -140,7 +116,10 @@ class _MenuView extends React.Component<Props, State> {
             </WorldOption>
           ))}
         </WorldOptionContainer>
-      </Container>
+        <p>
+          made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
+        </p>
+      </AbsoluteContainer>
     );
   }
 }

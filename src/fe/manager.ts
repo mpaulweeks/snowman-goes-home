@@ -1,6 +1,16 @@
 import { store } from "../redux";
-import { setLevel, setTimer, setWorld } from "../redux/actions";
+import { setGameOver, setLevel, setTimer, setWorld } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
+
+const Color = {
+  block: 'black',
+  goal: 'yellow',
+  grid: 'black',
+  glow: 'rgba(150, 150, 255, 1)',
+};
+const Sprite = {
+  hero: 'ice_blue.png',
+};
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -49,6 +59,7 @@ export class GameManager {
   sprites: Sprites;
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
+  shouldDrawGrid = false;
 
   constructor() {
     // determine canvas size
@@ -68,7 +79,7 @@ export class GameManager {
 
     // load sprites
     this.sprites = {
-      hero: loadImage('img/ice_blue.png'),
+      hero: loadImage('img/' + Sprite.hero),
     };
     const allSprites = Object.values(this.sprites);
     this.loadedAssets = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
@@ -92,12 +103,23 @@ export class GameManager {
     this.loop();
   }
   private async loop() {
-    if (this.world) {
+    const { world, stopwatch } = this;
+    if (world) {
       await this.draw();
-      if (this.stopwatch.getElapsed() !== store.getState().secondsElapsed) {
-        this.dispatch(setTimer(this.stopwatch));
+      if (world.isInfinite()) {
+        world.generateLevels();
+        if (stopwatch.getRemaining() !== store.getState().secondsRemaining) {
+          this.dispatch(setTimer(stopwatch));
+        }
+        if (stopwatch.getRemaining() < 0) {
+          this.triggerGameOver();
+        }
+      } else {
+        if (stopwatch.getElapsed() !== store.getState().secondsElapsed) {
+          this.dispatch(setTimer(stopwatch));
+        }
       }
-    } else {
+    } else if (!store.getState().isGameOver) {
       this.worldLoader.loadInBackground();
     }
     window.requestAnimationFrame(() => this.loop());
@@ -105,7 +127,9 @@ export class GameManager {
 
   clickReset = () => {
     this.currentLevel && this.currentLevel.reset();
-    this.draw();
+  }
+  clickToggleGrid = () => {
+    this.shouldDrawGrid = !this.shouldDrawGrid;
   }
   clickUp = () => {
     this.handleMove(Move.Up);
@@ -130,13 +154,18 @@ export class GameManager {
     this.worldLoader = new WorldLoader(this.worldDimensions);
     this.world = world;
     this.currentLevelIndex = 0;
-    this.stopwatch = new Stopwatch();
+    this.stopwatch = world.createStopwatch();
     this.nextLevel();
     this.dispatch(setWorld(world));
   }
   unsetWorld() {
+    // todo score should dispatch this action
     this.world = undefined;
     this.dispatch(setWorld(undefined));
+  }
+  triggerGameOver() {
+    this.world = undefined;
+    this.dispatch(setGameOver());
   }
 
   handleMove(move: Move) {
@@ -155,16 +184,17 @@ export class GameManager {
     if (!world) {
       throw new Error('todo this should be impossible');
     }
-    this.pendingAnimations = [];
-    const levels = await world.loadNow(); // todo rewrite to not use async?
-    const nextLevel = levels[currentLevelIndex];
+    // todo maybe keep animations between levels?
+    // this.pendingAnimations = [];
+    const nextLevel = await world.loadLevel(currentLevelIndex);
     this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
-    if (nextLevel) {
+    if (this.currentLevel) {
       console.log(this.currentLevel.soln.printMoves());
       this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;
+      this.stopwatch.addTime(1000 * (world.progression.secondsPerLevel || 0));
     } else {
-      setTimeout(() => this.unsetWorld(), 2000);
+      this.triggerGameOver();
     }
   }
 
@@ -184,12 +214,15 @@ export class GameManager {
 
     await loadedAssets;
 
-    ctx.fillStyle = 'black';
+    const grd = ctx.createLinearGradient(0, 0, width, height);
+    grd.addColorStop(0, '#eeeeee');
+    grd.addColorStop(1, '#bbbbbb');
+    ctx.fillStyle = grd;
     ctx.fillRect(0, 0, width, height);
 
     if (!currentLevel) {
       ctx.font = '20px monospace';
-      ctx.fillStyle = 'white';
+      ctx.fillStyle = Color.grid;
       ctx.fillText('you win! returning to the main menu...', 100, 100);
       return;
     }
@@ -198,32 +231,34 @@ export class GameManager {
     const blockHeight = height / currentLevel.level.height;
 
     // grid
-    ctx.strokeStyle = 'white';
-    for (let y = 1; y < currentLevel.level.height; y++) {
-      ctx.beginPath();
-      ctx.moveTo(0, y * blockHeight);
-      ctx.lineTo(width, y * blockHeight);
-      ctx.stroke();
-    }
-    for (let x = 1; x < currentLevel.level.width; x++) {
-      ctx.beginPath();
-      ctx.moveTo(x * blockWidth, 0);
-      ctx.lineTo(x * blockWidth, height);
-      ctx.stroke();
+    if (this.shouldDrawGrid) {
+      ctx.strokeStyle = Color.grid;
+      for (let y = 1; y < currentLevel.level.height; y++) {
+        ctx.beginPath();
+        ctx.moveTo(0, y * blockHeight);
+        ctx.lineTo(width, y * blockHeight);
+        ctx.stroke();
+      }
+      for (let x = 1; x < currentLevel.level.width; x++) {
+        ctx.beginPath();
+        ctx.moveTo(x * blockWidth, 0);
+        ctx.lineTo(x * blockWidth, height);
+        ctx.stroke();
+      }
     }
 
     // ctx.fillStyle = 'grey';
     // ctx.fillRect(currentLevel.level.start.x * blockWidth, currentLevel.level.start.y * blockHeight, blockWidth, blockHeight);
 
-    ctx.fillStyle = 'lightgreen';
+    ctx.fillStyle = Color.goal;
     ctx.fillRect(currentLevel.level.win.x * blockWidth, currentLevel.level.win.y * blockHeight, blockWidth, blockHeight);
 
-    ctx.fillStyle = 'lightgrey';
+    ctx.fillStyle = Color.block;
     currentLevel.level.blocks.forEach(block => {
       ctx.fillRect(block.x * blockWidth, block.y * blockHeight, blockWidth, blockHeight);
     });
 
-    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getTime() > 0);
+    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
     this.pendingAnimations.forEach(a => {
       const { point, stopwatch } = a;
       const blueLevel = stopwatch.getPercent();
@@ -236,6 +271,8 @@ export class GameManager {
       );
     });
 
+    ctx.strokeStyle = Color.glow;
+    ctx.strokeRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
     ctx.drawImage(
       sprites.hero.image,
       currentLevel.hero.point.x * blockWidth + blockWidth * 0.2,

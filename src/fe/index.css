@@ -1,7 +1,10 @@
 body {
+  --foreground: black;
+  --background: white;
+
   margin: 0px;
-  background-color: black;
-  color: white;
+  background-color: var(--background);
+  color: var(--foreground);
 
   position: absolute;
   top: 0px;
@@ -11,5 +14,5 @@ body {
   overflow: hidden;
 }
 canvas {
-  border: 1px solid white;
+  border: 1px solid var(--foreground);
 }

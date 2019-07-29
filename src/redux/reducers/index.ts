@@ -1,11 +1,12 @@
-import { World } from "../../utils";
-import { SET_LEVEL, SET_TIMER, SET_WORLD } from "../actionTypes";
+import { Stopwatch, World } from "../../utils";
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD } from "../actionTypes";
 
 export interface DataState {
   world?: World;
   secondsElapsed: number;
   secondsRemaining: number;
   level: number;
+  isGameOver: boolean;
 }
 
 interface DataAction {
@@ -22,10 +23,17 @@ const initialState: DataState = {
   secondsElapsed: 0,
   level: 0,
   world: undefined,
+  isGameOver: false,
 };
 
 function reducer(state = initialState, action: DataAction) {
   switch (action.type) {
+    case SET_GAME_OVER: {
+      return {
+        ...state,
+        isGameOver: true,
+      };
+    }
     case SET_LEVEL: {
       const { level } = action.payload;
       return {
@@ -37,14 +45,15 @@ function reducer(state = initialState, action: DataAction) {
       const { stopwatch } = action.payload;
       return {
         ...state,
-        secondsElapsed: stopwatch.formatElapsed(),
-        secondsRemaining: stopwatch.formatRemaining(),
+        secondsElapsed: stopwatch && stopwatch.formatElapsed(),
+        secondsRemaining: stopwatch && stopwatch.formatRemaining(),
       };
     }
     case SET_WORLD: {
       const { world } = action.payload;
       return {
         ...state,
+        isGameOver: false,
         world,
       };
     }

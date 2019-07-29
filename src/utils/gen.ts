@@ -9,6 +9,10 @@ export function range(n: number): Array<number> {
   return arr;
 }
 
+export function rangeFrom(start: number, length: number): Array<number> {
+  return range(length).map(i => i + start);
+}
+
 function randomInRange(min: number, max: number) {
   return min + (Math.random() * (max - min));
 }

@@ -1,51 +1,50 @@
-import { Generator, range } from "./gen";
+import { Generator, range, rangeFrom } from "./gen";
 import { SolvableLevel } from "./level";
 import { Point } from "./point";
+import { Stopwatch } from "./stopwatch";
 
 export enum Difficulty {
-  Easy = 1, // 1s
-  Medium, // 2s
-  Hard, // 9s
+  Easy = 1,
+  Medium,
+  Hard,
+  Infinite,
   // Test,
 };
 
 // race against time to get far, then get score based on how quick
 export interface Progression {
-  gridSize: number,
+  gridSize: (number),
   minMoves: number;
   levelsPerTier: number;
   totalLevels: number;
-  secondsPerLevel: number;
+  secondsPerLevel?: number;
 }
 
 const ProgressionByDifficulty = {
-  // [Difficulty.Test]: {
-  //   gridSize: 1,
-  //   minMoves: 7,
-  //   levelsPerTier: 1,
-  //   totalLevels: 2,
-  //   secondsPerLevel: 10,
-  // },
   [Difficulty.Easy]: {
     gridSize: 1,
     minMoves: 7,
     levelsPerTier: 2,
     totalLevels: 10,
-    secondsPerLevel: 10,
   },
   [Difficulty.Medium]: {
     gridSize: 1.5,
     minMoves: 7,
     levelsPerTier: 1,
     totalLevels: 15,
-    secondsPerLevel: 7,
   },
   [Difficulty.Hard]: {
     gridSize: 2,
     minMoves: 10,
     levelsPerTier: 2,
     totalLevels: 20,
-    secondsPerLevel: 7,
+  },
+  [Difficulty.Infinite]: {
+    gridSize: 1.5,
+    minMoves: 7,
+    levelsPerTier: 3,
+    totalLevels: 20,
+    secondsPerLevel: 5,
   },
 }
 
@@ -53,27 +52,68 @@ export interface LevelsByMoves {
   [minMoves: number]: Array<SolvableLevel>;
 }
 
-export class World {
+export interface World {
+  difficulty: Difficulty;
+  totalLevels: number;
+  progression: Progression;
+  loaded: boolean;
+  onLoad: Promise<World>;
+  displayName: () => string;
+  isInfinite: () => boolean;
+  createStopwatch: () => Stopwatch;
+  generateLevels: () => void;
+  loadLevel: (i: number) => Promise<SolvableLevel | undefined>;
+}
+
+class BasicWorld implements World {
   dimensions: Point;
   difficulty: Difficulty;
+  totalLevels: number;
   progression: Progression;
-  levelsByMoves: LevelsByMoves;
   loaded = false;
   onLoad: Promise<World>;
-  private registerLoaded = () => { };
+  registerLoaded = () => { };
 
   constructor(dimensions: Point, difficulty: Difficulty) {
     this.dimensions = dimensions;
     this.difficulty = difficulty;
     this.progression = ProgressionByDifficulty[difficulty];
+    this.onLoad = new Promise((resolve, reject) => {
+      this.registerLoaded = () => resolve(this);
+    });
+    this.totalLevels = this.progression.totalLevels;
+  }
+  displayName() {
+    return Difficulty[this.difficulty];
+  }
+  isInfinite() {
+    return this.difficulty === Difficulty.Infinite;
+  }
+  createStopwatch() {
+    const secondsPerLevel = this.progression.secondsPerLevel || 0;
+    const startTime = 1000 * (60 - secondsPerLevel);
+    // const startTime = 5; // for testing infinite mode
+    return new Stopwatch(this.isInfinite() ? startTime : undefined);
+  }
+
+  generateLevels() {
+    throw new Error('base class');
+  }
+  loadLevel(index: number): Promise<SolvableLevel | undefined> {
+    throw new Error('base class');
+  }
+}
+
+class FiniteWorld extends BasicWorld {
+  levelsByMoves: LevelsByMoves;
+
+  constructor(dimensions: Point, difficulty: Difficulty) {
+    super(dimensions, difficulty);
     this.levelsByMoves = range(this.progression.totalLevels / this.progression.levelsPerTier)
       .reduce((obj: LevelsByMoves, num) => {
         obj[num + this.progression.minMoves] = [];
         return obj;
       }, {});
-    this.onLoad = new Promise((resolve, reject) => {
-      this.registerLoaded = () => resolve(this);
-    });
   }
 
   getLevelKeys() {
@@ -112,7 +152,7 @@ export class World {
     });
   }
 
-  async loadNow() {
+  async loadLevel(index: number) {
     while (!this.loaded) {
       this.generateLevels();
     }
@@ -120,11 +160,47 @@ export class World {
       arr.push(...this.levelsByMoves[key]);
       return arr;
     }, []);
-    return levels;
+    return levels[index];
+  }
+}
+
+class InfiniteWorld extends BasicWorld {
+  levels: Array<SolvableLevel> = [];
+  lastIndex = 0;
+
+  constructor(dimensions: Point) {
+    super(dimensions, Difficulty.Infinite);
   }
 
-  displayName() {
-    return Difficulty[this.difficulty];
+  generateLevels() {
+    const { dimensions, levels, progression, lastIndex } = this;
+    const { gridSize } = progression;
+    if (levels.length > lastIndex + 10) {
+      this.loaded = true;
+      this.registerLoaded();
+      return;
+    }
+    // todo randomize gridSize, minMoves
+    const scaledDimensions = new Point(dimensions.x * gridSize, dimensions.y * gridSize);
+    const gen = new Generator({
+      width: scaledDimensions.x,
+      height: scaledDimensions.y,
+      blockPercentMin: 0.05,
+      blockPercentMax: 0.3,
+      minMovesOptions: rangeFrom(progression.minMoves, 10),
+    })
+    this.levels.push(...gen.generateLevels(10, 10));
+    if (levels.length > lastIndex + 10) {
+      console.log('infinite loaded!');
+    }
+  }
+
+  async loadLevel(index: number) {
+    while (index > this.levels.length) {
+      this.generateLevels();
+    }
+    this.lastIndex = index;
+    return this.levels[index];
   }
 }
 
@@ -133,11 +209,17 @@ export class WorldLoader {
 
   constructor(dimensions: Point) {
     this.loaders = [
-      // Difficulty.Test,
-      Difficulty.Easy,
-      Difficulty.Medium,
-      Difficulty.Hard,
-    ].map(d => new World(dimensions, d));
+      new InfiniteWorld(dimensions),
+      ...[
+        Difficulty.Easy,
+        Difficulty.Medium,
+        Difficulty.Hard,
+      ].map(d => new FiniteWorld(dimensions, d)),
+    ];
+  }
+
+  getLoaderByDifficulty(difficulty: Difficulty) {
+    return this.loaders.filter(w => w.difficulty === difficulty)[0];
   }
 
   loadInBackground() {
