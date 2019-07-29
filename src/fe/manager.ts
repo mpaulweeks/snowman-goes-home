@@ -6,6 +6,7 @@ const Color = {
   block: 'black',
   goal: 'yellow',
   grid: 'black',
+  glow: 'rgba(150, 150, 255, 1)',
 };
 const Sprite = {
   hero: 'ice_blue.png',
@@ -58,6 +59,7 @@ export class GameManager {
   sprites: Sprites;
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
+  shouldDrawGrid = false;
 
   constructor() {
     // determine canvas size
@@ -125,7 +127,9 @@ export class GameManager {
 
   clickReset = () => {
     this.currentLevel && this.currentLevel.reset();
-    this.draw();
+  }
+  clickToggleGrid = () => {
+    this.shouldDrawGrid = !this.shouldDrawGrid;
   }
   clickUp = () => {
     this.handleMove(Move.Up);
@@ -226,18 +230,20 @@ export class GameManager {
     const blockHeight = height / currentLevel.level.height;
 
     // grid
-    ctx.strokeStyle = Color.grid;
-    for (let y = 1; y < currentLevel.level.height; y++) {
-      ctx.beginPath();
-      ctx.moveTo(0, y * blockHeight);
-      ctx.lineTo(width, y * blockHeight);
-      ctx.stroke();
-    }
-    for (let x = 1; x < currentLevel.level.width; x++) {
-      ctx.beginPath();
-      ctx.moveTo(x * blockWidth, 0);
-      ctx.lineTo(x * blockWidth, height);
-      ctx.stroke();
+    if (this.shouldDrawGrid) {
+      ctx.strokeStyle = Color.grid;
+      for (let y = 1; y < currentLevel.level.height; y++) {
+        ctx.beginPath();
+        ctx.moveTo(0, y * blockHeight);
+        ctx.lineTo(width, y * blockHeight);
+        ctx.stroke();
+      }
+      for (let x = 1; x < currentLevel.level.width; x++) {
+        ctx.beginPath();
+        ctx.moveTo(x * blockWidth, 0);
+        ctx.lineTo(x * blockWidth, height);
+        ctx.stroke();
+      }
     }
 
     // ctx.fillStyle = 'grey';
@@ -264,6 +270,8 @@ export class GameManager {
       );
     });
 
+    ctx.strokeStyle = Color.glow;
+    ctx.strokeRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
     ctx.drawImage(
       sprites.hero.image,
       currentLevel.hero.point.x * blockWidth + blockWidth * 0.2,

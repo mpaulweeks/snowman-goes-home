@@ -26,6 +26,12 @@ const SubContainer = styled(Row)`
 const Column = styled(Row)`
   flex-direction: column;
 `;
+const ColumnInfo = styled(Column)`
+  justify-content: flex-start;
+  align-items: center;
+  width: 5em;
+  margin-top: 1em;
+`;
 const Header = styled(SubContainer)`
   height: 20vh;
 `;
@@ -42,9 +48,9 @@ const KeyButton = styled.div`
   cursor: pointer;
 
   height: 4vh;
-  padding: 0 0.5em;
+  padding: 0 0.75em;
   margin: 0 0.3em;
-  width: 3em;
+  min-width: 2em;
   border-radius: 1em;
 
   border: 2px solid var(--foreground);
@@ -91,9 +97,9 @@ class _GameView extends React.Component<Props> {
     return (
       <Container>
         <Header>
-          <Column>
-            <KeyButton onClick={gm.clickReset}>reset</KeyButton>
-          </Column>
+          <ColumnInfo>
+            <div>Level {level + 1}</div>
+          </ColumnInfo>
           <Column>
             <Row>
               <KeyButton onClick={gm.clickUp}>up</KeyButton>
@@ -106,6 +112,9 @@ class _GameView extends React.Component<Props> {
               <KeyButton onClick={gm.clickDown}>down</KeyButton>
             </Row>
           </Column>
+          <ColumnInfo>
+            <Timer>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</Timer>
+          </ColumnInfo>
         </Header>
         <CanvasContainer>
           {this.props.children}
@@ -113,10 +122,10 @@ class _GameView extends React.Component<Props> {
         </CanvasContainer>
         <Footer>
           <Column>
-            <div>Level {level + 1}</div>
+            <KeyButton onClick={gm.clickReset}>reset</KeyButton>
           </Column>
           <Column>
-            <Timer>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</Timer>
+            <KeyButton onClick={gm.clickToggleGrid}>toggle grid</KeyButton>
           </Column>
         </Footer>
       </Container>
