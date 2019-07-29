@@ -2,9 +2,14 @@ import { store } from "../redux";
 import { setLevel, setTimer, setWorld } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
-const cssBackground = 'white';
-const cssForeground = 'black';
-const cssGameBackground = 'linear-gradient(150deg, rgba(204,204,221,1) 0%, rgba(0,212,255,1) 100%)';
+const Color = {
+  block: 'black',
+  goal: 'yellow',
+  grid: 'black',
+};
+const Sprite = {
+  hero: 'ice_blue.png',
+};
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -72,7 +77,7 @@ export class GameManager {
 
     // load sprites
     this.sprites = {
-      hero: loadImage('img/ice_white.png'),
+      hero: loadImage('img/' + Sprite.hero),
     };
     const allSprites = Object.values(this.sprites);
     this.loadedAssets = Promise.all(allSprites.map(s => s.loaded)).then(() => true);
@@ -200,14 +205,14 @@ export class GameManager {
     await loadedAssets;
 
     const grd = ctx.createLinearGradient(0, 0, width, height);
-    grd.addColorStop(0, '#aaddff');
-    grd.addColorStop(1, '#44ddff');
+    grd.addColorStop(0, '#eeeeee');
+    grd.addColorStop(1, '#bbbbbb');
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, width, height);
 
     if (!currentLevel) {
       ctx.font = '20px monospace';
-      ctx.fillStyle = cssForeground;
+      ctx.fillStyle = Color.grid;
       ctx.fillText('you win! returning to the main menu...', 100, 100);
       return;
     }
@@ -216,7 +221,7 @@ export class GameManager {
     const blockHeight = height / currentLevel.level.height;
 
     // grid
-    ctx.strokeStyle = cssForeground;
+    ctx.strokeStyle = Color.grid;
     for (let y = 1; y < currentLevel.level.height; y++) {
       ctx.beginPath();
       ctx.moveTo(0, y * blockHeight);
@@ -233,10 +238,10 @@ export class GameManager {
     // ctx.fillStyle = 'grey';
     // ctx.fillRect(currentLevel.level.start.x * blockWidth, currentLevel.level.start.y * blockHeight, blockWidth, blockHeight);
 
-    ctx.fillStyle = 'lightgreen';
+    ctx.fillStyle = Color.goal;
     ctx.fillRect(currentLevel.level.win.x * blockWidth, currentLevel.level.win.y * blockHeight, blockWidth, blockHeight);
 
-    ctx.fillStyle = 'darkgrey';
+    ctx.fillStyle = Color.block;
     currentLevel.level.blocks.forEach(block => {
       ctx.fillRect(block.x * blockWidth, block.y * blockHeight, blockWidth, blockHeight);
     });
