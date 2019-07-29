@@ -1,5 +1,5 @@
 import { store } from "../redux";
-import { setLevel, setTimer, setWorld } from "../redux/actions";
+import { setGameOver, setLevel, setTimer, setWorld } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 
 const Color = {
@@ -109,15 +109,15 @@ export class GameManager {
         if (stopwatch.getRemaining() !== store.getState().secondsRemaining) {
           this.dispatch(setTimer(stopwatch));
         }
+        if (stopwatch.getRemaining() < 0) {
+          this.triggerGameOver();
+        }
       } else {
         if (stopwatch.getElapsed() !== store.getState().secondsElapsed) {
           this.dispatch(setTimer(stopwatch));
         }
       }
-      if (stopwatch.getRemaining() < 0) {
-        // todo end game
-      }
-    } else {
+    } else if (!store.getState().isGameOver) {
       this.worldLoader.loadInBackground();
     }
     window.requestAnimationFrame(() => this.loop());
@@ -155,8 +155,13 @@ export class GameManager {
     this.dispatch(setWorld(world));
   }
   unsetWorld() {
+    // todo score should dispatch this action
     this.world = undefined;
     this.dispatch(setWorld(undefined));
+  }
+  triggerGameOver() {
+    this.world = undefined;
+    this.dispatch(setGameOver());
   }
 
   handleMove(move: Move) {
@@ -184,7 +189,7 @@ export class GameManager {
       this.currentLevelIndex += 1;
       this.stopwatch.addTime(1000 * (world.progression.secondsPerLevel || 0));
     } else {
-      setTimeout(() => this.unsetWorld(), 2000);
+      this.triggerGameOver();
     }
   }
 

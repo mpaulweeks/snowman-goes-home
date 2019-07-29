@@ -2,6 +2,7 @@ import React from 'react';
 import { GameView } from './GameView';
 import styled from 'styled-components';
 import { MenuView } from './MenuView';
+import { ScoreView } from './ScoreView';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
@@ -49,6 +50,7 @@ class _App extends React.Component<Props> {
           <Canvas ref={this.canvasRef} />
         </GameView>
         <MenuView gm={gm} />
+        <ScoreView gm={gm} />
       </Container>
     );
   }

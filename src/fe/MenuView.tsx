@@ -4,17 +4,7 @@ import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
-
-const Container = styled.div`
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 1;
-  width: 100%;
-  height: 100vh;
-
-  background-color: var(--background);
-`;
+import { AbsoluteContainer } from './common';
 
 const WorldOptionContainer = styled.div`
   display: flex;
@@ -118,7 +108,7 @@ class _MenuView extends React.Component<Props, State> {
       Difficulty.Infinite,
     ];
     return (
-      <Container>
+      <AbsoluteContainer>
         <h1>
           ice slide puzzle game
         </h1>
@@ -151,7 +141,7 @@ class _MenuView extends React.Component<Props, State> {
         <p>
           made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
         </p>
-      </Container>
+      </AbsoluteContainer>
     );
   }
 }

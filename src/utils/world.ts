@@ -44,7 +44,7 @@ const ProgressionByDifficulty = {
     minMoves: 7,
     levelsPerTier: 3,
     totalLevels: 20,
-    secondsPerLevel: 10,
+    secondsPerLevel: 5,
   },
 }
 
@@ -92,6 +92,7 @@ class BasicWorld implements World {
   createStopwatch() {
     const secondsPerLevel = this.progression.secondsPerLevel || 0;
     const startTime = 1000 * (60 - secondsPerLevel);
+    // const startTime = 5; // for testing infinite mode
     return new Stopwatch(this.isInfinite() ? startTime : undefined);
   }
 
