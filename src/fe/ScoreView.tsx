@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { setWorld } from "../redux/actions";
 import { GameManager } from './manager';
-import { AbsoluteContainer } from './common';
+import { AbsoluteContainer, Row, ReadyButton } from './common';
 
 interface Props {
   gm: GameManager;
@@ -25,16 +25,18 @@ class _ScoreView extends React.Component<Props, State> {
     }
     return (
       <AbsoluteContainer>
-        <h1>
-          {world.isInfinite() ? `
-            game over! you managed to complete ${gm.currentLevelIndex - 1} levels
-          ` : `
-            you win! your score is ${store.secondsElapsed}. try to get it lower!
-          `}
-        </h1>
-        <p>
-          <button onClick={this.onReset}>RESET</button>
-        </p>
+        <Row>
+          <h1>
+            {world.isInfinite() ? `
+              game over! you managed to complete ${gm.currentLevelIndex - 1} levels
+            ` : `
+              you win! your score is ${store.secondsElapsed}. try to get it lower!
+            `}
+          </h1>
+        </Row>
+        <Row>
+          <ReadyButton onClick={this.onReset}>RESET</ReadyButton>
+        </Row>
       </AbsoluteContainer>
     );
   }

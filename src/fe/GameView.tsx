@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { DataState } from '../redux/reducers';
 import { connect } from 'react-redux';
 import { GameManager } from './manager';
+import { Row, Column, KeyButton } from './common';
 
 const Container = styled.div`
   display: flex;
@@ -12,19 +13,9 @@ const Container = styled.div`
   flex-wrap: nowrap;
 `;
 
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: stretch;
-  flex-wrap: nowrap;
-`;
 const SubContainer = styled(Row)`
   width: 100%;
   margin: 0px;
-`;
-const Column = styled(Row)`
-  flex-direction: column;
 `;
 const ColumnInfo = styled(Column)`
   justify-content: flex-start;
@@ -43,32 +34,6 @@ const Timer = styled.div`
   font-size: 1.2em;
   font-weight: bold;
 `;
-
-const KeyButton = styled.div`
-  cursor: pointer;
-
-  height: 4vh;
-  padding: 0 0.75em;
-  margin: 0 0.3em;
-  min-width: 2em;
-  border-radius: 1em;
-
-  border: 2px solid var(--foreground);
-  font-style: normal;
-  color: var(--foreground);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
-
-  &:hover {
-    color: var(--background);
-    background-color: var(--foreground);
-  }
-`;
-
 
 const CanvasContainer = styled.div`
   position: relative;

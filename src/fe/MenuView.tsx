@@ -4,7 +4,7 @@ import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
-import { AbsoluteContainer } from './common';
+import { AbsoluteContainer, LoadingButton, ReadyButton } from './common';
 
 const WorldOptionContainer = styled.div`
   display: flex;
@@ -25,28 +25,6 @@ const WorldOption = styled.div`
 `;
 const WorldTitle = styled.h2`
   margin-bottom: 0.5rem;
-`;
-
-const LoadingButton = styled.div`
-  padding: 0.5em;
-  width: 4em;
-  border-radius: 1em;
-
-  border: 2px solid grey;
-  font-style: italic;
-  color: grey;
-`;
-const ReadyButton = styled(LoadingButton)`
-  cursor: pointer;
-
-  border-color: var(--foreground);
-  font-style: normal;
-  color: var(--foreground);
-
-  &:hover {
-    color: var(--background);
-    background-color: var(--foreground);
-  }
 `;
 
 interface Props {

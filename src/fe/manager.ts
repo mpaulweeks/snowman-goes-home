@@ -184,7 +184,8 @@ export class GameManager {
     if (!world) {
       throw new Error('todo this should be impossible');
     }
-    this.pendingAnimations = [];
+    // todo maybe keep animations between levels?
+    // this.pendingAnimations = [];
     const nextLevel = await world.loadLevel(currentLevelIndex);
     this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
     if (this.currentLevel) {
