@@ -1,4 +1,5 @@
 import React from 'react';
+import { AudioPlayer } from './AudioPlayer';
 import { GameView } from './GameView';
 import styled from 'styled-components';
 import { MenuView } from './MenuView';
@@ -46,6 +47,7 @@ class _App extends React.Component<Props> {
     const { gm } = this;
     return (
       <Container>
+        <AudioPlayer />
         <GameView gm={gm}>
           <Canvas ref={this.canvasRef} />
         </GameView>

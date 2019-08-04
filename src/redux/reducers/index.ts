@@ -1,7 +1,13 @@
-import { Stopwatch, World } from "../../utils";
+import { Stopwatch, SongsByDifficulty, World } from "../../utils";
 import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD } from "../actionTypes";
 
+
+export interface AudioState {
+  playing: boolean;
+  url: string;
+}
 export interface DataState {
+  audio: AudioState,
   world?: World;
   secondsElapsed: number;
   secondsRemaining: number;
@@ -19,6 +25,10 @@ interface DataAction {
 }
 
 const initialState: DataState = {
+  audio: {
+    playing: true,
+    url: '',
+  },
   secondsRemaining: 0,
   secondsElapsed: 0,
   level: 0,
@@ -55,6 +65,10 @@ function reducer(state = initialState, action: DataAction) {
         ...state,
         isGameOver: false,
         world,
+        audio: {
+          ...state.audio,
+          url: world ? SongsByDifficulty[world.difficulty] : state.audio.url,
+        },
       };
     }
     default:
