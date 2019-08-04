@@ -17,22 +17,14 @@ const SubContainer = styled(Row)`
   width: 100%;
   margin: 0px;
 `;
-const ColumnInfo = styled(Column)`
-  justify-content: flex-start;
-  align-items: center;
-  width: 5em;
-  margin-top: 1em;
-`;
 const Header = styled(SubContainer)`
-  height: 20vh;
-`;
-const Footer = styled(SubContainer)`
   height: 10vh;
-`;
-const Timer = styled.div`
   font-family: monospace;
   font-size: 1.2em;
   font-weight: bold;
+`;
+const Footer = styled(SubContainer)`
+  height: 10vh;
 `;
 
 const CanvasContainer = styled.div`
@@ -62,26 +54,14 @@ class _GameView extends React.Component<Props> {
     return (
       <Container>
         <Header>
-          <ColumnInfo>
-            <div>Level {level + 1}</div>
-          </ColumnInfo>
           <Column>
-            <Row>
-              <KeyButton onClick={gm.clickUp}>up</KeyButton>
-            </Row>
-            <Row>
-              <KeyButton onClick={gm.clickLeft}>left</KeyButton>
-              <KeyButton onClick={gm.clickRight}>right</KeyButton>
-            </Row>
-            <Row>
-              <KeyButton onClick={gm.clickDown}>down</KeyButton>
-            </Row>
+            <div>Level {level + 1}</div>
           </Column>
-          <ColumnInfo>
-            <Timer>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</Timer>
-          </ColumnInfo>
+          <Column>
+            <div>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</div>
+          </Column>
         </Header>
-        <CanvasContainer>
+        <CanvasContainer onClick={gm.mouseMove}>
           {this.props.children}
           <CanvasOverlay />
         </CanvasContainer>

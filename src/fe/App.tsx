@@ -19,7 +19,7 @@ const Container = styled.div`
 `;
 
 const Canvas = styled.canvas`
-  height: 70vh;
+  height: 80vh;
 `;
 
 interface Props {

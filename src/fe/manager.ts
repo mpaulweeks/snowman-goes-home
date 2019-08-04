@@ -67,7 +67,7 @@ export class GameManager {
     const screenWidth = document.body.clientWidth;
     const isMobile = screenHeight > screenWidth;
     const dimensions = isMobile ? new Point(8, 10) : new Point(10, 8);
-    const height = document.body.clientHeight * 0.7; // matching css of 70vh
+    const height = document.body.clientHeight * 0.8; // matching css of 80vh
     let width = height * dimensions.x / dimensions.y;
     while (width > screenWidth) {
       dimensions.x -= 1;
@@ -130,6 +130,24 @@ export class GameManager {
   }
   clickToggleGrid = () => {
     this.shouldDrawGrid = !this.shouldDrawGrid;
+  }
+  mouseMove = evt => {
+    const rect = evt.target.getBoundingClientRect();
+    const x = evt.clientX - rect.left;
+    const y = evt.clientY - rect.top;
+    const px = x / rect.width;
+    const py = y / rect.height;
+    const isTopRight = px > py;
+    const isTopLeft = px + py < 1;
+    const move = (
+      (isTopLeft && isTopRight && Move.Up) ||
+      (!isTopLeft && isTopRight && Move.Right) ||
+      (!isTopLeft && !isTopRight && Move.Down) ||
+      (isTopLeft && !isTopRight && Move.Left)
+    );
+    if (move) {
+      this.handleMove(move);
+    }
   }
   clickUp = () => {
     this.handleMove(Move.Up);
