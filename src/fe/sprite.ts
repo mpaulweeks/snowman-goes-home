@@ -36,7 +36,7 @@ function loadImage(url: string) {
 
 // load sprites
 const spriteImages = {
-  hero: loadImage('img/ice_blue.png'),
+  hero: loadImage('sprite/snowman.png'),
   groundIce1: loadImage('sprite/ground_ice_1.png'),
   groundIce2: loadImage('sprite/ground_ice_2.png'),
   groundIce3: loadImage('sprite/ground_ice_3.png'),

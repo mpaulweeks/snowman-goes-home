@@ -4,8 +4,6 @@ import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoa
 import { Sprite, Sprites } from './sprite';
 
 const Color = {
-  block: 'black',
-  goal: 'yellow',
   grid: 'black',
   glow: 'rgba(150, 150, 255, 1)',
 };
@@ -206,6 +204,13 @@ export class GameManager {
       blockHeight * scale
     );
   }
+  drawSpriteWithOpacity(alpha: number, sprite: Sprite, x: number, y: number, scale?: number) {
+    const { ctx } = this;
+    const oldAlpha = ctx.globalAlpha;
+    ctx.globalAlpha = alpha;
+    this.drawSprite(sprite, x, y, scale);
+    ctx.globalAlpha = oldAlpha;
+  }
   async draw() {
     const { canvasElm, ctx, currentLevel } = this;
     if (!canvasElm || !ctx) {
@@ -246,32 +251,36 @@ export class GameManager {
       }
     }
 
+    // ghosts
+    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
+    this.pendingAnimations.forEach(a => {
+      const { point, stopwatch } = a;
+      const opacity = stopwatch.getPercent();
+      this.drawSpriteWithOpacity(
+        opacity,
+        Sprites.hero,
+        point.x,
+        point.y,
+        1.2,
+      );
+    });
+
     // start square
     // ctx.fillStyle = 'grey';
     // ctx.fillRect(currentLevel.level.start.x * blockWidth, currentLevel.level.start.y * blockHeight, blockWidth, blockHeight);
 
+    // goal square
     this.drawSprite(Sprites.igloo, currentLevel.level.win.x, currentLevel.level.win.y);
 
+    // blocks
     currentLevel.level.blocks.forEach(block => {
       const sprite = (block.x + block.y) % 2 === 0 ? Sprites.treeLight : Sprites.treeHeavy;
       this.drawSprite(sprite, block.x, block.y);
     });
 
-    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
-    this.pendingAnimations.forEach(a => {
-      const { point, stopwatch } = a;
-      const blueLevel = stopwatch.getPercent();
-      ctx.fillStyle = `rgba(150, 150, 255, ${blueLevel})`;
-      ctx.fillRect(
-        point.x * blockWidth + blockWidth * 0.2,
-        point.y * blockHeight + blockHeight * 0.2,
-        blockWidth * 0.6,
-        blockHeight * 0.6
-      );
-    });
-
-    ctx.strokeStyle = Color.glow;
-    ctx.strokeRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
-    this.drawSprite(Sprites.hero, currentLevel.hero.point.x, currentLevel.hero.point.y, 0.6);
+    // hero
+    // ctx.strokeStyle = Color.glow;
+    // ctx.strokeRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
+    this.drawSprite(Sprites.hero, currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);
   }
 }
