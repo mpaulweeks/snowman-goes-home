@@ -1,9 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
-import { setWorld } from "../redux/actions";
 import { GameManager } from './manager';
 import { AbsoluteContainer, Row, ReadyButton } from './common';
 
