@@ -14,5 +14,5 @@ body {
   overflow: hidden;
 }
 canvas {
-  border: 1px solid var(--foreground);
+  /* border: 1px solid var(--foreground); */
 }

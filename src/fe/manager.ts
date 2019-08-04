@@ -4,6 +4,7 @@ import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoa
 import { Sprite, Sprites } from './sprite';
 
 const Color = {
+  background: 'white', // matching css
   grid: 'black',
   glow: 'rgba(150, 150, 255, 1)',
 };
@@ -228,9 +229,36 @@ export class GameManager {
     const blockHeight = height / currentLevel.level.height;
 
     // background
+    ctx.fillStyle = Color.background;
+    ctx.fillRect(0, 0, width, height);
     for (let y = 0; y < currentLevel.level.height; y++){
       for (let x = 0; x < currentLevel.level.width; x++) {
-        this.drawSprite(Sprites.groundIce5, x, y);
+        let sprite = Sprites.groundIce5;
+        if (y === 0) {
+          sprite = Sprites.groundIce2;
+        }
+        if (y === currentLevel.level.height - 1) {
+          sprite = Sprites.groundIce8;
+        }
+        if (x === 0) {
+          sprite = Sprites.groundIce4;
+          if (y === 0) {
+            sprite = Sprites.groundIce1;
+          }
+          if (y === currentLevel.level.height - 1) {
+            sprite = Sprites.groundIce7;
+          }
+        }
+        if (x === currentLevel.level.width - 1) {
+          sprite = Sprites.groundIce6;
+          if (y === 0) {
+            sprite = Sprites.groundIce3;
+          }
+          if (y === currentLevel.level.height - 1) {
+            sprite = Sprites.groundIce9;
+          }
+        }
+        this.drawSprite(sprite, x, y);
       }
     }
 
