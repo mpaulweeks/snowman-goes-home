@@ -1,7 +1,7 @@
 import { store } from "../redux";
 import { setGameOver, setLevel, setTimer, setWorld } from "../redux/actions";
 import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
-import { Sprites } from './sprite';
+import { Sprite, Sprites } from './sprite';
 
 const Color = {
   block: 'black',
@@ -192,6 +192,20 @@ export class GameManager {
     }));
     this.pendingAnimations.push(...animations);
   }
+  drawSprite(sprite: Sprite, x: number, y: number, scale?: number) {
+    const { canvasElm, ctx, currentLevel } = this;
+    const { width, height } = canvasElm;
+    const blockWidth = width / currentLevel.level.width;
+    const blockHeight = height / currentLevel.level.height;
+    scale = scale || 1;
+    ctx.drawImage(
+      sprite.image,
+      x * blockWidth + (blockWidth * (1 - scale) / 2),
+      y * blockHeight + (blockHeight * (1 - scale) / 2),
+      blockWidth * scale,
+      blockHeight * scale
+    );
+  }
   async draw() {
     const { canvasElm, ctx, currentLevel } = this;
     if (!canvasElm || !ctx) {
@@ -211,13 +225,7 @@ export class GameManager {
     // background
     for (let y = 0; y < currentLevel.level.height; y++){
       for (let x = 0; x < currentLevel.level.width; x++) {
-        ctx.drawImage(
-          Sprites.groundIce5.image,
-          x * blockWidth,
-          y * blockHeight,
-          blockWidth,
-          blockHeight
-        )
+        this.drawSprite(Sprites.groundIce5, x, y);
       }
     }
 
@@ -242,23 +250,11 @@ export class GameManager {
     // ctx.fillStyle = 'grey';
     // ctx.fillRect(currentLevel.level.start.x * blockWidth, currentLevel.level.start.y * blockHeight, blockWidth, blockHeight);
 
-    ctx.drawImage(
-      Sprites.igloo.image,
-      currentLevel.level.win.x * blockWidth,
-      currentLevel.level.win.y * blockHeight,
-      blockWidth,
-      blockHeight
-    );
+    this.drawSprite(Sprites.igloo, currentLevel.level.win.x, currentLevel.level.win.y);
 
     currentLevel.level.blocks.forEach(block => {
-      const image = (block.x + block.y) % 2 === 0 ? Sprites.treeLight.image : Sprites.treeHeavy.image;
-      ctx.drawImage(
-        image,
-        block.x * blockWidth,
-        block.y * blockHeight,
-        blockWidth,
-        blockHeight
-      );
+      const sprite = (block.x + block.y) % 2 === 0 ? Sprites.treeLight : Sprites.treeHeavy;
+      this.drawSprite(sprite, block.x, block.y);
     });
 
     this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
@@ -276,12 +272,6 @@ export class GameManager {
 
     ctx.strokeStyle = Color.glow;
     ctx.strokeRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
-    ctx.drawImage(
-      Sprites.hero.image,
-      currentLevel.hero.point.x * blockWidth + blockWidth * 0.2,
-      currentLevel.hero.point.y * blockHeight + blockHeight * 0.2,
-      blockWidth * 0.6,
-      blockHeight * 0.6
-    );
+    this.drawSprite(Sprites.hero, currentLevel.hero.point.x, currentLevel.hero.point.y, 0.6);
   }
 }
