@@ -4,6 +4,7 @@ import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
+import { Sprites } from './sprite';
 import { AbsoluteContainer, LoadingButton, ReadyButton } from './common';
 
 const WorldOptionContainer = styled.div`
@@ -33,6 +34,7 @@ interface Props {
 };
 
 interface State {
+  spritesLoaded: boolean,
   [Difficulty.Easy]: boolean,
   [Difficulty.Medium]: boolean,
   [Difficulty.Hard]: boolean,
@@ -40,6 +42,7 @@ interface State {
 };
 
 const defaultState = {
+  spritesLoaded: false,
   [Difficulty.Easy]: false,
   [Difficulty.Medium]: false,
   [Difficulty.Hard]: false,
@@ -51,6 +54,10 @@ class _MenuView extends React.Component<Props, State> {
 
   componentDidMount() {
     this.reset();
+    Sprites.loaded.then(() => {
+      this.setState({spritesLoaded: true});
+      console.log('sprites loaded');
+    });
   }
   reset() {
     this.setState({
