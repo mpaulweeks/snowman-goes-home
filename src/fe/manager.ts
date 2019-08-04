@@ -1,6 +1,6 @@
 import { store } from "../redux";
 import { setGameOver, setLevel, setTimer, setWorld } from "../redux/actions";
-import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
+import { Move, MoveInformation, Traveled, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 import { Sprite, Sprites } from './sprite';
 
 const Color = {
@@ -17,7 +17,7 @@ const moveMap: { [code: string]: Move } = {
 };
 
 export interface Animation {
-  point: Point,
+  traveled: Traveled,
   stopwatch: Stopwatch,
 }
 
@@ -32,6 +32,7 @@ export class GameManager {
   stopwatch = new Stopwatch();
   currentLevel: (PlayableLevel | undefined);
   currentLevelIndex = 0;
+  spriteFacing: Move.Right;
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
   shouldDrawGrid = false;
@@ -160,6 +161,10 @@ export class GameManager {
       return;
     }
     const moveInfo = currentLevel.moveHero(move);
+    // sprite show face left/right or switch its current direction
+    this.spriteFacing = [Move.Left, Move.Right].includes(move) ? move : (
+      this.spriteFacing === Move.Right ? Move.Left : Move.Right
+    )
     this.animateMove(moveInfo);
     if (currentLevel.level.isWinningPoint(moveInfo.point)) {
       this.nextLevel();
@@ -185,8 +190,8 @@ export class GameManager {
   }
 
   animateMove(moveInfo: MoveInformation) {
-    const animations = moveInfo.traveled.map((p, i, arr) => ({
-      point: p,
+    const animations = moveInfo.traveled.slice(0, -1).map((t, i, arr) => ({
+      traveled: t,
       stopwatch: new Stopwatch(1000 * (1 + (i / arr.length))),
     }));
     this.pendingAnimations.push(...animations);
@@ -282,13 +287,13 @@ export class GameManager {
     // ghosts
     this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
     this.pendingAnimations.forEach(a => {
-      const { point, stopwatch } = a;
+      const { traveled, stopwatch } = a;
       const opacity = stopwatch.getPercent();
       this.drawSpriteWithOpacity(
         opacity,
-        Sprites.hero,
-        point.x,
-        point.y,
+        traveled.move === Move.Left ? Sprites.heroLeft : Sprites.heroRight, // todo this is buggy on up/dowh
+        traveled.point.x,
+        traveled.point.y,
         1.2,
       );
     });
@@ -309,6 +314,8 @@ export class GameManager {
     // hero
     // ctx.strokeStyle = Color.glow;
     // ctx.strokeRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
-    this.drawSprite(Sprites.hero, currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);
+    this.drawSprite(
+      this.spriteFacing === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
+      currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);
   }
 }

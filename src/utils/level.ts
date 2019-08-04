@@ -3,9 +3,14 @@
 import { Move, PointHistory } from './moves';
 import { Point } from './point';
 
+export interface Traveled {
+  move: Move,
+  point: Point,
+}
+
 export interface MoveInformation {
   point: Point,
-  traveled: Array<Point>,
+  traveled: Array<Traveled>,
 }
 
 export enum Block {
@@ -58,7 +63,10 @@ export class Level {
   }
   applyMove(point: Point, move: Move): MoveInformation {
     let current = point;
-    const traveled = [current];
+    const traveled = [{
+      move: move,
+      point: current,
+    }];
     while (true) {
       const next = current.clone();
 
@@ -71,7 +79,7 @@ export class Level {
       if (this.isIllegalPoint(next)) {
         break;
       }
-      traveled.push(next);
+      traveled.push({move: move, point: next});
       current = next;
       if (this.isWinningPoint(current)) {
         break;
