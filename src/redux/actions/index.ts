@@ -5,6 +5,7 @@ export const setGameOver = () => ({
   type: SET_GAME_OVER,
   payload: {},
 });
+
 export const setLevel = (level: number) => ({
   type: SET_LEVEL,
   payload: {

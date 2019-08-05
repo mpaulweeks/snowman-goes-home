@@ -318,8 +318,4 @@ export class GameManager {
       this.spriteFacing === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
       currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);
   }
-
-  isMobile() {
-    return this.canvasElm ? this.canvasElm.width < 600 : true;
-  }
 }

@@ -51,7 +51,7 @@ interface Props {
 class _GameView extends React.Component<Props> {
   render() {
     const { gm, toggleMusic } = this.props;
-    const { world, level, secondsRemaining, secondsElapsed } = this.props.store;
+    const { isMobile, world, level, secondsRemaining, secondsElapsed } = this.props.store;
     return (
       <Container>
         <Header>
@@ -70,11 +70,11 @@ class _GameView extends React.Component<Props> {
           <Column>
             <KeyButton onClick={gm.clickReset}>reset level</KeyButton>
           </Column>
-          <Column>
-            {!gm.isMobile() && (
+          {!isMobile && (
+            <Column>
               <KeyButton onClick={toggleMusic}>toggle music</KeyButton>
-            )}
-          </Column>
+            </Column>
+          )}
           <Column>
             <KeyButton onClick={gm.clickToggleGrid}>toggle grid</KeyButton>
           </Column>

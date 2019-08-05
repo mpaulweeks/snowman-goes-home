@@ -26,7 +26,7 @@ class _AudioPlayer extends React.Component<Props, State> {
     }
   }
   render() {
-    const { playing, url } = this.props.audio;
+    const { url } = this.props.audio;
     return (
       <audio
         loop
