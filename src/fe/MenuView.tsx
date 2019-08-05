@@ -15,18 +15,31 @@ const WorldOptionContainer = styled.div`
   flex-wrap: wrap;
 `;
 
+const GameTitle = styled.h1`
+  margin-bottom: 0px;
+`;
+
 const WorldOption = styled.div`
-  margin: 1em;
+  padding: 0.5em;
+  margin: 0.5em;
 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   flex-wrap: nowrap;
+
+  background-color: #eeeeee;
+  border-radius: 1em;
 `;
 const WorldTitle = styled.h2`
-  margin-bottom: 0.5rem;
+  margin: 0.5rem;
 `;
+const WorldButton = styled.h3`
+  margin: 0px;
+  margin-top: 0.5em;
+`;
+
 
 interface Props {
   gm: GameManager;
@@ -94,12 +107,11 @@ class _MenuView extends React.Component<Props, State> {
     ];
     return (
       <AbsoluteContainer>
-        <h1>
-          ice slide puzzle game
-        </h1>
-        <p>
-          select your difficulty level
-        </p>
+        <GameTitle>
+          <em>ice slide puzzle</em>
+          <br/>
+          <img src="sprite/igloo.png"/><img src="sprite/snowman_left.png"/>
+        </GameTitle>
         <WorldOptionContainer>
           {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map(world => (
             <WorldOption key={world.difficulty}>
@@ -109,7 +121,7 @@ class _MenuView extends React.Component<Props, State> {
               <div>
                 {world.isInfinite() ? '∞' : world.totalLevels} levels
               </div>
-              <h3>
+              <WorldButton>
                 {state[world.difficulty] ? (
                   <ReadyButton onClick={() => this.loadWorld(world)}>
                     PLAY
@@ -119,12 +131,16 @@ class _MenuView extends React.Component<Props, State> {
                       loading
                 </LoadingButton>
                   )}
-              </h3>
+              </WorldButton>
             </WorldOption>
           ))}
         </WorldOptionContainer>
         <p>
           made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
+          <br/>
+          assets by <a href="https://www.kenney.nl">Kenney</a>
+          <br/>
+          music by <a href="https://visager.bandcamp.com/album/songs-from-an-unmade-world">Visager</a>
         </p>
       </AbsoluteContainer>
     );

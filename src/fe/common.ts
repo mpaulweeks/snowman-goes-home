@@ -30,6 +30,7 @@ export const LoadingButton = styled.div`
   border: 2px solid grey;
   font-style: italic;
   color: grey;
+  background-color: var(--background);
 
   display: flex;
   flex-direction: column;
