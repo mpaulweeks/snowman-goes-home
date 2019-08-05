@@ -1,5 +1,5 @@
 import { store } from "../redux";
-import { setGameOver, setLevel, setTimer, setWorld } from "../redux/actions";
+import { setGameOver, setLevel, setTimer, setWorld } from "../redux";
 import { Move, MoveInformation, Traveled, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 import { Sprite, Sprites } from './sprite';
 
@@ -317,5 +317,9 @@ export class GameManager {
     this.drawSprite(
       this.spriteFacing === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
       currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);
+  }
+
+  isMobile() {
+    return this.canvasElm ? this.canvasElm.width < 600 : true;
   }
 }

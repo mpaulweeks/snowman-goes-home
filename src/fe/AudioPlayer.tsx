@@ -20,14 +20,19 @@ class _AudioPlayer extends React.Component<Props, State> {
       if (this.props.audio.playing) {
         this.elm.play();
       } else {
-        this.elm.stop();
+        this.elm.pause();
+        this.elm.currentTime = 0;
       }
     }
   }
   render() {
     const { playing, url } = this.props.audio;
     return (
-      <audio ref={elm => this.elm = elm} src={url}></audio>
+      <audio
+        loop
+        src={url}
+        ref={elm => this.elm = elm}
+      ></audio>
     );
   }
 }

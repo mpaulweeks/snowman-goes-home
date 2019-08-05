@@ -1,5 +1,5 @@
 import { Stopwatch, SongsByDifficulty, World } from "../../utils";
-import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD } from "../actionTypes";
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_MUSIC } from "../actionTypes";
 
 
 export interface AudioState {
@@ -68,6 +68,15 @@ function reducer(state = initialState, action: DataAction) {
         audio: {
           ...state.audio,
           url: world ? SongsByDifficulty[world.difficulty] : state.audio.url,
+        },
+      };
+    }
+    case TOGGLE_MUSIC: {
+      return {
+        ...state,
+        audio: {
+          ...state.audio,
+          playing: !state.audio.playing,
         },
       };
     }

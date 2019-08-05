@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { DataState } from '../redux/reducers';
+import { DataState, toggleMusic } from '../redux';
 import { connect } from 'react-redux';
 import { GameManager } from './manager';
 import { Row, Column, KeyButton } from './common';
@@ -45,11 +45,12 @@ const CanvasOverlay = styled.div`
 interface Props {
   gm: GameManager;
   store: DataState;
+  toggleMusic: () => void;
 };
 
 class _GameView extends React.Component<Props> {
   render() {
-    const { gm } = this.props;
+    const { gm, toggleMusic } = this.props;
     const { world, level, secondsRemaining, secondsElapsed } = this.props.store;
     return (
       <Container>
@@ -67,7 +68,12 @@ class _GameView extends React.Component<Props> {
         </CanvasContainer>
         <Footer>
           <Column>
-            <KeyButton onClick={gm.clickReset}>reset</KeyButton>
+            <KeyButton onClick={gm.clickReset}>reset level</KeyButton>
+          </Column>
+          <Column>
+            {!gm.isMobile() && (
+              <KeyButton onClick={toggleMusic}>toggle music</KeyButton>
+            )}
           </Column>
           <Column>
             <KeyButton onClick={gm.clickToggleGrid}>toggle grid</KeyButton>
@@ -82,5 +88,8 @@ class _GameView extends React.Component<Props> {
 export const GameView = connect(
   (store: DataState) => ({
     store,
-  })
+  }),
+  {
+    toggleMusic,
+  }
 )(_GameView);

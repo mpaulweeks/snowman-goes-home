@@ -1,5 +1,5 @@
 import { Stopwatch, World } from '../../utils';
-import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD } from '../actionTypes';
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_MUSIC } from '../actionTypes';
 
 export const setGameOver = () => ({
   type: SET_GAME_OVER,
@@ -24,4 +24,9 @@ export const setWorld = (world?: World) => ({
   payload: {
     world,
   },
+});
+
+export const toggleMusic = () => ({
+  type: TOGGLE_MUSIC,
+  payload: {},
 });
