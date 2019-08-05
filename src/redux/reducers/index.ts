@@ -34,7 +34,7 @@ interface DataAction {
 
 const initialState: DataState = {
   audio: {
-    playing: true,
+    playing: !mobilecheck(),
     url: '',
   },
   isMobile: mobilecheck(),

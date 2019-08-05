@@ -1,6 +1,7 @@
 body {
   --foreground: black;
   --background: white;
+  --offset: #eeeeee;
 
   margin: 0px;
   background-color: var(--background);
@@ -14,5 +15,7 @@ body {
   overflow: hidden;
 }
 canvas {
-  /* border: 1px solid var(--foreground); */
+  border: 5px solid var(--offset);
+  border-radius: 5%;
+  box-sizing: border-box;
 }

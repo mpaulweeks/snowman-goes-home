@@ -29,7 +29,7 @@ const WorldOption = styled.div`
   align-items: center;
   flex-wrap: nowrap;
 
-  background-color: #eeeeee;
+  background-color: var(--offset);
   border-radius: 1em;
 `;
 const WorldTitle = styled.h2`
