@@ -6,7 +6,7 @@ import { Sprite, Sprites } from './sprite';
 const Color = {
   background: 'white', // matching css
   grid: 'black',
-  glow: 'rgba(150, 150, 255, 1)',
+  glow: 'rgba(0, 0, 0, 0.5)',
 };
 
 const moveMap: { [code: string]: Move } = {
@@ -287,8 +287,16 @@ export class GameManager {
     });
 
     // hero
-    // ctx.strokeStyle = Color.glow;
-    // ctx.strokeRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
+    ctx.fillStyle = Color.glow;
+    // ctx.fillRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
+    ctx.beginPath();
+    ctx.arc(
+      (currentLevel.hero.point.x + 0.5) * blockWidth,
+      (currentLevel.hero.point.y + 0.5) * blockHeight,
+      blockWidth / 2,
+      0, 2 * Math.PI
+     );
+    ctx.fill();
     this.drawSprite(
       this.spriteFacing === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
       currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);

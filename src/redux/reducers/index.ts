@@ -1,4 +1,4 @@
-import { Stopwatch, SongsByDifficulty, World } from "../../utils";
+import { Stopwatch, World } from "../../utils";
 import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_MUSIC } from "../actionTypes";
 
 // https://stackoverflow.com/a/11381730
@@ -11,7 +11,6 @@ const mobilecheck = function() {
 
 export interface AudioState {
   playing: boolean;
-  url: string;
 }
 export interface DataState {
   audio: AudioState,
@@ -35,7 +34,6 @@ interface DataAction {
 const initialState: DataState = {
   audio: {
     playing: !mobilecheck(),
-    url: '',
   },
   isMobile: mobilecheck(),
   secondsRemaining: 0,
@@ -76,7 +74,6 @@ function reducer(state = initialState, action: DataAction) {
         world,
         audio: {
           ...state.audio,
-          url: world ? SongsByDifficulty[world.difficulty] : state.audio.url,
         },
       };
     }
