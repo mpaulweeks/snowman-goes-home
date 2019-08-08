@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
-import { DataState } from '../redux/reducers';
+import { DataState, toggleMusic } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { AbsoluteContainer, LoadingButton, ReadyButton } from './common';
+import { AbsoluteContainer, LoadingButton, ReadyButton, Row, KeyButton } from './common';
 
 const WorldOptionContainer = styled.div`
   display: flex;
@@ -44,6 +44,7 @@ const WorldButton = styled.h3`
 interface Props {
   gm: GameManager;
   store: DataState;
+  toggleMusic: () => void;
 };
 
 interface State {
@@ -110,7 +111,8 @@ class _MenuView extends React.Component<Props, State> {
         <GameTitle>
           <em>ice slide puzzle</em>
           <br/>
-          <img src="sprite/igloo.png"/><img src="sprite/snowman_left.png"/>
+          <img alt="" src="sprite/igloo.png"/>
+          <img alt="" src="sprite/snowman_left.png"/>
         </GameTitle>
         <WorldOptionContainer>
           {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map(world => (
@@ -135,13 +137,20 @@ class _MenuView extends React.Component<Props, State> {
             </WorldOption>
           ))}
         </WorldOptionContainer>
-        <p>
+        <br/>
+        <Row>
+          <KeyButton onClick={() => this.props.toggleMusic()}>
+            music is {this.props.store.audio.playing ? 'on' : 'off'}
+          </KeyButton>
+        </Row>
+        <br/>
+        <div>
           made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
           <br/>
           assets by <a href="https://www.kenney.nl">Kenney</a>
           <br/>
           music by <a href="https://visager.bandcamp.com/album/songs-from-an-unmade-world">Visager</a>
-        </p>
+        </div>
       </AbsoluteContainer>
     );
   }
@@ -150,5 +159,8 @@ class _MenuView extends React.Component<Props, State> {
 export const MenuView = connect(
   (store: DataState) => ({
     store,
-  })
+  }),
+  {
+    toggleMusic,
+  }
 )(_MenuView);

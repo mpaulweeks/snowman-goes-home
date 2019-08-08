@@ -71,8 +71,9 @@ class _GameView extends React.Component<Props> {
             <KeyButton onClick={gm.clickReset}>reset level</KeyButton>
           </Column>
           {!isMobile && (
+            // mobile can play music, but its too cramped to show this button
             <Column>
-              <KeyButton onClick={toggleMusic}>toggle music</KeyButton>
+              <KeyButton onClick={toggleMusic}>music is {this.props.store.audio.playing ? 'on' : 'off'}</KeyButton>
             </Column>
           )}
           <Column>
