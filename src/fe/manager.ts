@@ -2,13 +2,7 @@ import { store } from "../redux";
 import { setGameOver, setLevel, setTimer, setWorld } from "../redux";
 import { Move, MoveInformation, Traveled, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 import { Sprite, Sprites } from './sprite';
-import { StyleByDifficulty } from './style';
-
-const Color = {
-  background: 'white', // matching css
-  grid: 'black',
-  glow: 'rgba(0, 0, 0, 0.5)',
-};
+import { GlobalStyle, StyleByDifficulty } from './style';
 
 const moveMap: { [code: string]: Move } = {
   'ArrowLeft': Move.Left,
@@ -24,6 +18,7 @@ export interface Animation {
 
 export class GameManager {
   dispatch = store.dispatch;
+  isDebug = window.location.href.includes('localhost');
   worldLoader: WorldLoader;
   worldDimensions: Point;
   canvasDimensions: Point;
@@ -40,20 +35,29 @@ export class GameManager {
   frameTick = 0;
 
   constructor() {
-    // determine canvas size
-    const screenHeight = document.body.clientHeight;
-    const screenWidth = document.body.clientWidth;
-    const isMobile = screenHeight > screenWidth;
-    const dimensions = isMobile ? new Point(8, 10) : new Point(10, 8);
-    const height = document.body.clientHeight * 0.8; // matching css of 80vh
-    let width = height * dimensions.x / dimensions.y;
-    while (width > screenWidth) {
-      dimensions.x -= 1;
-      width = height * dimensions.x / dimensions.y;
+    const { isDebug } = this;
+    if (isDebug) {
+      window.DEBUG = this;
     }
+
+    // determine largest possible canvas size
+    const screenHeight = document.body.clientHeight * 0.8; // matching css of 80vh
+    const screenWidth = document.body.clientWidth;
+
+    // determine canvas orientation
+    const isVertical = screenHeight > screenWidth;
+    const dimensions = isVertical ? new Point(8, 10) : new Point(10, 8);
     this.worldDimensions = dimensions;
     this.worldLoader = new WorldLoader(this.worldDimensions);
-    this.canvasDimensions = new Point(width, height);
+
+    // shrink down canvas size until it fits on this screen
+    let canvasHeight = screenHeight;
+    let canvasWidth = canvasHeight * dimensions.x / dimensions.y;
+    while (canvasWidth > screenWidth) {
+      canvasHeight -= 1;
+      canvasWidth = canvasHeight * dimensions.x / dimensions.y;
+    }
+    this.canvasDimensions = new Point(canvasWidth, canvasHeight);
 
     // setup key listeners
     window.addEventListener('keydown', e => {
@@ -65,13 +69,19 @@ export class GameManager {
       if (e.code === 'KeyR') {
         this.clickReset();
       }
-      if (e.code === 'KeyN') {
+      if (e.code === 'KeyN' && isDebug) {
         this.nextLevel();
       }
     });
 
     // setup passive draw/load loop
     this.loop();
+  }
+  setup(canvasElm: HTMLCanvasElement) {
+    this.canvasElm = canvasElm;
+    canvasElm.width = this.canvasDimensions.x;
+    canvasElm.height = this.canvasDimensions.y;
+    this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
   }
   private async loop() {
     const { world, stopwatch } = this;
@@ -133,12 +143,6 @@ export class GameManager {
     this.handleMove(Move.Right);
   }
 
-  setup(canvasElm: HTMLCanvasElement) {
-    this.canvasElm = canvasElm;
-    canvasElm.width = this.canvasDimensions.x;
-    canvasElm.height = this.canvasDimensions.y;
-    this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
-  }
   setWorld(world: World) {
     this.worldLoader = new WorldLoader(this.worldDimensions);
     this.world = world;
@@ -205,7 +209,7 @@ export class GameManager {
     const blockHeight = height / currentLevel.level.height;
     scale = scale || 1;
     ctx.drawImage(
-      sprite.getImage(this.frameTick),
+      sprite.atFrame(this.frameTick).image,
       x * blockWidth + (blockWidth * (1 - scale) / 2),
       y * blockHeight + (blockHeight * (1 - scale) / 2),
       blockWidth * scale,
@@ -235,19 +239,20 @@ export class GameManager {
     this.frameTick = Math.floor(world.progression.boilFps * new Date().getTime() / 1000);
     const blockWidth = width / currentLevel.level.width;
     const blockHeight = height / currentLevel.level.height;
+    const worldStyle = StyleByDifficulty[world.difficulty];
 
     // background
-    ctx.fillStyle = Color.background;
+    ctx.fillStyle = GlobalStyle.backgroundColor;
     ctx.fillRect(0, 0, width, height);
     for (let y = 0; y < currentLevel.level.height; y++){
       for (let x = 0; x < currentLevel.level.width; x++) {
-        this.drawSprite(StyleByDifficulty[world.difficulty].ground, x, y);
+        this.drawSprite(worldStyle.ground, x, y);
       }
     }
 
     // grid
     if (this.shouldDrawGrid) {
-      ctx.strokeStyle = Color.grid;
+      ctx.strokeStyle = worldStyle.gridColor;
       for (let y = 1; y < currentLevel.level.height; y++) {
         ctx.beginPath();
         ctx.moveTo(0, y * blockHeight);
@@ -276,10 +281,6 @@ export class GameManager {
       );
     });
 
-    // start square
-    // ctx.fillStyle = 'grey';
-    // ctx.fillRect(currentLevel.level.start.x * blockWidth, currentLevel.level.start.y * blockHeight, blockWidth, blockHeight);
-
     // goal square
     this.drawSprite(Sprites.igloo, currentLevel.level.win.x, currentLevel.level.win.y);
 
@@ -290,16 +291,6 @@ export class GameManager {
     });
 
     // hero
-    // ctx.fillStyle = Color.glow;
-    // ctx.fillRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
-    // ctx.beginPath();
-    // ctx.arc(
-    //   (currentLevel.hero.point.x + 0.5) * blockWidth,
-    //   (currentLevel.hero.point.y + 0.5) * blockHeight,
-    //   blockWidth / 2,
-    //   0, 2 * Math.PI
-    //  );
-    // ctx.fill();
     this.drawSprite(
       this.spriteFacing === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
       currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);

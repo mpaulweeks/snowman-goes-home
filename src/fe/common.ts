@@ -1,15 +1,5 @@
 import styled from 'styled-components';
-
-export const AbsoluteContainer = styled.div`
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 1;
-  width: 100%;
-  height: 100vh;
-
-  background-color: var(--background);
-`;
+import { Sprites } from './sprite';
 
 export const Row = styled.div`
   display: flex;
@@ -20,6 +10,38 @@ export const Row = styled.div`
 `;
 export const Column = styled(Row)`
   flex-direction: column;
+`;
+
+export const AbsoluteContainer = styled(Column)`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+
+  background-color: var(--background);
+`;
+export const IcyContainer = styled(AbsoluteContainer)`
+  justify-content: center;
+  background-image: url('${Sprites.groundIceWhite.default.url}');
+  background-repeat: repeat;
+`;
+
+export const BubbleArea = styled.div`
+  padding: 0.5em;
+  margin: 0.5em;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+
+  background-color: var(--background);
+  border-radius: 1em;
+  border: 1px solid var(--snow);
+  box-sizing: border-box;
 `;
 
 export const LoadingButton = styled.div`

@@ -20,7 +20,7 @@ const Container = styled.div`
 `;
 
 const Canvas = styled.canvas`
-  height: 80vh;
+  border-radius: 5%;
 `;
 
 interface Props {

@@ -1,15 +1,18 @@
 import { Difficulty } from '../utils';
 export class SpriteFrame {
+  url: string;
   image: HTMLImageElement;
   loaded: Promise<boolean>;
 
   constructor(spriteName: string) {
+    const url = `sprite/${spriteName}.png`;
     const img = new Image();
     const loaded = new Promise((resolve, reject) => {
       img.onload = () => resolve(true);
     });
-    img.src = `sprite/${spriteName}.png`;
+    img.src = url;
 
+    this.url = url;
     this.image = img;
     this.loaded = loaded;
   }
@@ -18,31 +21,29 @@ export class SpriteFrame {
 export class Sprite {
   frames: Array<SpriteFrame>;
   loaded: Promise<boolean>;
+  default: SpriteFrame;
 
   constructor(spriteNames: Array<string>) {
     this.frames = spriteNames.map(spriteName => new SpriteFrame(spriteName));
     this.loaded = Promise.all(this.frames.map(f => f.loaded));
+    this.default = this.atFrame(0);
   }
 
-  getImage(frameCount) {
+  atFrame(frameCount) {
     const { frames } = this;
     const index = frameCount % frames.length;
-    return frames[index].image;
+    return frames[index];
   }
 }
 
 export interface SpriteManager {
   loaded: Promise<boolean>,
-  hero: Sprite;
-  groundIce1: Sprite,
-  groundIce2: Sprite,
-  groundIce3: Sprite,
-  groundIce4: Sprite,
-  groundIce5: Sprite,
-  groundIce6: Sprite,
-  groundIce7: Sprite,
-  groundIce8: Sprite,
-  groundIce9: Sprite,
+  heroLeft: Sprite;
+  heroRight: Sprite;
+  groundIceBlue: Sprite,
+  groundIceGray: Sprite,
+  groundIceNavy: Sprite,
+  groundIceWhite: Sprite,
   treeLight: Sprite,
   treeHeavy: Sprite,
   igloo: Sprite,

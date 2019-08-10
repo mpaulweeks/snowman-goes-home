@@ -2,6 +2,7 @@ body {
   --foreground: black;
   --background: white;
   --offset: #eeeeee;
+  --snow: rgb(228, 248, 255);
 
   margin: 0px;
   background-color: var(--background);
@@ -14,8 +15,18 @@ body {
   height: 100%;
   overflow: hidden;
 }
-canvas {
-  border: 5px solid var(--offset);
-  border-radius: 5%;
-  box-sizing: border-box;
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.rotate {
+  animation-name: rotation;
+  animation-duration: 2s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }

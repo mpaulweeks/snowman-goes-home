@@ -5,33 +5,21 @@ import { connect } from 'react-redux';
 import { DataState, toggleMusic } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { AbsoluteContainer, LoadingButton, ReadyButton, Row, KeyButton } from './common';
+import { IcyContainer, LoadingButton, ReadyButton, Row, BubbleArea, KeyButton } from './common';
 
-const WorldOptionContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+const WorldOptionContainer = styled(Row)`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 `;
 
 const GameTitle = styled.h1`
+  margin-left: 2em;
+  margin-right: 2em;
   margin-bottom: 0px;
+  font-family: monospace;
 `;
 
-const WorldOption = styled.div`
-  padding: 0.5em;
-  margin: 0.5em;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: nowrap;
-
-  background-color: var(--offset);
-  border-radius: 1em;
-`;
 const WorldTitle = styled.h2`
   margin: 0.5rem;
 `;
@@ -107,16 +95,20 @@ class _MenuView extends React.Component<Props, State> {
       Difficulty.Infinite,
     ];
     return (
-      <AbsoluteContainer>
-        <GameTitle>
-          <em>ice slide puzzle</em>
-          <br/>
-          <img alt="" src="sprite/igloo.png"/>
-          <img alt="" src="sprite/snowman_left.png"/>
-        </GameTitle>
+      <IcyContainer>
+        <Row>
+          <BubbleArea>
+            <GameTitle>
+              <em>ICY PATH</em>
+              <br/>
+              <img alt="" src={Sprites.igloo.default.url}/>
+              <img alt="" src={Sprites.heroLeft.default.url}/>
+            </GameTitle>
+          </BubbleArea>
+        </Row>
         <WorldOptionContainer>
           {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map(world => (
-            <WorldOption key={world.difficulty}>
+            <BubbleArea key={world.difficulty}>
               <WorldTitle>
                 {world.displayName()}
               </WorldTitle>
@@ -134,24 +126,28 @@ class _MenuView extends React.Component<Props, State> {
                 </LoadingButton>
                   )}
               </WorldButton>
-            </WorldOption>
+            </BubbleArea>
           ))}
         </WorldOptionContainer>
-        <br/>
         <Row>
-          <KeyButton onClick={() => this.props.toggleMusic()}>
-            music is {this.props.store.audio.playing ? 'on' : 'off'}
-          </KeyButton>
+          <BubbleArea>
+            <KeyButton onClick={() => this.props.toggleMusic()}>
+              music is {this.props.store.audio.playing ? 'on' : 'off'}
+            </KeyButton>
+          </BubbleArea>
         </Row>
-        <br/>
-        <div>
-          made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
-          <br/>
-          assets by <a href="https://www.kenney.nl">Kenney</a>
-          <br/>
-          music by <a href="https://visager.bandcamp.com/album/songs-from-an-unmade-world">Visager</a>
-        </div>
-      </AbsoluteContainer>
+        <Row>
+          <BubbleArea>
+            <div>
+              made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
+            </div>
+            <div>
+              assets by <a href="https://www.kenney.nl">Kenney</a> +
+              music by <a href="https://visager.bandcamp.com/album/songs-from-an-unmade-world">Visager</a>
+            </div>
+          </BubbleArea>
+        </Row>
+      </IcyContainer>
     );
   }
 }
