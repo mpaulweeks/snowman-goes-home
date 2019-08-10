@@ -1,5 +1,5 @@
 import { Stopwatch, World } from "../../utils";
-import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_MUSIC } from "../actionTypes";
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_MUSIC, TOGGLE_OPTIONS } from "../actionTypes";
 
 // https://stackoverflow.com/a/11381730
 const mobilecheck = function() {
@@ -20,6 +20,7 @@ export interface DataState {
   secondsRemaining: number;
   level: number;
   isGameOver: boolean;
+  showOptions: boolean;
 }
 
 interface DataAction {
@@ -42,6 +43,7 @@ const initialState: DataState = {
   level: 0,
   world: undefined,
   isGameOver: false,
+  showOptions: false,
 };
 
 function reducer(state = initialState, action: DataAction) {
@@ -85,6 +87,12 @@ function reducer(state = initialState, action: DataAction) {
           ...state.audio,
           playing: !state.audio.playing,
         },
+      };
+    }
+    case TOGGLE_OPTIONS: {
+      return {
+        ...state,
+        showOptions: !state.showOptions,
       };
     }
     default:

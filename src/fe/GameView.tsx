@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { DataState, toggleMusic } from '../redux';
+import { DataState, toggleOptions } from '../redux';
 import { connect } from 'react-redux';
 import { GameManager } from './manager';
 import { Row, Column, KeyButton } from './common';
@@ -74,16 +74,14 @@ class _GameView extends React.Component<Props> {
         </CanvasContainer>
         <Footer>
           <Column>
-            <KeyButton onClick={gm.clickReset}>reset level</KeyButton>
+            <KeyButton onClick={gm.clickReset}>
+              reset level
+            </KeyButton>
           </Column>
-          {!isMobile && (
-            // mobile can play music, but its too cramped to show this button
-            <Column>
-              <KeyButton onClick={toggleMusic}>music is {this.props.store.audio.playing ? 'on' : 'off'}</KeyButton>
-            </Column>
-          )}
           <Column>
-            <KeyButton onClick={gm.clickToggleGrid}>toggle grid</KeyButton>
+            <KeyButton onClick={() => this.props.toggleOptions()}>
+              options
+            </KeyButton>
           </Column>
         </Footer>
       </Container>
@@ -97,6 +95,6 @@ export const GameView = connect(
     store,
   }),
   {
-    toggleMusic,
+    toggleOptions,
   }
 )(_GameView);

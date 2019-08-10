@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { DataState } from '../redux/reducers';
+import { DataState } from '../redux';
 import { GameManager } from './manager';
 import { IcyContainer, Row, BubbleArea, ReadyButton } from './common';
 import { Sprites } from './sprite';

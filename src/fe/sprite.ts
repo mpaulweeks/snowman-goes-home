@@ -1,4 +1,3 @@
-import { Difficulty } from '../utils';
 export class SpriteFrame {
   url: string;
   image: HTMLImageElement;

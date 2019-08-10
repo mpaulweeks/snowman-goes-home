@@ -3,6 +3,7 @@ import { AudioPlayer } from './AudioPlayer';
 import { GameView } from './GameView';
 import styled from 'styled-components';
 import { MenuView } from './MenuView';
+import { OptionsView } from './OptionsView';
 import { ScoreView } from './ScoreView';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
@@ -53,6 +54,7 @@ class _App extends React.Component<Props> {
         </GameView>
         <MenuView gm={gm} />
         <ScoreView gm={gm} />
+        <OptionsView gm={gm} />
       </Container>
     );
   }

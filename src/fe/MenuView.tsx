@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
-import { DataState, toggleMusic } from '../redux';
+import { DataState, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
 import { IcyContainer, LoadingButton, ReadyButton, Row, BubbleArea, KeyButton } from './common';
@@ -32,7 +32,7 @@ const WorldButton = styled.h3`
 interface Props {
   gm: GameManager;
   store: DataState;
-  toggleMusic: () => void;
+  toggleOptions: () => void;
 };
 
 interface State {
@@ -44,7 +44,6 @@ interface State {
 };
 
 const defaultState = {
-  spritesLoaded: false,
   [Difficulty.Easy]: false,
   [Difficulty.Medium]: false,
   [Difficulty.Hard]: false,
@@ -56,10 +55,6 @@ class _MenuView extends React.Component<Props, State> {
 
   componentDidMount() {
     this.reset();
-    Sprites.loaded.then(() => {
-      this.setState({spritesLoaded: true});
-      console.log('sprites loaded');
-    });
   }
   reset() {
     this.setState({
@@ -67,8 +62,10 @@ class _MenuView extends React.Component<Props, State> {
     }, () => {
       this.props.gm.worldLoader.loaders.forEach(world => {
         world.onLoad.then(() => {
-          this.setState({
-            [world.difficulty]: true,
+          Sprites.loaded.then(() => {
+            this.setState({
+              [world.difficulty]: true,
+            });
           });
         });
       });
@@ -131,8 +128,8 @@ class _MenuView extends React.Component<Props, State> {
         </WorldOptionContainer>
         <Row>
           <BubbleArea>
-            <KeyButton onClick={() => this.props.toggleMusic()}>
-              music is {this.props.store.audio.playing ? 'on' : 'off'}
+            <KeyButton onClick={() => this.props.toggleOptions()}>
+              options
             </KeyButton>
           </BubbleArea>
         </Row>
@@ -157,6 +154,6 @@ export const MenuView = connect(
     store,
   }),
   {
-    toggleMusic,
+    toggleOptions,
   }
 )(_MenuView);
