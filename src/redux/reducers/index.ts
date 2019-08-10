@@ -33,7 +33,8 @@ interface DataAction {
 
 const initialState: DataState = {
   audio: {
-    playing: !mobilecheck(),
+    // playing: !mobilecheck(),
+    playing: false,
   },
   isMobile: mobilecheck(),
   secondsRemaining: 0,

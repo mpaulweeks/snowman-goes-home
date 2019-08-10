@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { SongsByDifficulty } from '../utils';
 import { DataState } from '../redux/reducers';
+import { StyleByDifficulty } from './style';
 
 interface Props {
   store: DataState;
@@ -44,11 +44,11 @@ class _AudioPlayer extends React.Component<Props, State> {
   }
   render() {
     const { playing } = this.props.store.audio;
-    return playing && Object.keys(SongsByDifficulty).map(diff => (
+    return playing && Object.keys(StyleByDifficulty).map(diff => (
       <audio
         key={diff}
         loop
-        src={SongsByDifficulty[diff]}
+        src={StyleByDifficulty[diff].music}
         ref={elm => this.elmsByDiff[diff] = elm}
       ></audio>
     ));

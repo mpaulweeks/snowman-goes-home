@@ -2,6 +2,7 @@ import { store } from "../redux";
 import { setGameOver, setLevel, setTimer, setWorld } from "../redux";
 import { Move, MoveInformation, Traveled, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
 import { Sprite, Sprites } from './sprite';
+import { StyleByDifficulty } from './style';
 
 const Color = {
   background: 'white', // matching css
@@ -36,6 +37,7 @@ export class GameManager {
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
   shouldDrawGrid = false;
+  frameTick = 0;
 
   constructor() {
     // determine canvas size
@@ -203,7 +205,7 @@ export class GameManager {
     const blockHeight = height / currentLevel.level.height;
     scale = scale || 1;
     ctx.drawImage(
-      sprite.image,
+      sprite.getImage(this.frameTick),
       x * blockWidth + (blockWidth * (1 - scale) / 2),
       y * blockHeight + (blockHeight * (1 - scale) / 2),
       blockWidth * scale,
@@ -218,7 +220,7 @@ export class GameManager {
     ctx.globalAlpha = oldAlpha;
   }
   async draw() {
-    const { canvasElm, ctx, currentLevel } = this;
+    const { canvasElm, ctx, currentLevel, world } = this;
     if (!canvasElm || !ctx) {
       return;
     }
@@ -230,6 +232,7 @@ export class GameManager {
       return;
     }
 
+    this.frameTick = Math.floor(world.progression.boilFps * new Date().getTime() / 1000);
     const blockWidth = width / currentLevel.level.width;
     const blockHeight = height / currentLevel.level.height;
 
@@ -238,7 +241,7 @@ export class GameManager {
     ctx.fillRect(0, 0, width, height);
     for (let y = 0; y < currentLevel.level.height; y++){
       for (let x = 0; x < currentLevel.level.width; x++) {
-        this.drawSprite(Sprites.groundIce5, x, y);
+        this.drawSprite(StyleByDifficulty[world.difficulty].ground, x, y);
       }
     }
 
@@ -263,7 +266,7 @@ export class GameManager {
     this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
     this.pendingAnimations.forEach(a => {
       const { traveled, stopwatch } = a;
-      const opacity = stopwatch.getPercent();
+      const opacity = stopwatch.getPercent() * 0.7;
       this.drawSpriteWithOpacity(
         opacity,
         traveled.move === Move.Left ? Sprites.heroLeft : Sprites.heroRight, // todo this is buggy on up/dowh
@@ -287,16 +290,16 @@ export class GameManager {
     });
 
     // hero
-    ctx.fillStyle = Color.glow;
+    // ctx.fillStyle = Color.glow;
     // ctx.fillRect(currentLevel.hero.point.x * blockWidth, currentLevel.hero.point.y * blockHeight, blockWidth, blockHeight);
-    ctx.beginPath();
-    ctx.arc(
-      (currentLevel.hero.point.x + 0.5) * blockWidth,
-      (currentLevel.hero.point.y + 0.5) * blockHeight,
-      blockWidth / 2,
-      0, 2 * Math.PI
-     );
-    ctx.fill();
+    // ctx.beginPath();
+    // ctx.arc(
+    //   (currentLevel.hero.point.x + 0.5) * blockWidth,
+    //   (currentLevel.hero.point.y + 0.5) * blockHeight,
+    //   blockWidth / 2,
+    //   0, 2 * Math.PI
+    //  );
+    // ctx.fill();
     this.drawSprite(
       this.spriteFacing === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
       currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);

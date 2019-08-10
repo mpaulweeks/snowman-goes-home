@@ -1,8 +1,34 @@
-
-
-export interface Sprite {
+import { Difficulty } from '../utils';
+export class SpriteFrame {
   image: HTMLImageElement;
   loaded: Promise<boolean>;
+
+  constructor(spriteName: string) {
+    const img = new Image();
+    const loaded = new Promise((resolve, reject) => {
+      img.onload = () => resolve(true);
+    });
+    img.src = `sprite/${spriteName}.png`;
+
+    this.image = img;
+    this.loaded = loaded;
+  }
+}
+
+export class Sprite {
+  frames: Array<SpriteFrame>;
+  loaded: Promise<boolean>;
+
+  constructor(spriteNames: Array<string>) {
+    this.frames = spriteNames.map(spriteName => new SpriteFrame(spriteName));
+    this.loaded = Promise.all(this.frames.map(f => f.loaded));
+  }
+
+  getImage(frameCount) {
+    const { frames } = this;
+    const index = frameCount % frames.length;
+    return frames[index].image;
+  }
 }
 
 export interface SpriteManager {
@@ -22,37 +48,24 @@ export interface SpriteManager {
   igloo: Sprite,
 };
 
-function loadImage(url: string) {
-  const img = new Image();
-  const state: Sprite = {
-    image: img,
-    loaded: new Promise((resolve, reject) => {
-      img.onload = () => resolve(true);
-    }),
-  };
-  img.src = url;
-  return state;
-}
-
 // load sprites
 const spriteImages = {
-  heroLeft: loadImage('sprite/snowman_left.png'),
-  heroRight: loadImage('sprite/snowman_right.png'),
-  groundIce1: loadImage('sprite/ground_ice_1.png'),
-  groundIce2: loadImage('sprite/ground_ice_2.png'),
-  groundIce3: loadImage('sprite/ground_ice_3.png'),
-  groundIce4: loadImage('sprite/ground_ice_4.png'),
-  groundIce5: loadImage('sprite/ground_ice_5.png'),
-  groundIce6: loadImage('sprite/ground_ice_6.png'),
-  groundIce7: loadImage('sprite/ground_ice_7.png'),
-  groundIce8: loadImage('sprite/ground_ice_8.png'),
-  groundIce9: loadImage('sprite/ground_ice_9.png'),
-  treeLight: loadImage('sprite/tree_light.png'),
-  treeHeavy: loadImage('sprite/tree_heavy.png'),
-  igloo: loadImage('sprite/igloo.png'),
+  heroLeft: new Sprite(['snowman_left']),
+  heroRight: new Sprite(['snowman_right']),
+  groundIceBlue: new Sprite(['ground_ice_blue']),
+  groundIceGray: new Sprite(['ground_ice_gray']),
+  groundIceNavy: new Sprite(['ground_ice_navy']),
+  groundIceWhite: new Sprite(['ground_ice_white']),
+  treeLight: new Sprite(['tree_light', 'tree_light_left', 'tree_light', 'tree_light_right']),
+  treeHeavy: new Sprite(['tree_heavy', 'tree_heavy_right', 'tree_heavy', 'tree_heavy_left']),
+  igloo: new Sprite(['igloo']),
 };
 export const Sprites: SpriteManager = {
   ...spriteImages,
   loaded: Promise.all(Object.values(spriteImages).map(s => s.loaded)).then(() => true),
 };
 window.Sprites = Sprites;
+
+export const Gifs = {
+  snowLoose: 'gif/snow_loose.gif',
+};

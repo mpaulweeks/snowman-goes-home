@@ -11,13 +11,6 @@ export enum Difficulty {
   // Test,
 };
 
-export const SongsByDifficulty = {
-  [Difficulty.Easy]: 'music/visager_village_dreaming.mp3',
-  [Difficulty.Medium]: 'music/visager_the_final_road.mp3',
-  [Difficulty.Hard]: 'music/visager_the_great_forest.mp3',
-  [Difficulty.Infinite]: 'music/visager_dark_sanctum.mp3',
-};
-
 // race against time to get far, then get score based on how quick
 export interface Progression {
   gridSize: (number),
@@ -25,33 +18,38 @@ export interface Progression {
   levelsPerTier: number;
   totalLevels: number;
   secondsPerLevel?: number;
+  boilFps: number,
 }
 
 const ProgressionByDifficulty = {
   [Difficulty.Easy]: {
+    boilFps: 1,
     gridSize: 1,
     minMoves: 7,
     levelsPerTier: 1,
     totalLevels: 5,
   },
   [Difficulty.Medium]: {
+    boilFps: 3,
     gridSize: 1.5,
     minMoves: 12,
     levelsPerTier: 1,
     totalLevels: 10,
   },
   [Difficulty.Hard]: {
+    boilFps: 6,
     gridSize: 2,
     minMoves: 12,
     levelsPerTier: 2,
     totalLevels: 15,
   },
   [Difficulty.Infinite]: {
+    boilFps: 9,
     gridSize: 1.5,
     minMoves: 7,
     levelsPerTier: 3,
     totalLevels: 20,
-    secondsPerLevel: 5,
+    secondsPerLevel: 10,
   },
 }
 
