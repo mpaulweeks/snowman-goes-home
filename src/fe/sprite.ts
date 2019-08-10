@@ -67,5 +67,6 @@ export const Sprites: SpriteManager = {
 window.Sprites = Sprites;
 
 export const Gifs = {
+  snowDiagonal: 'gif/snow_diagonal.gif',
   snowLoose: 'gif/snow_loose.gif',
 };

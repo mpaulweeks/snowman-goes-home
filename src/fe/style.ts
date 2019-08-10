@@ -15,11 +15,11 @@ export const StyleByDifficulty = {
   [Difficulty.Hard]: {
     music: 'music/visager_the_great_forest.mp3',
     ground: Sprites.groundIceGray,
-    overlay: Gifs.snowLoose,
+    overlay: Gifs.snowDiagonal,
   },
   [Difficulty.Infinite]: {
     music: 'music/visager_dark_sanctum.mp3',
     ground: Sprites.groundIceNavy,
-    overlay: Gifs.snowLoose,
+    overlay: Gifs.snowDiagonal,
   },
 };

@@ -4,6 +4,11 @@ import { DataState, toggleMusic } from '../redux';
 import { connect } from 'react-redux';
 import { GameManager } from './manager';
 import { Row, Column, KeyButton } from './common';
+import { StyleByDifficulty } from './style';
+
+type UrlProps = {
+  url: string,
+};
 
 const Container = styled.div`
   display: flex;
@@ -31,13 +36,13 @@ const CanvasContainer = styled.div`
   position: relative;
 `;
 
-const CanvasOverlay = styled.div`
+const CanvasOverlay = styled.div<UrlProps>`
   position: absolute;
   top: 0px;
   left: 0px;
   width: 100%;
   height: 100%;
-  background-image: url('img/snow_loose.gif');
+  background-image: url('${props => props.url}');
   background-size: contain;
   background-repeat: none;
 `;
@@ -50,8 +55,9 @@ interface Props {
 
 class _GameView extends React.Component<Props> {
   render() {
-    const { gm, toggleMusic } = this.props;
+    const { gm, store, toggleMusic } = this.props;
     const { isMobile, world, level, secondsRemaining, secondsElapsed } = this.props.store;
+    const overlay = store.world ? StyleByDifficulty[store.world.difficulty].overlay : '';
     return (
       <Container>
         <Header>
@@ -64,7 +70,7 @@ class _GameView extends React.Component<Props> {
         </Header>
         <CanvasContainer onClick={gm.mouseMove}>
           {this.props.children}
-          <CanvasOverlay />
+          <CanvasOverlay url={overlay} />
         </CanvasContainer>
         <Footer>
           <Column>
