@@ -79,7 +79,7 @@ export class Level {
       if (this.isIllegalPoint(next)) {
         break;
       }
-      traveled.push({move: move, point: next});
+      traveled.push({ move: move, point: next });
       current = next;
       if (this.isWinningPoint(current)) {
         break;

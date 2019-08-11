@@ -89,9 +89,9 @@ class _MenuView extends React.Component<Props, State> {
           <BubbleArea>
             <MenuTitle>
               ICY PATH
-              <br/>
-              <img alt="" src={Sprites.igloo.default.url}/>
-              <img alt="" src={Sprites.heroLeft.default.url}/>
+              <br />
+              <img alt="" src={Sprites.igloo.default.url} />
+              <img alt="" src={Sprites.heroLeft.default.url} />
             </MenuTitle>
           </BubbleArea>
         </Row>

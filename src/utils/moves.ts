@@ -6,10 +6,12 @@ export enum Move {
   Left,
   Right,
 };
-export const Moves = Object
-  .keys(Move)
-  .filter(k => isNaN(Number(k)))
-  .map(k => Move[k]);
+export const Moves = [
+  Move.Up,
+  Move.Down,
+  Move.Left,
+  Move.Right,
+];
 
 export interface PotentialMove {
   move: Move,

@@ -29,7 +29,8 @@
   "devDependencies": {
     "@types/jest": "^24.0.13",
     "gh-pages": "^2.0.1",
-    "ts-jest": "^24.0.2"
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.18.0"
   },
   "eslintConfig": {
     "extends": "react-app"
