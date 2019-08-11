@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { DataState, toggleOptions } from '../redux';
 import { connect } from 'react-redux';
 import { GameManager } from './manager';
-import { Row, Column, KeyButton } from './common';
+import { Row, Column, ActionButton } from './common';
 import { StyleByDifficulty } from './style';
 
 type UrlProps = {
@@ -73,14 +73,14 @@ class _GameView extends React.Component<Props> {
         </CanvasContainer>
         <Footer>
           <Column>
-            <KeyButton onClick={gm.clickReset}>
-              reset level
-            </KeyButton>
+            <ActionButton onClick={gm.clickReset}>
+              reset
+            </ActionButton>
           </Column>
           <Column>
-            <KeyButton onClick={() => this.props.toggleOptions()}>
+            <ActionButton onClick={() => this.props.toggleOptions()}>
               options
-            </KeyButton>
+            </ActionButton>
           </Column>
         </Footer>
       </Container>

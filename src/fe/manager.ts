@@ -31,7 +31,6 @@ export class GameManager {
   spriteFacing: Move.Right;
   loadedAssets: Promise<boolean>;
   pendingAnimations: Array<Animation> = [];
-  shouldDrawGrid = false;
   frameTick = 0;
 
   constructor() {
@@ -108,9 +107,6 @@ export class GameManager {
 
   clickReset = () => {
     this.currentLevel && this.currentLevel.reset();
-  }
-  clickToggleGrid = () => {
-    this.shouldDrawGrid = !this.shouldDrawGrid;
   }
   mouseMove = evt => {
     const rect = evt.target.getBoundingClientRect();
@@ -251,7 +247,7 @@ export class GameManager {
     }
 
     // grid
-    if (this.shouldDrawGrid) {
+    if (store.getState().shouldDrawGrid) {
       ctx.strokeStyle = worldStyle.gridColor;
       for (let y = 1; y < currentLevel.level.height; y++) {
         ctx.beginPath();

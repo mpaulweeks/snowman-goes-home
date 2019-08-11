@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { DataState, toggleMusic, toggleOptions } from '../redux';
+import { DataState, toggleDrawGrid, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
-import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, KeyButton } from './common';
+import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, ActionButton } from './common';
 
 interface Props {
   gm: GameManager;
   store: DataState;
+  toggleDrawGrid: () => void;
   toggleMusic: () => void;
   toggleOptions: () => void;
 };
@@ -29,24 +30,31 @@ class _OptionsView extends React.Component<Props, State> {
               <MenuTitle> OPTIONS </MenuTitle>
             </RowWithPadding>
             <RowWithPadding>
-              <KeyButton onClick={() => this.props.toggleMusic()}>
+              <ActionButton onClick={() => this.props.toggleMusic()}>
                 music is {this.props.store.audio.playing ? 'on' : 'off'}
-              </KeyButton>
+              </ActionButton>
             </RowWithPadding>
             <RowWithPadding>
-              <KeyButton onClick={gm.clickToggleGrid}>
-                toggle grid
-              </KeyButton>
+              <ActionButton onClick={() => this.props.toggleDrawGrid()}>
+                grid is {this.props.store.shouldDrawGrid ? 'on' : 'off'}
+              </ActionButton>
             </RowWithPadding>
+            {store.world && (
+              <RowWithPadding>
+                <ActionButton onClick={() => {gm.unsetWorld(); this.props.toggleOptions()}}>
+                  quit to menu
+                </ActionButton>
+              </RowWithPadding>
+            )}
           </BubbleArea>
         </Row>
         <Row>
           <BubbleArea>
-            <Row>
-              <KeyButton onClick={() => this.props.toggleOptions()}>
-                close
-              </KeyButton>
-            </Row>
+            <RowWithPadding>
+              <ActionButton onClick={() => this.props.toggleOptions()}>
+                back
+              </ActionButton>
+            </RowWithPadding>
           </BubbleArea>
         </Row>
       </IcyContainer>
@@ -59,6 +67,7 @@ export const OptionsView = connect(
     store,
   }),
   {
+    toggleDrawGrid,
     toggleMusic,
     toggleOptions,
   }

@@ -20,6 +20,7 @@ export const MenuTitle = styled.h1`
   margin-right: 2em;
   margin-bottom: 0px;
   font-family: monospace;
+  font-style: italic;
 `;
 
 export const AbsoluteContainer = styled(Column)`
@@ -55,8 +56,9 @@ export const BubbleArea = styled.div`
 `;
 
 export const LoadingButton = styled.div`
-  width: 4em;
-  padding: 0.5em;
+  min-width: 4em;
+  padding: 0.25em 0.75em;
+  margin: 0 0.3em;
   border-radius: 1em;
 
   border: 2px solid grey;
@@ -69,9 +71,8 @@ export const LoadingButton = styled.div`
   justify-content: center;
   align-items: center;
   flex-wrap: nowrap;
-
 `;
-export const ReadyButton = styled(LoadingButton)`
+export const ActionButton = styled(LoadingButton)`
   cursor: pointer;
   text-transform: uppercase;
 
@@ -83,12 +84,4 @@ export const ReadyButton = styled(LoadingButton)`
     color: var(--background);
     background-color: var(--foreground);
   }
-`;
-
-export const KeyButton = styled(ReadyButton)`
-  height: 4vh;
-  width: auto;
-  min-width: 2em;
-  padding: 0 0.75em;
-  margin: 0 0.3em;
 `;

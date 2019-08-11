@@ -23,7 +23,7 @@ export interface Progression {
 
 const ProgressionByDifficulty = {
   [Difficulty.Easy]: {
-    boilFps: 1,
+    boilFps: 3,
     gridSize: 1,
     minMoves: 7,
     levelsPerTier: 1,

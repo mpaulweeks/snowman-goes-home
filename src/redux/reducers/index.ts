@@ -1,5 +1,5 @@
 import { Stopwatch, World } from "../../utils";
-import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_MUSIC, TOGGLE_OPTIONS } from "../actionTypes";
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_DRAW_GRID, TOGGLE_MUSIC, TOGGLE_OPTIONS } from "../actionTypes";
 
 // https://stackoverflow.com/a/11381730
 const mobilecheck = function() {
@@ -20,6 +20,7 @@ export interface DataState {
   secondsRemaining: number;
   level: number;
   isGameOver: boolean;
+  shouldDrawGrid: boolean;
   showOptions: boolean;
 }
 
@@ -43,6 +44,7 @@ const initialState: DataState = {
   level: 0,
   world: undefined,
   isGameOver: false,
+  shouldDrawGrid: false,
   showOptions: false,
 };
 
@@ -78,6 +80,12 @@ function reducer(state = initialState, action: DataAction) {
         audio: {
           ...state.audio,
         },
+      };
+    }
+    case TOGGLE_DRAW_GRID: {
+      return {
+        ...state,
+        shouldDrawGrid: !state.shouldDrawGrid,
       };
     }
     case TOGGLE_MUSIC: {

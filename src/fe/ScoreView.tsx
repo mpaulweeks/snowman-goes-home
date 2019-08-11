@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { DataState } from '../redux';
 import { GameManager } from './manager';
-import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, ReadyButton } from './common';
+import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, ActionButton } from './common';
 import { Sprites } from './sprite';
 
 interface Props {
@@ -12,9 +12,6 @@ interface Props {
 interface State {};
 
 class _ScoreView extends React.Component<Props, State> {
-  onReset = () => {
-    this.props.gm.unsetWorld();
-  }
   render() {
     const { gm, store } = this.props;
     const { world, isGameOver } = store;
@@ -25,9 +22,11 @@ class _ScoreView extends React.Component<Props, State> {
       <IcyContainer>
         <Row>
           <BubbleArea>
-            <MenuTitle>
-              {world.isInfinite() ? `GAME OVER!` : `YOU WIN!`}
-            </MenuTitle>
+            <RowWithPadding>
+              <MenuTitle>
+                {world.isInfinite() ? `GAME OVER!` : `YOU WIN!`}
+              </MenuTitle>
+            </RowWithPadding>
             <RowWithPadding>
               <img alt="" src={Sprites.igloo.default.url}/>
               <img className="rotate" alt="" src={Sprites.heroLeft.default.url}/>
@@ -48,7 +47,9 @@ class _ScoreView extends React.Component<Props, State> {
                 </RowWithPadding>
               </div>
             )}
-            <ReadyButton onClick={this.onReset}>MENU</ReadyButton>
+            <RowWithPadding>
+              <ActionButton onClick={() => gm.unsetWorld()}>MENU</ActionButton>
+            </RowWithPadding>
           </BubbleArea>
         </Row>
       </IcyContainer>

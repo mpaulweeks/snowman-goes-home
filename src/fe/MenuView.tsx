@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { DataState, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { IcyContainer, LoadingButton, ReadyButton, Row, BubbleArea, MenuTitle, KeyButton } from './common';
+import { IcyContainer, LoadingButton, ActionButton, Row, RowWithPadding, BubbleArea, MenuTitle, SubTitle } from './common';
 
 const WorldOptionContainer = styled(Row)`
   justify-content: center;
@@ -13,12 +13,12 @@ const WorldOptionContainer = styled(Row)`
   flex-wrap: wrap;
 `;
 
-const WorldTitle = styled.h2`
-  margin: 0.5rem;
+const WorldTitle = styled.span`
+  font-weight: bold;
+  text-transform: uppercase;
 `;
-const WorldButton = styled.h3`
-  margin: 0px;
-  margin-top: 0.5em;
+const WorldInfo = styled.span`
+  font-size: 0.8em;
 `;
 
 interface Props {
@@ -88,7 +88,7 @@ class _MenuView extends React.Component<Props, State> {
         <Row>
           <BubbleArea>
             <MenuTitle>
-              <em>ICY PATH</em>
+              ICY PATH
               <br/>
               <img alt="" src={Sprites.igloo.default.url}/>
               <img alt="" src={Sprites.heroLeft.default.url}/>
@@ -98,31 +98,37 @@ class _MenuView extends React.Component<Props, State> {
         <WorldOptionContainer>
           {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map(world => (
             <BubbleArea key={world.difficulty}>
-              <WorldTitle>
-                {world.displayName()}
-              </WorldTitle>
-              <div>
-                {world.isInfinite() ? '∞' : world.totalLevels} levels
-              </div>
-              <WorldButton>
+              <Row>
+                <WorldTitle>
+                  {world.displayName()}
+                </WorldTitle>
+              </Row>
+              <Row>
+                <WorldInfo>
+                  {world.isInfinite() ? 'Limited Time' : world.totalLevels + ' Levels'}
+                </WorldInfo>
+              </Row>
+              <Row>
                 {state[world.difficulty] ? (
-                  <ReadyButton onClick={() => this.loadWorld(world)}>
+                  <ActionButton onClick={() => this.loadWorld(world)}>
                     PLAY
-                </ReadyButton>
+                </ActionButton>
                 ) : (
                     <LoadingButton>
                       loading
                 </LoadingButton>
                   )}
-              </WorldButton>
+              </Row>
             </BubbleArea>
           ))}
         </WorldOptionContainer>
         <Row>
           <BubbleArea>
-            <KeyButton onClick={() => this.props.toggleOptions()}>
-              options
-            </KeyButton>
+            <RowWithPadding>
+              <ActionButton onClick={() => this.props.toggleOptions()}>
+                options
+              </ActionButton>
+            </RowWithPadding>
           </BubbleArea>
         </Row>
         <Row>
@@ -131,7 +137,9 @@ class _MenuView extends React.Component<Props, State> {
               made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
             </div>
             <div>
-              assets by <a href="https://www.kenney.nl">Kenney</a> +
+              assets by <a href="https://www.kenney.nl">Kenney</a> + <a href="https://amyjxu.me">Amy Xu</a>
+            </div>
+            <div>
               music by <a href="https://visager.bandcamp.com/album/songs-from-an-unmade-world">Visager</a>
             </div>
           </BubbleArea>
