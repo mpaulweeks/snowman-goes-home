@@ -5,19 +5,12 @@ import { connect } from 'react-redux';
 import { DataState, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { IcyContainer, LoadingButton, ReadyButton, Row, BubbleArea, KeyButton } from './common';
+import { IcyContainer, LoadingButton, ReadyButton, Row, BubbleArea, MenuTitle, KeyButton } from './common';
 
 const WorldOptionContainer = styled(Row)`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-`;
-
-const GameTitle = styled.h1`
-  margin-left: 2em;
-  margin-right: 2em;
-  margin-bottom: 0px;
-  font-family: monospace;
 `;
 
 const WorldTitle = styled.h2`
@@ -27,7 +20,6 @@ const WorldButton = styled.h3`
   margin: 0px;
   margin-top: 0.5em;
 `;
-
 
 interface Props {
   gm: GameManager;
@@ -95,12 +87,12 @@ class _MenuView extends React.Component<Props, State> {
       <IcyContainer>
         <Row>
           <BubbleArea>
-            <GameTitle>
+            <MenuTitle>
               <em>ICY PATH</em>
               <br/>
               <img alt="" src={Sprites.igloo.default.url}/>
               <img alt="" src={Sprites.heroLeft.default.url}/>
-            </GameTitle>
+            </MenuTitle>
           </BubbleArea>
         </Row>
         <WorldOptionContainer>

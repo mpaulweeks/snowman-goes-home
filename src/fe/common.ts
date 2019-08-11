@@ -8,8 +8,18 @@ export const Row = styled.div`
   align-items: stretch;
   flex-wrap: nowrap;
 `;
+export const RowWithPadding = styled(Row)`
+  margin: 1em;
+`;
 export const Column = styled(Row)`
   flex-direction: column;
+`;
+
+export const MenuTitle = styled.h1`
+  margin-left: 2em;
+  margin-right: 2em;
+  margin-bottom: 0px;
+  font-family: monospace;
 `;
 
 export const AbsoluteContainer = styled(Column)`
@@ -63,6 +73,7 @@ export const LoadingButton = styled.div`
 `;
 export const ReadyButton = styled(LoadingButton)`
   cursor: pointer;
+  text-transform: uppercase;
 
   border-color: var(--foreground);
   font-style: normal;

@@ -50,13 +50,12 @@ const CanvasOverlay = styled.div<UrlProps>`
 interface Props {
   gm: GameManager;
   store: DataState;
-  toggleMusic: () => void;
 };
 
 class _GameView extends React.Component<Props> {
   render() {
-    const { gm, store, toggleMusic } = this.props;
-    const { isMobile, world, level, secondsRemaining, secondsElapsed } = this.props.store;
+    const { gm, store } = this.props;
+    const { world, level, secondsRemaining, secondsElapsed } = this.props.store;
     const overlay = store.world ? StyleByDifficulty[store.world.difficulty].overlay : '';
     return (
       <Container>

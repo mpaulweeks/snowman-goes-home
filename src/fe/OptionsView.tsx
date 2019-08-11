@@ -2,8 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { DataState, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
-import { IcyContainer, Row, BubbleArea, KeyButton } from './common';
-import { Sprites } from './sprite';
+import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, KeyButton } from './common';
 
 interface Props {
   gm: GameManager;
@@ -26,19 +25,19 @@ class _OptionsView extends React.Component<Props, State> {
       <IcyContainer>
         <Row>
           <BubbleArea>
-            <Row>
-              <h1> OPTIONS </h1>
-            </Row>
-            <Row>
+            <RowWithPadding>
+              <MenuTitle> OPTIONS </MenuTitle>
+            </RowWithPadding>
+            <RowWithPadding>
               <KeyButton onClick={() => this.props.toggleMusic()}>
                 music is {this.props.store.audio.playing ? 'on' : 'off'}
               </KeyButton>
-            </Row>
-            <Row>
+            </RowWithPadding>
+            <RowWithPadding>
               <KeyButton onClick={gm.clickToggleGrid}>
                 toggle grid
               </KeyButton>
-            </Row>
+            </RowWithPadding>
           </BubbleArea>
         </Row>
         <Row>

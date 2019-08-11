@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { DataState } from '../redux';
 import { GameManager } from './manager';
-import { IcyContainer, Row, BubbleArea, ReadyButton } from './common';
+import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, ReadyButton } from './common';
 import { Sprites } from './sprite';
 
 interface Props {
@@ -25,27 +25,27 @@ class _ScoreView extends React.Component<Props, State> {
       <IcyContainer>
         <Row>
           <BubbleArea>
-            <h1>
+            <MenuTitle>
               {world.isInfinite() ? `GAME OVER!` : `YOU WIN!`}
-            </h1>
-            <p>
+            </MenuTitle>
+            <RowWithPadding>
               <img alt="" src={Sprites.igloo.default.url}/>
               <img className="rotate" alt="" src={Sprites.heroLeft.default.url}/>
-            </p>
+            </RowWithPadding>
             {world.isInfinite() ? (
               <div>
-                <p>
+                <RowWithPadding>
                   You managed to complete {gm.currentLevelIndex - 1} levels.
-                </p>
+                </RowWithPadding>
               </div>
             ) : (
               <div>
-                <p>
+                <RowWithPadding>
                   You managed to beat {world.displayName()} in {store.secondsElapsed} seconds.
-                </p>
-                <p>
+                </RowWithPadding>
+                <RowWithPadding>
                   Try to beat it faster or play a higher difficulty!
-                </p>
+                </RowWithPadding>
               </div>
             )}
             <ReadyButton onClick={this.onReset}>MENU</ReadyButton>
