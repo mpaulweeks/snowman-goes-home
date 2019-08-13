@@ -15,6 +15,10 @@ body {
   height: 100%;
   overflow: hidden;
 }
+* {
+  /* disable ios blinking on touch */
+  -webkit-tap-highlight-color: transparent;
+}
 @keyframes rotation {
   from {
     transform: rotate(0deg);
