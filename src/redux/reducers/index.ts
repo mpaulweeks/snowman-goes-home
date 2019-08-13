@@ -1,7 +1,7 @@
-import { Reducer } from "redux";
-import { mobileCheck } from "../../fe/mobileCheck";
-import { Stopwatch, World } from "../../utils";
-import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_DRAW_GRID, TOGGLE_MUSIC, TOGGLE_OPTIONS } from "../actionTypes";
+import { Reducer } from 'redux';
+import { mobileCheck } from '../../fe/mobileCheck';
+import { Stopwatch, World } from '../../utils';
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_DRAW_GRID, TOGGLE_MUSIC, TOGGLE_OPTIONS } from '../actionTypes';
 
 export interface AudioState {
   playing: boolean;
@@ -33,8 +33,8 @@ const initialState: DataState = {
     playing: false,
   },
   isMobile: mobileCheck(),
-  secondsRemaining: '',
   secondsElapsed: '',
+  secondsRemaining: '',
   level: 0,
   world: undefined,
   isGameOver: false,

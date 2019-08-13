@@ -1,42 +1,41 @@
-import { store } from "../redux";
-import { setGameOver, setLevel, setTimer, setWorld } from "../redux";
-import { Move, MoveInformation, Traveled, PlayableLevel, Point, Stopwatch, World, WorldLoader } from "../utils";
+import { setGameOver, setLevel, setTimer, setWorld, store } from '../redux';
+import { Move, MoveInformation, PlayableLevel, Point, Stopwatch, Traveled, World, WorldLoader } from '../utils';
 import { Sprite, Sprites } from './sprite';
 import { GlobalStyle, StyleByDifficulty } from './style';
 
 const moveMap: { [code: string]: Move } = {
-  'ArrowLeft': Move.Left,
-  'ArrowRight': Move.Right,
-  'ArrowUp': Move.Up,
-  'ArrowDown': Move.Down,
+  ArrowDown: Move.Down,
+  ArrowLeft: Move.Left,
+  ArrowRight: Move.Right,
+  ArrowUp: Move.Up,
 };
 
 export interface Animation {
-  traveled: Traveled,
-  stopwatch: Stopwatch,
+  traveled: Traveled;
+  stopwatch: Stopwatch;
 }
 
 export class GameManager {
-  dispatch = store.dispatch;
-  isDebug = window.location.href.includes('localhost');
-  worldLoader: WorldLoader;
-  worldDimensions: Point;
-  canvasDimensions: Point;
-  canvasElm?: HTMLCanvasElement;
-  ctx?: CanvasRenderingContext2D;
-  world?: World;
-  stopwatch = new Stopwatch();
-  currentLevel: (PlayableLevel | undefined);
-  currentLevelIndex = 0;
-  spriteFacing: Move.Right;
-  loadedAssets: Promise<boolean>;
-  pendingAnimations: Array<Animation> = [];
-  frameTick = 0;
+  public worldLoader: WorldLoader;
+  private dispatch = store.dispatch;
+  private isDebug = window.location.href.includes('localhost');
+  private worldDimensions: Point;
+  private canvasDimensions: Point;
+  private canvasElm?: HTMLCanvasElement;
+  private ctx?: CanvasRenderingContext2D;
+  private world?: World;
+  private stopwatch = new Stopwatch();
+  private currentLevel: (PlayableLevel | undefined);
+  private currentLevelIndex = 0;
+  private spriteFacing = Move.Right;
+  private pendingAnimations: Animation[] = [];
+  private frameTick = 0;
 
   constructor() {
     const { isDebug } = this;
     if (isDebug) {
-      window.DEBUG = this;
+      const w: any = window;
+      w.DEBUG = this;
     }
 
     // determine largest possible canvas size
@@ -76,40 +75,18 @@ export class GameManager {
     // setup passive draw/load loop
     this.loop();
   }
-  setup(canvasElm: HTMLCanvasElement) {
+  public setup(canvasElm: HTMLCanvasElement) {
     this.canvasElm = canvasElm;
     canvasElm.width = this.canvasDimensions.x;
     canvasElm.height = this.canvasDimensions.y;
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
   }
-  private async loop() {
-    const { world, stopwatch } = this;
-    if (world) {
-      await this.draw();
-      if (world.isInfinite()) {
-        world.generateLevels();
-        if (stopwatch.getRemaining() !== store.getState().secondsRemaining) {
-          this.dispatch(setTimer(stopwatch));
-        }
-        if (stopwatch.getRemaining() < 0) {
-          this.triggerGameOver();
-        }
-      } else {
-        if (stopwatch.getElapsed() !== store.getState().secondsElapsed) {
-          this.dispatch(setTimer(stopwatch));
-        }
-      }
-    } else if (!store.getState().isGameOver) {
-      this.worldLoader.loadInBackground();
-    }
-    window.requestAnimationFrame(() => this.loop());
-  }
 
-  clickReset = () => {
+  public clickReset = () => {
     this.currentLevel && this.currentLevel.reset();
   }
-  mouseMove = evt => {
-    const rect = evt.target.getBoundingClientRect();
+  public mouseDown = (evt: React.MouseEvent<HTMLElement>) => {
+    const rect = (evt.target as HTMLElement).getBoundingClientRect();
     const x = evt.clientX - rect.left;
     const y = evt.clientY - rect.top;
     const px = x / rect.width;
@@ -126,20 +103,20 @@ export class GameManager {
       this.handleMove(move);
     }
   }
-  clickUp = () => {
+  public clickUp = () => {
     this.handleMove(Move.Up);
   }
-  clickDown = () => {
+  public clickDown = () => {
     this.handleMove(Move.Down);
   }
-  clickLeft = () => {
+  public clickLeft = () => {
     this.handleMove(Move.Left);
   }
-  clickRight = () => {
+  public clickRight = () => {
     this.handleMove(Move.Right);
   }
 
-  setWorld(world: World) {
+  public setWorld(world: World) {
     this.worldLoader = new WorldLoader(this.worldDimensions);
     this.world = world;
     this.currentLevelIndex = 0;
@@ -147,17 +124,17 @@ export class GameManager {
     this.nextLevel();
     this.dispatch(setWorld(world));
   }
-  unsetWorld() {
+  public unsetWorld() {
     // todo score should dispatch this action
     this.world = undefined;
     this.dispatch(setWorld(undefined));
   }
-  triggerGameOver() {
+  private triggerGameOver() {
     this.world = undefined;
     this.dispatch(setGameOver());
   }
 
-  handleMove(move: Move) {
+  private handleMove(move: Move) {
     const { currentLevel } = this;
     if (!currentLevel) {
       return;
@@ -172,7 +149,7 @@ export class GameManager {
       this.nextLevel();
     }
   }
-  async nextLevel() {
+  private async nextLevel() {
     const { currentLevelIndex, world } = this;
     if (!world) {
       throw new Error('todo this should be impossible');
@@ -191,15 +168,40 @@ export class GameManager {
     }
   }
 
-  animateMove(moveInfo: MoveInformation) {
+  private async loop() {
+    const { world, stopwatch } = this;
+    if (world) {
+      await this.draw();
+      if (world.isInfinite()) {
+        world.generateLevels();
+        if (stopwatch.formatRemaining() !== store.getState().secondsRemaining) {
+          this.dispatch(setTimer(stopwatch));
+        }
+        if (stopwatch.getRemaining() < 0) {
+          this.triggerGameOver();
+        }
+      } else {
+        if (stopwatch.formatElapsed() !== store.getState().secondsElapsed) {
+          this.dispatch(setTimer(stopwatch));
+        }
+      }
+    } else if (!store.getState().isGameOver) {
+      this.worldLoader.loadInBackground();
+    }
+    window.requestAnimationFrame(() => this.loop());
+  }
+  private animateMove(moveInfo: MoveInformation) {
     const animations = moveInfo.traveled.slice(0, -1).map((t, i, arr) => ({
       traveled: t,
       stopwatch: new Stopwatch(1000 * (1 + (i / arr.length))),
     }));
     this.pendingAnimations.push(...animations);
   }
-  drawSprite(sprite: Sprite, x: number, y: number, scale?: number) {
+  private drawSprite(sprite: Sprite, x: number, y: number, scale?: number) {
     const { canvasElm, ctx, currentLevel } = this;
+    if (!canvasElm || !ctx || !currentLevel) {
+      return;
+    }
     const { width, height } = canvasElm;
     const blockWidth = width / currentLevel.level.width;
     const blockHeight = height / currentLevel.level.height;
@@ -212,14 +214,17 @@ export class GameManager {
       blockHeight * scale
     );
   }
-  drawSpriteWithOpacity(alpha: number, sprite: Sprite, x: number, y: number, scale?: number) {
+  private drawSpriteWithOpacity(alpha: number, sprite: Sprite, x: number, y: number, scale?: number) {
     const { ctx } = this;
+    if (!ctx) {
+      return;
+    }
     const oldAlpha = ctx.globalAlpha;
     ctx.globalAlpha = alpha;
     this.drawSprite(sprite, x, y, scale);
     ctx.globalAlpha = oldAlpha;
   }
-  async draw() {
+  private async draw() {
     const { canvasElm, ctx, currentLevel, world } = this;
     if (!canvasElm || !ctx) {
       return;
@@ -228,7 +233,7 @@ export class GameManager {
 
     await Sprites.loaded;
 
-    if (!currentLevel) {
+    if (!currentLevel || !world) {
       return;
     }
 
@@ -240,7 +245,7 @@ export class GameManager {
     // background
     ctx.fillStyle = GlobalStyle.backgroundColor;
     ctx.fillRect(0, 0, width, height);
-    for (let y = 0; y < currentLevel.level.height; y++){
+    for (let y = 0; y < currentLevel.level.height; y++) {
       for (let x = 0; x < currentLevel.level.width; x++) {
         this.drawSprite(worldStyle.ground, x, y);
       }

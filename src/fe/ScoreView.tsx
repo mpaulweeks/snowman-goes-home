@@ -1,15 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { DataState } from '../redux';
+import { ActionButton, BubbleArea, IcyContainer, MenuTitle, Row, RowWithPadding } from './common';
 import { GameManager } from './manager';
-import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, ActionButton } from './common';
 import { Sprites } from './sprite';
 
 interface Props {
   gm: GameManager;
   store: DataState;
 };
-interface State {};
+interface State { };
 
 class _ScoreView extends React.Component<Props, State> {
   render() {
@@ -28,25 +28,25 @@ class _ScoreView extends React.Component<Props, State> {
               </MenuTitle>
             </RowWithPadding>
             <RowWithPadding>
-              <img alt="" src={Sprites.igloo.default.url}/>
-              <img className="rotate" alt="" src={Sprites.heroLeft.default.url}/>
+              <img alt="" src={Sprites.igloo.default.url} />
+              <img className="rotate" alt="" src={Sprites.heroLeft.default.url} />
             </RowWithPadding>
             {world.isInfinite() ? (
               <div>
                 <RowWithPadding>
-                  You managed to complete {gm.currentLevelIndex - 1} levels.
+                  You managed to complete {store.level - 1} levels.
                 </RowWithPadding>
               </div>
             ) : (
-              <div>
-                <RowWithPadding>
-                  You managed to beat {world.displayName()} in {store.secondsElapsed} seconds.
+                <div>
+                  <RowWithPadding>
+                    You managed to beat {world.displayName()} in {store.secondsElapsed} seconds.
                 </RowWithPadding>
-                <RowWithPadding>
-                  Try to beat it faster or play a higher difficulty!
+                  <RowWithPadding>
+                    Try to beat it faster or play a higher difficulty!
                 </RowWithPadding>
-              </div>
-            )}
+                </div>
+              )}
             <RowWithPadding>
               <ActionButton onClick={() => gm.unsetWorld()}>MENU</ActionButton>
             </RowWithPadding>

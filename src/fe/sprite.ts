@@ -6,7 +6,7 @@ export class SpriteFrame {
   constructor(spriteName: string) {
     const url = `sprite/${spriteName}.png`;
     const img = new Image();
-    const loaded = new Promise((resolve, reject) => {
+    const loaded = new Promise<boolean>((resolve, reject) => {
       img.onload = () => resolve(true);
     });
     img.src = url;
@@ -24,13 +24,13 @@ export class Sprite {
 
   constructor(spriteNames: Array<string>) {
     this.frames = spriteNames.map(spriteName => new SpriteFrame(spriteName));
-    this.loaded = Promise.all(this.frames.map(f => f.loaded));
+    this.loaded = Promise.all(this.frames.map(f => f.loaded)).then(arr => arr.every(b => b));
     this.default = this.atFrame(0);
   }
 
-  atFrame(frameCount) {
+  atFrame(frameCount: number) {
     const { frames } = this;
-    const index = frameCount % frames.length;
+    const index = Math.floor(frameCount) % frames.length;
     return frames[index];
   }
 }
@@ -64,7 +64,6 @@ export const Sprites: SpriteManager = {
   ...spriteImages,
   loaded: Promise.all(Object.values(spriteImages).map(s => s.loaded)).then(() => true),
 };
-window.Sprites = Sprites;
 
 export const Gifs = {
   snowDiagonal: 'gif/snow_diagonal.gif',

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { DataState, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { IcyContainer, LoadingButton, ActionButton, Row, RowWithPadding, BubbleArea, MenuTitle, SubTitle } from './common';
+import { IcyContainer, LoadingButton, ActionButton, Row, RowWithPadding, BubbleArea, MenuTitle } from './common';
 
 const WorldOptionContainer = styled(Row)`
   justify-content: center;
@@ -28,7 +28,6 @@ interface Props {
 };
 
 interface State {
-  spritesLoaded: boolean,
   [Difficulty.Easy]: boolean,
   [Difficulty.Medium]: boolean,
   [Difficulty.Hard]: boolean,

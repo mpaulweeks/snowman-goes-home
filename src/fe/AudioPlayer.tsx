@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 import { DataState } from '../redux/reducers';
 import { GlobalStyle, StyleByDifficulty } from './style';
 
@@ -11,14 +11,18 @@ const Hidden = styled.div`
 interface Props {
   store: DataState;
 };
-interface State {};
+interface State { };
+
+interface ElmsByDiff {
+  [diff: string]: HTMLAudioElement;
+};
 
 class _AudioPlayer extends React.Component<Props, State> {
   elmMenu?: HTMLAudioElement;
-  elmsByDiff = {};
+  elmsByDiff: ElmsByDiff = {};
   desiredVolume = 0.5;
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     const { elmMenu, elmsByDiff } = this;
     const { audio, world } = this.props.store;
     if (!audio.playing) {
@@ -42,22 +46,6 @@ class _AudioPlayer extends React.Component<Props, State> {
       }
     }
   }
-  playElm(elm: HTMLAudioElement) {
-    const { desiredVolume } = this;
-    if (elm.volume !== desiredVolume) {
-      elm.volume = desiredVolume;
-    }
-    elm.play();
-  }
-  stopElm(elm: HTMLAudioElement) {
-    elm.pause();
-    elm.currentTime = 0;
-  }
-  stopAll() {
-    const { elmMenu, elmsByDiff } = this;
-    elmMenu && this.stopElm(elmMenu);
-    Object.keys(elmsByDiff).forEach(diff => this.stopElm(elmsByDiff[diff]));
-  }
   render() {
     const { playing } = this.props.store.audio;
     return playing && (
@@ -65,18 +53,36 @@ class _AudioPlayer extends React.Component<Props, State> {
         <audio
           loop
           src={GlobalStyle.menuMusic}
-          ref={elm => this.elmMenu = elm}
+          ref={elm => elm && (this.elmMenu = elm)}
         ></audio>
-        {Object.keys(StyleByDifficulty).map(diff => (
-          <audio
-            key={diff}
-            loop
-            src={StyleByDifficulty[diff].music}
-            ref={elm => this.elmsByDiff[diff] = elm}
-          ></audio>
-        ))}
-      </Hidden>
+        {
+          Object.keys(StyleByDifficulty).map(diff => (
+            <audio
+              key={diff}
+              loop
+              src={StyleByDifficulty[diff].music}
+              ref={elm => elm && (this.elmsByDiff[diff] = elm)}
+            ></audio>
+          ))
+        }
+      </Hidden >
     );
+  }
+  private playElm(elm: HTMLAudioElement) {
+    const { desiredVolume } = this;
+    if (elm.volume !== desiredVolume) {
+      elm.volume = desiredVolume;
+    }
+    elm.play();
+  }
+  private stopElm(elm: HTMLAudioElement) {
+    elm.pause();
+    elm.currentTime = 0;
+  }
+  private stopAll() {
+    const { elmMenu, elmsByDiff } = this;
+    elmMenu && this.stopElm(elmMenu);
+    Object.keys(elmsByDiff).forEach(diff => this.stopElm(elmsByDiff[diff]));
   }
 }
 

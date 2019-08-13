@@ -50,6 +50,7 @@ const CanvasOverlay = styled.div<UrlProps>`
 interface Props {
   gm: GameManager;
   store: DataState;
+  toggleOptions: () => void;
 };
 
 class _GameView extends React.Component<Props> {
@@ -67,7 +68,7 @@ class _GameView extends React.Component<Props> {
             <div>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</div>
           </Column>
         </Header>
-        <CanvasContainer onClick={gm.mouseMove}>
+        <CanvasContainer onMouseDown={gm.mouseDown}>
           {this.props.children}
           <CanvasOverlay url={overlay} />
         </CanvasContainer>
