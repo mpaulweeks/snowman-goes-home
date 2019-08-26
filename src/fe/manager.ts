@@ -172,7 +172,10 @@ export class GameManager {
       this.pendingClearAnimations.push({
         origin: this.currentLevel.level.start,
         stopwatch: new Stopwatch(500),
-      });
+      }, {
+          origin: this.currentLevel.level.win,
+          stopwatch: new Stopwatch(500),
+        });
     } else {
       this.triggerGameOver();
     }
