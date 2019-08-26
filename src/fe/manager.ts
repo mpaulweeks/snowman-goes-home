@@ -17,8 +17,7 @@ interface TravelAnimation extends Animation {
   traveled: Traveled;
 }
 interface ClearAnimation extends Animation {
-  begin: Point;
-  end: Point;
+  origin: Point;
 }
 
 export class GameManager {
@@ -158,11 +157,10 @@ export class GameManager {
     }
   }
   private async nextLevel() {
-    const { currentLevelIndex, currentLevel, world } = this;
+    const { currentLevelIndex, world } = this;
     if (!world) {
       throw new Error('this should be impossible');
     }
-    const lastLevel = currentLevel;
     const nextSolvableLevel = await world.loadLevel(currentLevelIndex);
     this.currentLevel = nextSolvableLevel && new PlayableLevel(nextSolvableLevel);
     if (this.currentLevel) {
@@ -170,13 +168,11 @@ export class GameManager {
       this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;
       this.stopwatch.addTime(1000 * (world.progression.secondsPerLevel || 0));
-      if (lastLevel) {
-        this.pendingClearAnimations.push({
-          begin: lastLevel.level.win,
-          end: this.currentLevel.level.start,
-          stopwatch: new Stopwatch(1000),
-        });
-      }
+      this.pendingTravelAnimations = [];
+      this.pendingClearAnimations.push({
+        origin: this.currentLevel.level.start,
+        stopwatch: new Stopwatch(500),
+      });
     } else {
       this.triggerGameOver();
     }
@@ -299,16 +295,14 @@ export class GameManager {
     // clear whiteout
     this.pendingClearAnimations = this.pendingClearAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
     this.pendingClearAnimations.forEach((a) => {
-      const { begin, end, stopwatch } = a;
+      const { origin, stopwatch } = a;
       const maxRadius = Math.max(width, height);
-      const percentFull = 1 - Math.abs((2 * stopwatch.getPercent()) - 1);
-      const source = stopwatch.getPercent() > 0.5 ? begin : end;
       ctx.fillStyle = 'white';
       ctx.beginPath();
       ctx.arc(
-        (source.x + 0.5) * blockWidth,
-        (source.y + 0.5) * blockHeight,
-        percentFull * maxRadius,
+        (origin.x + 0.5) * blockWidth,
+        (origin.y + 0.5) * blockHeight,
+        maxRadius * stopwatch.getPercent(),
         0, 2 * Math.PI, false,
       );
       ctx.fill();
