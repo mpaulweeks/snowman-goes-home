@@ -10,9 +10,15 @@ const moveMap: { [code: string]: Move } = {
   ArrowUp: Move.Up,
 };
 
-export interface Animation {
-  traveled: Traveled;
+interface Animation {
   stopwatch: Stopwatch;
+}
+interface TravelAnimation extends Animation {
+  traveled: Traveled;
+}
+interface ClearAnimation extends Animation {
+  begin: Point;
+  end: Point;
 }
 
 export class GameManager {
@@ -28,7 +34,8 @@ export class GameManager {
   private currentLevel: (PlayableLevel | undefined);
   private currentLevelIndex = 0;
   private spriteFacing = Move.Right;
-  private pendingAnimations: Animation[] = [];
+  private pendingTravelAnimations: TravelAnimation[] = [];
+  private pendingClearAnimations: ClearAnimation[] = [];
   private frameTick = 0;
 
   constructor() {
@@ -151,17 +158,25 @@ export class GameManager {
     }
   }
   private async nextLevel() {
-    const { currentLevelIndex, world } = this;
+    const { currentLevelIndex, currentLevel, world } = this;
     if (!world) {
       throw new Error('this should be impossible');
     }
-    const nextLevel = await world.loadLevel(currentLevelIndex);
-    this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
+    const lastLevel = currentLevel;
+    const nextSolvableLevel = await world.loadLevel(currentLevelIndex);
+    this.currentLevel = nextSolvableLevel && new PlayableLevel(nextSolvableLevel);
     if (this.currentLevel) {
       console.log(this.currentLevel.soln.printMoves());
       this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;
       this.stopwatch.addTime(1000 * (world.progression.secondsPerLevel || 0));
+      if (lastLevel) {
+        this.pendingClearAnimations.push({
+          begin: lastLevel.level.win,
+          end: this.currentLevel.level.start,
+          stopwatch: new Stopwatch(1000),
+        });
+      }
     } else {
       this.triggerGameOver();
     }
@@ -191,10 +206,10 @@ export class GameManager {
   }
   private animateMove(moveInfo: MoveInformation) {
     const animations = moveInfo.traveled.slice(0, -1).map((t, i, arr) => ({
-      traveled: t,
       stopwatch: new Stopwatch(1000 * (1 + (i / arr.length))),
+      traveled: t,
     }));
-    this.pendingAnimations.push(...animations);
+    this.pendingTravelAnimations.push(...animations);
   }
   private drawSprite(sprite: Sprite, x: number, y: number, scale?: number) {
     const { canvasElm, ctx, currentLevel } = this;
@@ -210,7 +225,7 @@ export class GameManager {
       x * blockWidth + (blockWidth * (1 - scale) / 2),
       y * blockHeight + (blockHeight * (1 - scale) / 2),
       blockWidth * scale,
-      blockHeight * scale
+      blockHeight * scale,
     );
   }
   private drawSpriteWithOpacity(alpha: number, sprite: Sprite, x: number, y: number, scale?: number) {
@@ -268,8 +283,8 @@ export class GameManager {
     }
 
     // ghosts
-    this.pendingAnimations = this.pendingAnimations.filter(a => a.stopwatch.getRemaining() > 0);
-    this.pendingAnimations.forEach(a => {
+    this.pendingTravelAnimations = this.pendingTravelAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
+    this.pendingTravelAnimations.forEach((a) => {
       const { traveled, stopwatch } = a;
       const opacity = stopwatch.getPercent() * 0.7;
       this.drawSpriteWithOpacity(
@@ -280,6 +295,23 @@ export class GameManager {
         traveled.point.y,
         1.2,
       );
+    });
+    // clear whiteout
+    this.pendingClearAnimations = this.pendingClearAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
+    this.pendingClearAnimations.forEach((a) => {
+      const { begin, end, stopwatch } = a;
+      const maxRadius = Math.max(width, height);
+      const percentFull = 1 - Math.abs((2 * stopwatch.getPercent()) - 1);
+      const source = stopwatch.getPercent() > 0.5 ? begin : end;
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(
+        (source.x + 0.5) * blockWidth,
+        (source.y + 0.5) * blockHeight,
+        percentFull * maxRadius,
+        0, 2 * Math.PI, false,
+      );
+      ctx.fill();
     });
 
     // goal square
