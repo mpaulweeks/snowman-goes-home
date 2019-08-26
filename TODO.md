@@ -1,10 +1,5 @@
 # todo
 
-- find way to come back to menu without destroying canvas + listeners
-  - maybe premake canvas in app but keep invisible?
-
-- add redux for better communication up the component chain
-
 - Add condition to level gen. Track bounce walls and teleport when used, so that solution must include them
 
 - find way to compress level into small string

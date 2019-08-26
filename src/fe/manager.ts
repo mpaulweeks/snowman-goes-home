@@ -153,10 +153,8 @@ export class GameManager {
   private async nextLevel() {
     const { currentLevelIndex, world } = this;
     if (!world) {
-      throw new Error('todo this should be impossible');
+      throw new Error('this should be impossible');
     }
-    // todo maybe keep animations between levels?
-    // this.pendingAnimations = [];
     const nextLevel = await world.loadLevel(currentLevelIndex);
     this.currentLevel = nextLevel && new PlayableLevel(nextLevel);
     if (this.currentLevel) {
@@ -276,7 +274,8 @@ export class GameManager {
       const opacity = stopwatch.getPercent() * 0.7;
       this.drawSpriteWithOpacity(
         opacity,
-        traveled.move === Move.Left ? Sprites.heroLeft : Sprites.heroRight, // todo this is buggy on up/dowh
+        // todo this is buggy on up/dowh
+        traveled.move === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
         traveled.point.x,
         traveled.point.y,
         1.2,
