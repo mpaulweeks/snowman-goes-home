@@ -85,10 +85,11 @@ export class GameManager {
   public clickReset = () => {
     this.currentLevel && this.currentLevel.reset();
   }
-  public mouseDown = (evt: React.MouseEvent<HTMLElement>) => {
+  public onTouchStart = (evt: React.TouchEvent<HTMLElement>) => {
+    const touchEvt = evt.nativeEvent.touches[0];
     const rect = (evt.target as HTMLElement).getBoundingClientRect();
-    const x = evt.clientX - rect.left;
-    const y = evt.clientY - rect.top;
+    const x = touchEvt.clientX - rect.left;
+    const y = touchEvt.clientY - rect.top;
     const px = x / rect.width;
     const py = y / rect.height;
     const isTopRight = px > py;

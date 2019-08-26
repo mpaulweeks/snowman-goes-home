@@ -68,7 +68,7 @@ class _GameView extends React.Component<Props> {
             <div>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</div>
           </Column>
         </Header>
-        <CanvasContainer onMouseDown={gm.mouseDown}>
+        <CanvasContainer onTouchStart={gm.onTouchStart}>
           {this.props.children}
           <CanvasOverlay url={overlay} />
         </CanvasContainer>
