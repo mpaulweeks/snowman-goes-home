@@ -25,7 +25,7 @@ const SubContainer = styled(Row)`
 const Header = styled(SubContainer)`
   height: 10vh;
   font-family: monospace;
-  font-size: 1.2em;
+  font-size: 1.8em;
   font-weight: bold;
 `;
 const Footer = styled(SubContainer)`
