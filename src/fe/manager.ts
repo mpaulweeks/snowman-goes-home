@@ -278,6 +278,12 @@ export class GameManager {
       }
     }
 
+    // blocks
+    currentLevel.level.blocks.forEach(block => {
+      const sprite = (block.x + block.y) % 2 === 0 ? Sprites.treeLight : Sprites.treeHeavy;
+      this.drawSprite(sprite, block.x, block.y);
+    });
+
     // ghosts
     this.pendingTravelAnimations = this.pendingTravelAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
     this.pendingTravelAnimations.forEach((a) => {
@@ -310,12 +316,6 @@ export class GameManager {
 
     // goal square
     this.drawSprite(Sprites.igloo, currentLevel.level.win.x, currentLevel.level.win.y);
-
-    // blocks
-    currentLevel.level.blocks.forEach(block => {
-      const sprite = (block.x + block.y) % 2 === 0 ? Sprites.treeLight : Sprites.treeHeavy;
-      this.drawSprite(sprite, block.x, block.y);
-    });
 
     // hero
     this.drawSprite(
