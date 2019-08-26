@@ -24,31 +24,30 @@ class _AudioPlayer extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { elmMenu, elmsByDiff } = this;
-    const { audio, world } = this.props.store;
-    if (!audio.playing) {
+    const { audioPlaying } = this.props.store;
+    if (!audioPlaying) {
       // if props gets set to false, make sure we dont have pointers to deleted DOM objects
       this.elmsByDiff = {};
+      return;
     }
-    if (world) {
-      if (world !== prevProps.store.world) {
-        // if changing to new world, stop old music
-        this.stopAll();
-      }
-      const elm = elmsByDiff[world.difficulty];
-      if (elm) {
-        // if elm, we're playing
-        this.playElm(elm);
-      }
-    } else {
-      // if we're in the menu, and have always been in the menu
-      if (elmMenu && !prevProps.store.world) {
-        this.playElm(elmMenu);
-      }
+
+    const lastWorld = prevProps.store.world;
+    const currWorld = this.props.store.world;
+    if (lastWorld !== currWorld) {
+      // if changing to new world, stop old music
+      this.stopAll();
     }
+
+    // figure out audio element for the world we're playing now
+    const currWorldAudioElm = currWorld ? elmsByDiff[currWorld.difficulty] : elmMenu;
+    if (!currWorldAudioElm) {
+      return;
+    }
+    this.playElm(currWorldAudioElm);
   }
   render() {
-    const { playing } = this.props.store.audio;
-    return playing && (
+    const { audioPlaying } = this.props.store;
+    return audioPlaying && (
       <Hidden>
         <audio
           loop

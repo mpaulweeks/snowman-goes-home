@@ -3,11 +3,8 @@ import { mobileCheck } from '../../fe/mobileCheck';
 import { Stopwatch, World } from '../../utils';
 import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_ABOUT, TOGGLE_DRAW_GRID, TOGGLE_HOW2PLAY, TOGGLE_MUSIC, TOGGLE_OPTIONS } from '../actionTypes';
 
-export interface AudioState {
-  playing: boolean;
-}
 export interface DataState {
-  audio: AudioState,
+  audioPlaying: boolean,
   isMobile: boolean;
   world?: World;
   secondsElapsed: string;
@@ -30,10 +27,7 @@ interface DataAction {
 }
 
 const initialState: DataState = {
-  audio: {
-    // playing: !mobilecheck(),
-    playing: false,
-  },
+  audioPlaying: false,
   isMobile: mobileCheck(),
   secondsElapsed: '',
   secondsRemaining: '',
@@ -75,9 +69,6 @@ const reducer: Reducer<DataState, DataAction> = (state = initialState, action: D
         ...state,
         isGameOver: false,
         world,
-        audio: {
-          ...state.audio,
-        },
       };
     }
     case TOGGLE_ABOUT: {
@@ -101,10 +92,7 @@ const reducer: Reducer<DataState, DataAction> = (state = initialState, action: D
     case TOGGLE_MUSIC: {
       return {
         ...state,
-        audio: {
-          ...state.audio,
-          playing: !state.audio.playing,
-        },
+        audioPlaying: !state.audioPlaying,
       };
     }
     case TOGGLE_OPTIONS: {

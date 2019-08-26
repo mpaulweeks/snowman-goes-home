@@ -32,7 +32,7 @@ class _OptionsView extends React.Component<Props, State> {
             </RowWithMargin>
             <RowWithMargin>
               <ActionButton onClick={this.props.toggleMusic}>
-                music is {this.props.store.audio.playing ? 'on' : 'off'}
+                music is {this.props.store.audioPlaying ? 'on' : 'off'}
               </ActionButton>
             </RowWithMargin>
             <RowWithMargin>
