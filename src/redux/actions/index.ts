@@ -1,5 +1,5 @@
 import { Stopwatch, World } from '../../utils';
-import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_MUSIC, TOGGLE_DRAW_GRID, TOGGLE_OPTIONS } from '../actionTypes';
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_ABOUT, TOGGLE_DRAW_GRID, TOGGLE_HOW2PLAY, TOGGLE_MUSIC, TOGGLE_OPTIONS } from '../actionTypes';
 
 export const setGameOver = () => ({
   type: SET_GAME_OVER,
@@ -27,8 +27,18 @@ export const setWorld = (world?: World) => ({
   },
 });
 
+export const toggleAbout = () => ({
+  type: TOGGLE_ABOUT,
+  payload: {},
+});
+
 export const toggleDrawGrid = () => ({
   type: TOGGLE_DRAW_GRID,
+  payload: {},
+});
+
+export const toggleHow2Play = () => ({
+  type: TOGGLE_HOW2PLAY,
   payload: {},
 });
 

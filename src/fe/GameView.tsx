@@ -62,10 +62,14 @@ class _GameView extends React.Component<Props> {
       <Container>
         <Header>
           <Column>
-            <div>Level {level + 1}</div>
+            <div>
+              Level {level + 1} / {world && (world.isInfinite() ? '∞' : world.totalLevels)}
+            </div>
           </Column>
           <Column>
-            <div>{world && world.isInfinite() ? secondsRemaining : secondsElapsed}s</div>
+            <div>
+              {world && world.isInfinite() ? secondsRemaining : secondsElapsed}s
+            </div>
           </Column>
         </Header>
         <CanvasContainer onTouchStart={gm.onTouchStart}>

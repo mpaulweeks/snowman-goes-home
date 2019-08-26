@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
-import { DataState, toggleOptions } from '../redux';
+import { DataState, toggleAbout, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { IcyContainer, LoadingButton, ActionButton, Row, RowWithPadding, BubbleArea, MenuTitle } from './common';
+import { IcyContainer, LoadingButton, ActionButton, Row, BubbleArea, MenuTitle, RowWithMargin, ColumnWithPadding } from './common';
 
 const WorldOptionContainer = styled(Row)`
   justify-content: center;
@@ -24,6 +24,7 @@ const WorldInfo = styled.span`
 interface Props {
   gm: GameManager;
   store: DataState;
+  toggleAbout: () => void;
   toggleOptions: () => void;
 };
 
@@ -88,59 +89,54 @@ class _MenuView extends React.Component<Props, State> {
           <BubbleArea>
             <MenuTitle>
               ICY PATH
-              <br />
+            </MenuTitle>
+            <Row>
               <img alt="" src={Sprites.igloo.default.url} />
               <img alt="" src={Sprites.heroLeft.default.url} />
-            </MenuTitle>
+            </Row>
           </BubbleArea>
         </Row>
         <WorldOptionContainer>
-          {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map(world => (
+          {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map((world) => (
             <BubbleArea key={world.difficulty}>
-              <Row>
-                <WorldTitle>
-                  {world.displayName()}
-                </WorldTitle>
-              </Row>
-              <Row>
-                <WorldInfo>
-                  {world.isInfinite() ? 'Limited Time' : world.totalLevels + ' Levels'}
-                </WorldInfo>
-              </Row>
-              <Row>
-                {state[world.difficulty] ? (
-                  <ActionButton onClick={() => this.loadWorld(world)}>
-                    PLAY
+              <ColumnWithPadding>
+                <Row>
+                  <WorldTitle>
+                    {world.displayName()}
+                  </WorldTitle>
+                </Row>
+                <Row>
+                  {state[world.difficulty] ? (
+                    <ActionButton onClick={() => this.loadWorld(world)}>
+                      PLAY
                 </ActionButton>
-                ) : (
-                    <LoadingButton>
-                      loading
+                  ) : (
+                      <LoadingButton>
+                        loading
                 </LoadingButton>
-                  )}
-              </Row>
+                    )}
+                </Row>
+                <Row>
+                  <WorldInfo>
+                    {world.isInfinite() ? 'Limited Time' : world.totalLevels + ' Levels'}
+                  </WorldInfo>
+                </Row>
+              </ColumnWithPadding>
             </BubbleArea>
           ))}
         </WorldOptionContainer>
         <Row>
           <BubbleArea>
-            <RowWithPadding>
-              <ActionButton onClick={() => this.props.toggleOptions()}>
+            <RowWithMargin>
+              <ActionButton onClick={this.props.toggleOptions}>
                 options
               </ActionButton>
-            </RowWithPadding>
-          </BubbleArea>
-        </Row>
-        <Row>
-          <BubbleArea>
-            <div>
-              made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
-            </div>
-            <div>
-              assets by <a href="https://www.kenney.nl">Kenney</a> + <a href="https://amyjxu.me">Amy Xu</a>
-            </div>
-            <div>
-              music by <a href="https://visager.bandcamp.com/album/songs-from-an-unmade-world">Visager</a>
-            </div>
+            </RowWithMargin>
+            <RowWithMargin>
+              <ActionButton onClick={this.props.toggleAbout}>
+                about
+              </ActionButton>
+            </RowWithMargin>
           </BubbleArea>
         </Row>
       </IcyContainer>
@@ -153,6 +149,7 @@ export const MenuView = connect(
     store,
   }),
   {
+    toggleAbout,
     toggleOptions,
   }
 )(_MenuView);

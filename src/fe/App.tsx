@@ -8,6 +8,8 @@ import { ScoreView } from './ScoreView';
 import { connect } from 'react-redux';
 import { DataState } from '../redux/reducers';
 import { GameManager } from './manager';
+import { How2PlayView } from './How2PlayView';
+import { AboutView } from './AboutView';
 
 const Container = styled.div`
   max-width: 50vh;
@@ -55,6 +57,8 @@ class _App extends React.Component<Props> {
         <MenuView gm={gm} />
         <ScoreView gm={gm} />
         <OptionsView gm={gm} />
+        <How2PlayView />
+        <AboutView />
       </Container>
     );
   }

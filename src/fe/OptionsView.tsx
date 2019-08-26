@@ -1,17 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { DataState, toggleDrawGrid, toggleMusic, toggleOptions } from '../redux';
+import { DataState, toggleDrawGrid, toggleHow2Play, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
-import { IcyContainer, Row, RowWithPadding, BubbleArea, MenuTitle, ActionButton } from './common';
+import { IcyContainer, Row, RowWithMargin, BubbleArea, MenuTitle, ActionButton } from './common';
 
 interface Props {
   gm: GameManager;
   store: DataState;
   toggleDrawGrid: () => void;
+  toggleHow2Play: () => void;
   toggleMusic: () => void;
   toggleOptions: () => void;
 };
-interface State {};
+interface State { };
 
 class _OptionsView extends React.Component<Props, State> {
   onReset = () => {
@@ -26,35 +27,40 @@ class _OptionsView extends React.Component<Props, State> {
       <IcyContainer>
         <Row>
           <BubbleArea>
-            <RowWithPadding>
+            <RowWithMargin>
               <MenuTitle> OPTIONS </MenuTitle>
-            </RowWithPadding>
-            <RowWithPadding>
-              <ActionButton onClick={() => this.props.toggleMusic()}>
+            </RowWithMargin>
+            <RowWithMargin>
+              <ActionButton onClick={this.props.toggleMusic}>
                 music is {this.props.store.audio.playing ? 'on' : 'off'}
               </ActionButton>
-            </RowWithPadding>
-            <RowWithPadding>
-              <ActionButton onClick={() => this.props.toggleDrawGrid()}>
+            </RowWithMargin>
+            <RowWithMargin>
+              <ActionButton onClick={this.props.toggleDrawGrid}>
                 grid is {this.props.store.shouldDrawGrid ? 'on' : 'off'}
               </ActionButton>
-            </RowWithPadding>
-            {store.world && (
-              <RowWithPadding>
-                <ActionButton onClick={() => {gm.unsetWorld(); this.props.toggleOptions()}}>
-                  quit to menu
-                </ActionButton>
-              </RowWithPadding>
-            )}
+            </RowWithMargin>
+            <RowWithMargin>
+              <ActionButton onClick={this.props.toggleHow2Play}>
+                how 2 play
+              </ActionButton>
+            </RowWithMargin>
           </BubbleArea>
         </Row>
         <Row>
           <BubbleArea>
-            <RowWithPadding>
-              <ActionButton onClick={() => this.props.toggleOptions()}>
-                back
+            <RowWithMargin>
+              <ActionButton onClick={this.props.toggleOptions}>
+                {store.world ? 'back to game' : 'back to menu'}
               </ActionButton>
-            </RowWithPadding>
+            </RowWithMargin>
+            {store.world && (
+              <RowWithMargin>
+                <ActionButton onClick={() => { gm.unsetWorld(); this.props.toggleOptions(); }}>
+                  quit to menu
+              </ActionButton>
+              </RowWithMargin>
+            )}
           </BubbleArea>
         </Row>
       </IcyContainer>
@@ -68,6 +74,7 @@ export const OptionsView = connect(
   }),
   {
     toggleDrawGrid,
+    toggleHow2Play,
     toggleMusic,
     toggleOptions,
   }

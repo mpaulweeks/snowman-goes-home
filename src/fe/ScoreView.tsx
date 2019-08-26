@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { DataState } from '../redux';
-import { ActionButton, BubbleArea, IcyContainer, MenuTitle, Row, RowWithPadding } from './common';
+import { ActionButton, BubbleArea, IcyContainer, MenuTitle, Row, RowWithMargin } from './common';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
 
@@ -22,34 +22,34 @@ class _ScoreView extends React.Component<Props, State> {
       <IcyContainer>
         <Row>
           <BubbleArea>
-            <RowWithPadding>
+            <RowWithMargin>
               <MenuTitle>
                 {world.isInfinite() ? `GAME OVER!` : `YOU WIN!`}
               </MenuTitle>
-            </RowWithPadding>
-            <RowWithPadding>
+            </RowWithMargin>
+            <RowWithMargin>
               <img alt="" src={Sprites.igloo.default.url} />
               <img className="rotate" alt="" src={Sprites.heroLeft.default.url} />
-            </RowWithPadding>
+            </RowWithMargin>
             {world.isInfinite() ? (
               <div>
-                <RowWithPadding>
+                <RowWithMargin>
                   You managed to complete {store.level - 1} levels.
-                </RowWithPadding>
+                </RowWithMargin>
               </div>
             ) : (
                 <div>
-                  <RowWithPadding>
+                  <RowWithMargin>
                     You managed to beat {world.displayName()} in {store.secondsElapsed} seconds.
-                </RowWithPadding>
-                  <RowWithPadding>
+                </RowWithMargin>
+                  <RowWithMargin>
                     Try to beat it faster or play a higher difficulty!
-                </RowWithPadding>
+                </RowWithMargin>
                 </div>
               )}
-            <RowWithPadding>
+            <RowWithMargin>
               <ActionButton onClick={() => gm.unsetWorld()}>MENU</ActionButton>
-            </RowWithPadding>
+            </RowWithMargin>
           </BubbleArea>
         </Row>
       </IcyContainer>

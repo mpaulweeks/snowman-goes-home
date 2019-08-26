@@ -9,16 +9,24 @@ export const Row = styled.div`
   flex-wrap: nowrap;
 `;
 export const RowWithPadding = styled(Row)`
-  margin: 1em;
+  margin: 1em 0.5em;
+`;
+export const RowWithMargin = styled(RowWithPadding)`
+  margin-top: 0em;
+  &:first-child {
+    margin-top: 1em;
+  }
 `;
 export const Column = styled(Row)`
   flex-direction: column;
+`;
+export const ColumnWithPadding = styled(Column)`
+  margin: 1em 0.5em;
 `;
 
 export const MenuTitle = styled.h1`
   margin-left: 2em;
   margin-right: 2em;
-  margin-bottom: 0px;
   font-family: monospace;
   font-style: italic;
 `;
