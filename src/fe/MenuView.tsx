@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { DataState, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { IcyContainer, LoadingButton, ActionButton, Row, BubbleArea, MenuTitle, RowWithMargin, ColumnWithPadding, GameTitle } from './common';
+import { IcyContainer, LoadingButton, ActionButton, Row, BubbleArea, RowWithMargin, ColumnWithPadding, GameTitle } from './common';
 
 const WorldOptionContainer = styled(Row)`
   justify-content: center;
