@@ -4,17 +4,18 @@ import { Stopwatch, World } from '../../utils';
 import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_ABOUT, TOGGLE_DRAW_GRID, TOGGLE_HOW2PLAY, TOGGLE_MUSIC, TOGGLE_OPTIONS } from '../actionTypes';
 
 export interface DataState {
-  audioPlaying: boolean,
+  audioPlaying: boolean;
+  isGameOver: boolean;
   isMobile: boolean;
-  world?: World;
+  level: number;
   secondsElapsed: string;
   secondsRemaining: string;
-  level: number;
-  isGameOver: boolean;
   shouldDrawGrid: boolean;
   showAbout: boolean;
   showHow2Play: boolean;
   showOptions: boolean;
+  showTutorial: boolean;
+  world?: World;
 }
 
 interface DataAction {
@@ -28,16 +29,17 @@ interface DataAction {
 
 const initialState: DataState = {
   audioPlaying: false,
+  isGameOver: false,
   isMobile: mobileCheck(),
+  level: 0,
   secondsElapsed: '',
   secondsRemaining: '',
-  level: 0,
-  world: undefined,
-  isGameOver: false,
   shouldDrawGrid: false,
   showAbout: false,
-  showHow2Play: false,
+  showHow2Play: true,
   showOptions: false,
+  showTutorial: true,
+  world: undefined,
 };
 
 const reducer: Reducer<DataState, DataAction> = (state = initialState, action: DataAction) => {
@@ -87,6 +89,7 @@ const reducer: Reducer<DataState, DataAction> = (state = initialState, action: D
       return {
         ...state,
         showHow2Play: !state.showHow2Play,
+        showTutorial: false,
       };
     }
     case TOGGLE_MUSIC: {

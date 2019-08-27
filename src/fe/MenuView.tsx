@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { DataState, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
-import { IcyContainer, LoadingButton, ActionButton, Row, BubbleArea, MenuTitle, RowWithMargin, ColumnWithPadding } from './common';
+import { IcyContainer, LoadingButton, ActionButton, Row, BubbleArea, MenuTitle, RowWithMargin, ColumnWithPadding, GameTitle } from './common';
 
 const WorldOptionContainer = styled(Row)`
   justify-content: center;
@@ -85,21 +85,7 @@ class _MenuView extends React.Component<Props, State> {
     ];
     return (
       <IcyContainer>
-        <Row>
-          <BubbleArea>
-            <MenuTitle>
-              <Row>
-                Snowman
-                <img alt="" src={Sprites.heroLeft.default.url} />
-              </Row>
-              <Row>
-                <img alt="" src={Sprites.igloo.default.url} />
-                Goes
-                Home
-              </Row>
-            </MenuTitle>
-          </BubbleArea>
-        </Row>
+        <GameTitle />
         <WorldOptionContainer>
           {displayOrder.map(d => worldLoader.getLoaderByDifficulty(d)).map((world) => (
             <BubbleArea key={world.difficulty}>

@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { Sprites } from './sprite';
 
@@ -103,3 +104,21 @@ export const ActionButton = styled(LoadingButton)`
     background-color: var(--foreground);
   }
 `;
+
+export const GameTitle = () => (
+  <Row>
+    <BubbleArea>
+      <MenuTitle>
+        <Row>
+          Snowman
+          <img alt="" src={Sprites.heroLeft.default.url} />
+        </Row>
+        <Row>
+          <img alt="" src={Sprites.igloo.default.url} />
+          Goes
+          Home
+        </Row>
+      </MenuTitle>
+    </BubbleArea>
+  </Row>
+);
