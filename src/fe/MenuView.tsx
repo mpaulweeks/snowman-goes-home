@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
-import { DataState, toggleAbout, toggleOptions } from '../redux';
+import { DataState, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
 import { IcyContainer, LoadingButton, ActionButton, Row, BubbleArea, MenuTitle, RowWithMargin, ColumnWithPadding } from './common';
@@ -24,8 +24,8 @@ const WorldInfo = styled.span`
 interface Props {
   gm: GameManager;
   store: DataState;
-  toggleAbout: () => void;
-  toggleOptions: () => void;
+  toggleMusic(): void;
+  toggleOptions(): void;
 };
 
 interface State {
@@ -128,13 +128,13 @@ class _MenuView extends React.Component<Props, State> {
         <Row>
           <BubbleArea>
             <RowWithMargin>
-              <ActionButton onClick={this.props.toggleOptions}>
-                options
+              <ActionButton onClick={this.props.toggleMusic}>
+                music is {this.props.store.audioPlaying ? 'on' : 'off'}
               </ActionButton>
             </RowWithMargin>
             <RowWithMargin>
-              <ActionButton onClick={this.props.toggleAbout}>
-                about
+              <ActionButton onClick={this.props.toggleOptions}>
+                options
               </ActionButton>
             </RowWithMargin>
           </BubbleArea>
@@ -149,7 +149,7 @@ export const MenuView = connect(
     store,
   }),
   {
-    toggleAbout,
+    toggleMusic,
     toggleOptions,
   }
 )(_MenuView);

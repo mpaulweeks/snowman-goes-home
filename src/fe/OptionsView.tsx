@@ -1,16 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { DataState, toggleDrawGrid, toggleHow2Play, toggleMusic, toggleOptions } from '../redux';
+import { DataState, toggleAbout, toggleDrawGrid, toggleHow2Play, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { IcyContainer, Row, RowWithMargin, BubbleArea, MenuTitle, ActionButton } from './common';
 
 interface Props {
   gm: GameManager;
   store: DataState;
-  toggleDrawGrid: () => void;
-  toggleHow2Play: () => void;
-  toggleMusic: () => void;
-  toggleOptions: () => void;
+  toggleAbout(): void;
+  toggleDrawGrid(): void;
+  toggleHow2Play(): void;
+  toggleMusic(): void;
+  toggleOptions(): void;
 };
 interface State { };
 
@@ -40,9 +41,18 @@ class _OptionsView extends React.Component<Props, State> {
                 grid is {this.props.store.shouldDrawGrid ? 'on' : 'off'}
               </ActionButton>
             </RowWithMargin>
+          </BubbleArea>
+        </Row>
+        <Row>
+          <BubbleArea>
             <RowWithMargin>
               <ActionButton onClick={this.props.toggleHow2Play}>
                 how 2 play
+              </ActionButton>
+            </RowWithMargin>
+            <RowWithMargin>
+              <ActionButton onClick={this.props.toggleAbout}>
+                about
               </ActionButton>
             </RowWithMargin>
           </BubbleArea>
@@ -73,6 +83,7 @@ export const OptionsView = connect(
     store,
   }),
   {
+    toggleAbout,
     toggleDrawGrid,
     toggleHow2Play,
     toggleMusic,
