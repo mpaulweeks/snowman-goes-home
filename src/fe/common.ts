@@ -25,10 +25,20 @@ export const ColumnWithPadding = styled(Column)`
 `;
 
 export const MenuTitle = styled.h1`
-  margin-left: 2em;
-  margin-right: 2em;
+  text-align: center;
+  margin: 0em 0.5em;
   font-family: monospace;
   font-style: italic;
+
+  & img {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+  }
+
+  & ${Row} {
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 export const AbsoluteContainer = styled(Column)`

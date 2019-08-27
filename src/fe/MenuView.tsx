@@ -88,12 +88,16 @@ class _MenuView extends React.Component<Props, State> {
         <Row>
           <BubbleArea>
             <MenuTitle>
-              ICY PATH
+              <Row>
+                Snowman
+                <img alt="" src={Sprites.heroLeft.default.url} />
+              </Row>
+              <Row>
+                <img alt="" src={Sprites.igloo.default.url} />
+                Goes
+                Home
+              </Row>
             </MenuTitle>
-            <Row>
-              <img alt="" src={Sprites.igloo.default.url} />
-              <img alt="" src={Sprites.heroLeft.default.url} />
-            </Row>
           </BubbleArea>
         </Row>
         <WorldOptionContainer>
