@@ -13,43 +13,43 @@ export enum Difficulty {
 
 // race against time to get far, then get score based on how quick
 export interface Progression {
-  gridSize: (number),
+  gridSize: (number);
   minMoves: number;
   levelsPerTier: number;
   totalLevels: number;
   secondsPerLevel?: number;
-  boilFps: number,
+  boilFps: number;
 }
 
 const ProgressionByDifficulty = {
   [Difficulty.Easy]: {
     boilFps: 3,
     gridSize: 1,
-    minMoves: 7,
     levelsPerTier: 1,
+    minMoves: 5,
     totalLevels: 5,
   },
   [Difficulty.Medium]: {
     boilFps: 3,
     gridSize: 1.5,
-    minMoves: 12,
     levelsPerTier: 1,
+    minMoves: 10,
     totalLevels: 10,
   },
   [Difficulty.Hard]: {
     boilFps: 6,
     gridSize: 2,
-    minMoves: 12,
     levelsPerTier: 2,
-    totalLevels: 15,
+    minMoves: 12,
+    totalLevels: 16,
   },
   [Difficulty.Infinite]: {
     boilFps: 9,
     gridSize: 1.5,
-    minMoves: 7,
     levelsPerTier: 3,
-    totalLevels: 20,
+    minMoves: 7,
     secondsPerLevel: 10,
+    totalLevels: 20,
   },
 }
 
