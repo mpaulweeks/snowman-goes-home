@@ -10,10 +10,18 @@ const moveMap: { [code: string]: Move } = {
   ArrowUp: Move.Up,
 };
 
+const facingMap: { [move: string]: Sprite } = {
+  [Move.Down]: Sprites.heroRight,
+  [Move.Left]: Sprites.heroLeft,
+  [Move.Right]: Sprites.heroRight,
+  [Move.Up]: Sprites.heroLeft,
+};
+
 interface Animation {
   stopwatch: Stopwatch;
 }
 interface TravelAnimation extends Animation {
+  facing: Sprite;
   traveled: Traveled;
 }
 interface ClearAnimation extends Animation {
@@ -32,7 +40,7 @@ export class GameManager {
   private stopwatch = new Stopwatch();
   private currentLevel: (PlayableLevel | undefined);
   private currentLevelIndex = 0;
-  private spriteFacing = Move.Right;
+  private spriteFacing = Sprites.heroRight;
   private pendingTravelAnimations: TravelAnimation[] = [];
   private pendingClearAnimations: ClearAnimation[] = [];
   private frameTick = 0;
@@ -89,7 +97,9 @@ export class GameManager {
   }
 
   public clickReset = () => {
-    this.currentLevel && this.currentLevel.reset();
+    if (this.currentLevel) {
+      this.currentLevel.reset();
+    }
   }
   public onTouchStart = (evt: React.TouchEvent<HTMLElement>) => {
     const touchEvt = evt.nativeEvent.touches[0];
@@ -147,11 +157,9 @@ export class GameManager {
       return;
     }
     const moveInfo = currentLevel.moveHero(move);
-    // sprite show face left/right or switch its current direction
-    this.spriteFacing = [Move.Left, Move.Right].includes(move) ? move : (
-      this.spriteFacing === Move.Right ? Move.Left : Move.Right
-    )
-    this.animateMove(moveInfo);
+    // sprite show face left/right or keep its current direction
+    this.spriteFacing = [Move.Left, Move.Right].includes(move) ? facingMap[move] : this.spriteFacing;
+    this.animateMove(moveInfo, this.spriteFacing);
     if (currentLevel.level.isWinningPoint(moveInfo.point)) {
       this.nextLevel();
     }
@@ -203,8 +211,9 @@ export class GameManager {
     }
     window.requestAnimationFrame(() => this.loop());
   }
-  private animateMove(moveInfo: MoveInformation) {
+  private animateMove(moveInfo: MoveInformation, facing: Sprite) {
     const animations = moveInfo.traveled.slice(0, -1).map((t, i, arr) => ({
+      facing,
       stopwatch: new Stopwatch(1000 * (1 + (i / arr.length))),
       traveled: t,
     }));
@@ -290,12 +299,11 @@ export class GameManager {
     // ghosts
     this.pendingTravelAnimations = this.pendingTravelAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
     this.pendingTravelAnimations.forEach((a) => {
-      const { traveled, stopwatch } = a;
+      const { facing, traveled, stopwatch } = a;
       const opacity = stopwatch.getPercent() * 0.7;
       this.drawSpriteWithOpacity(
         opacity,
-        // todo this is buggy on up/dowh
-        traveled.move === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
+        facing,
         traveled.point.x,
         traveled.point.y,
         1.2,
@@ -322,7 +330,7 @@ export class GameManager {
 
     // hero
     this.drawSprite(
-      this.spriteFacing === Move.Left ? Sprites.heroLeft : Sprites.heroRight,
+      this.spriteFacing,
       currentLevel.hero.point.x, currentLevel.hero.point.y, 1.2);
   }
 }
