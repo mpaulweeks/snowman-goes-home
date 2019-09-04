@@ -55,7 +55,7 @@ class _OptionsView extends React.Component<Props, State> {
           <BubbleArea>
             <RowWithMargin>
               <ActionButton onClick={this.props.toggleHow2Play}>
-                how 2 play
+                how to play
               </ActionButton>
             </RowWithMargin>
             <RowWithMargin>
