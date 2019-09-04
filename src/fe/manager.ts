@@ -49,9 +49,9 @@ export class GameManager {
   private currentLevel: (PlayableLevel | undefined);
   private currentLevelIndex = 0;
   private spriteFacing = Sprites.heroRight;
-  private pendingTravelAnimations: TravelAnimation[] = [];
-  private pendingTouchAnimations: TouchAnimation[] = [];
-  private pendingClearAnimations: ClearAnimation[] = [];
+  private travelAnimations: TravelAnimation[] = [];
+  private touchAnimations: TouchAnimation[] = [];
+  private clearAnimations: ClearAnimation[] = [];
   private touchTriangleByMove: TouchTriangleByMove = {};
   private frameTick = 0;
 
@@ -199,8 +199,8 @@ export class GameManager {
       this.dispatch(setLevel(this.currentLevelIndex));
       this.currentLevelIndex += 1;
       this.stopwatch.addTime(1000 * (world.progression.secondsPerLevel || 0));
-      this.pendingTravelAnimations = [];
-      this.pendingClearAnimations.push({
+      this.travelAnimations = [];
+      this.clearAnimations.push({
         origin: this.currentLevel.level.start,
         stopwatch: new Stopwatch(500),
       }, {
@@ -240,8 +240,8 @@ export class GameManager {
       stopwatch: new Stopwatch(1000 * (1 + (i / arr.length))),
       traveled: t,
     }));
-    this.pendingTravelAnimations.push(...animations);
-    this.pendingTouchAnimations.push({
+    this.travelAnimations.push(...animations);
+    this.touchAnimations.push({
       move,
       stopwatch: new Stopwatch(200),
     });
@@ -324,8 +324,8 @@ export class GameManager {
     });
 
     // ghosts
-    this.pendingTravelAnimations = this.pendingTravelAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
-    this.pendingTravelAnimations.forEach((a) => {
+    this.travelAnimations = this.travelAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
+    this.travelAnimations.forEach((a) => {
       const { facing, traveled, stopwatch } = a;
       const opacity = stopwatch.getPercent() * 0.7;
       this.drawSpriteWithOpacity(
@@ -338,9 +338,9 @@ export class GameManager {
     });
 
     // touch indicator
-    this.pendingTouchAnimations = this.pendingTouchAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
+    this.touchAnimations = this.touchAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
     if (store.getState().shouldDrawTouch) {
-      this.pendingTouchAnimations.forEach((a) => {
+      this.touchAnimations.forEach((a) => {
         const { move, stopwatch } = a;
         const points = touchTriangleByMove[move];
         const opacity = stopwatch.getPercent() * 0.5;
@@ -355,8 +355,8 @@ export class GameManager {
     }
 
     // clear whiteout
-    this.pendingClearAnimations = this.pendingClearAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
-    this.pendingClearAnimations.forEach((a) => {
+    this.clearAnimations = this.clearAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
+    this.clearAnimations.forEach((a) => {
       const { origin, stopwatch } = a;
       const maxRadius = Math.max(width, height);
       ctx.fillStyle = 'white';
