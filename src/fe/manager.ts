@@ -244,10 +244,12 @@ export class GameManager {
       traveled: t,
     }));
     this.travelAnimations.push(...animations);
-    this.touchAnimations.push({
-      move,
-      stopwatch: new Stopwatch(200),
-    });
+    if (store.getState().shouldDrawTouch) {
+      this.touchAnimations.push({
+        move,
+        stopwatch: new Stopwatch(200),
+      });
+    }
   }
   private drawSprite(sprite: Sprite, x: number, y: number, scale?: number) {
     const { canvasElm, ctx, currentLevel } = this;
@@ -342,20 +344,18 @@ export class GameManager {
 
     // touch indicator
     this.touchAnimations = this.touchAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
-    if (store.getState().shouldDrawTouch) {
-      this.touchAnimations.forEach((a) => {
-        const { move, stopwatch } = a;
-        const points = touchPolygonByMove[move];
-        const opacity = stopwatch.getPercent() * 0.5;
-        ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        points.reverse().forEach((p) => {
-          ctx.lineTo(p.x, p.y);
-        });
-        ctx.fill();
+    this.touchAnimations.forEach((a) => {
+      const { move, stopwatch } = a;
+      const points = touchPolygonByMove[move];
+      const opacity = stopwatch.getPercent() * 0.5;
+      ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      points.reverse().forEach((p) => {
+        ctx.lineTo(p.x, p.y);
       });
-    }
+      ctx.fill();
+    });
 
     // clear whiteout
     this.clearAnimations = this.clearAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
