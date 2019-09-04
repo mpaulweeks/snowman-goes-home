@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { DataState, toggleAbout, toggleDrawGrid, toggleHow2Play, toggleMusic, toggleOptions } from '../redux';
+import { DataState, toggleAbout, toggleDrawGrid, toggleDrawTouch, toggleHow2Play, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { IcyContainer, Row, RowWithMargin, BubbleArea, MenuTitle, ActionButton } from './common';
 
@@ -9,6 +9,7 @@ interface Props {
   store: DataState;
   toggleAbout(): void;
   toggleDrawGrid(): void;
+  toggleDrawTouch(): void;
   toggleHow2Play(): void;
   toggleMusic(): void;
   toggleOptions(): void;
@@ -41,6 +42,13 @@ class _OptionsView extends React.Component<Props, State> {
                 grid is {this.props.store.shouldDrawGrid ? 'on' : 'off'}
               </ActionButton>
             </RowWithMargin>
+            {store.isMobile && (
+              <RowWithMargin>
+                <ActionButton onClick={this.props.toggleDrawTouch}>
+                  touch indicators are {this.props.store.shouldDrawTouch ? 'on' : 'off'}
+                </ActionButton>
+              </RowWithMargin>
+            )}
           </BubbleArea>
         </Row>
         <Row>
@@ -85,6 +93,7 @@ export const OptionsView = connect(
   {
     toggleAbout,
     toggleDrawGrid,
+    toggleDrawTouch,
     toggleHow2Play,
     toggleMusic,
     toggleOptions,
