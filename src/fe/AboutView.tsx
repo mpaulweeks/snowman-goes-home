@@ -24,7 +24,7 @@ class _AboutView extends React.Component<Props, State> {
             </RowWithMargin>
             <RowWithMargin>
               <div>
-                made by <a href="https://twitter.com/mpaulweeks">@mpaulweeks</a>
+                made by <a href="https://www.mpaulweeks.com">mpaulweeks</a>
               </div>
             </RowWithMargin>
             <RowWithMargin>
@@ -40,6 +40,11 @@ class _AboutView extends React.Component<Props, State> {
             <RowWithMargin>
               <div>
                 music by <a href="https://visager.bandcamp.com/album/songs-from-an-unmade-world">Visager</a>
+              </div>
+            </RowWithMargin>
+            <RowWithMargin>
+              <div>
+                ❄️<i>August 2019</i> ❄️
               </div>
             </RowWithMargin>
           </BubbleArea>
