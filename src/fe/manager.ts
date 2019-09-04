@@ -52,7 +52,7 @@ export class GameManager {
   private travelAnimations: TravelAnimation[] = [];
   private touchAnimations: TouchAnimation[] = [];
   private clearAnimations: ClearAnimation[] = [];
-  private touchTriangleByMove: TouchTriangleByMove = {};
+  private touchPolygonByMove: TouchTriangleByMove = {};
   private frameTick = 0;
 
   constructor() {
@@ -105,17 +105,20 @@ export class GameManager {
     canvasElm.height = this.canvasDimensions.y;
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
 
-    // setup touchTriangleByMove
-    const Center = new Point(canvasElm.width / 2, canvasElm.height / 2);
+    // setup touchPolygonByMove
     const TopLeft = new Point(0, 0);
+    const TopLeftCenter = new Point(canvasElm.width / 4, canvasElm.height / 4);
     const TopRight = new Point(canvasElm.width, 0);
+    const TopRightCenter = new Point(canvasElm.width * 3 / 4, canvasElm.height / 4);
     const BottomLeft = new Point(0, canvasElm.height);
+    const BottomLeftCenter = new Point(canvasElm.width / 4, canvasElm.height * 3 / 4);
     const BottomRight = new Point(canvasElm.width, canvasElm.height);
-    this.touchTriangleByMove = {
-      [Move.Left]: [Center, TopLeft, BottomLeft],
-      [Move.Right]: [Center, TopRight, BottomRight],
-      [Move.Up]: [Center, TopLeft, TopRight],
-      [Move.Down]: [Center, BottomLeft, BottomRight],
+    const BottomRightCenter = new Point(canvasElm.width * 3 / 4, canvasElm.height * 3 / 4);
+    this.touchPolygonByMove = {
+      [Move.Left]: [TopLeft, TopLeftCenter, BottomLeftCenter, BottomLeft],
+      [Move.Right]: [TopRight, TopRightCenter, BottomRightCenter, BottomRight],
+      [Move.Up]: [TopLeft, TopLeftCenter, TopRightCenter, TopRight],
+      [Move.Down]: [BottomLeft, BottomLeftCenter, BottomRightCenter, BottomRight],
     };
   }
 
@@ -274,7 +277,7 @@ export class GameManager {
     ctx.globalAlpha = oldAlpha;
   }
   private async draw() {
-    const { canvasElm, ctx, currentLevel, world, touchTriangleByMove } = this;
+    const { canvasElm, ctx, currentLevel, world, touchPolygonByMove } = this;
     if (!canvasElm || !ctx) {
       return;
     }
@@ -342,7 +345,7 @@ export class GameManager {
     if (store.getState().shouldDrawTouch) {
       this.touchAnimations.forEach((a) => {
         const { move, stopwatch } = a;
-        const points = touchTriangleByMove[move];
+        const points = touchPolygonByMove[move];
         const opacity = stopwatch.getPercent() * 0.5;
         ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
         ctx.beginPath();
