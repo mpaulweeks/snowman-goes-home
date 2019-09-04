@@ -4,6 +4,7 @@ export const SET_TIMER = 'SET_TIMER';
 export const SET_WORLD = 'SET_WORLD';
 export const TOGGLE_ABOUT = 'TOGGLE_ABOUT';
 export const TOGGLE_DRAW_GRID = 'TOGGLE_DRAW_GRID';
+export const TOGGLE_DRAW_TOUCH = 'TOGGLE_DRAW_TOUCH';
 export const TOGGLE_HOW2PLAY = 'TOGGLE_HOW2PLAY';
 export const TOGGLE_MUSIC = 'TOGGLE_MUSIC';
 export const TOGGLE_OPTIONS = 'TOGGLE_OPTIONS';

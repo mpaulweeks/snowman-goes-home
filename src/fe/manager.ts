@@ -24,9 +24,17 @@ interface TravelAnimation extends Animation {
   facing: Sprite;
   traveled: Traveled;
 }
+interface TouchAnimation extends Animation {
+  move: Move;
+}
 interface ClearAnimation extends Animation {
   origin: Point;
 }
+interface TouchTriangleByMove {
+  [move: string]: Point[];
+}
+
+const CanvasNotReadyError = new Error('canvas is not loaded yet');
 
 export class GameManager {
   public worldLoader: WorldLoader;
@@ -42,7 +50,9 @@ export class GameManager {
   private currentLevelIndex = 0;
   private spriteFacing = Sprites.heroRight;
   private pendingTravelAnimations: TravelAnimation[] = [];
+  private pendingTouchAnimations: TouchAnimation[] = [];
   private pendingClearAnimations: ClearAnimation[] = [];
+  private touchTriangleByMove: TouchTriangleByMove = {};
   private frameTick = 0;
 
   constructor() {
@@ -94,6 +104,19 @@ export class GameManager {
     canvasElm.width = this.canvasDimensions.x;
     canvasElm.height = this.canvasDimensions.y;
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
+
+    // setup touchTriangleByMove
+    const Center = new Point(canvasElm.width / 2, canvasElm.height / 2);
+    const TopLeft = new Point(0, 0);
+    const TopRight = new Point(canvasElm.width, 0);
+    const BottomLeft = new Point(0, canvasElm.height);
+    const BottomRight = new Point(canvasElm.width, canvasElm.height);
+    this.touchTriangleByMove = {
+      [Move.Left]: [Center, TopLeft, BottomLeft],
+      [Move.Right]: [Center, TopRight, BottomRight],
+      [Move.Up]: [Center, TopLeft, TopRight],
+      [Move.Down]: [Center, BottomLeft, BottomRight],
+    };
   }
 
   public clickReset = () => {
@@ -159,7 +182,7 @@ export class GameManager {
     const moveInfo = currentLevel.moveHero(move);
     // sprite show face left/right or keep its current direction
     this.spriteFacing = [Move.Left, Move.Right].includes(move) ? facingMap[move] : this.spriteFacing;
-    this.animateMove(moveInfo, this.spriteFacing);
+    this.animateMove(move, moveInfo, this.spriteFacing);
     if (currentLevel.level.isWinningPoint(moveInfo.point)) {
       this.nextLevel();
     }
@@ -211,13 +234,17 @@ export class GameManager {
     }
     window.requestAnimationFrame(() => this.loop());
   }
-  private animateMove(moveInfo: MoveInformation, facing: Sprite) {
+  private animateMove(move: Move, moveInfo: MoveInformation, facing: Sprite) {
     const animations = moveInfo.traveled.slice(0, -1).map((t, i, arr) => ({
       facing,
       stopwatch: new Stopwatch(1000 * (1 + (i / arr.length))),
       traveled: t,
     }));
     this.pendingTravelAnimations.push(...animations);
+    this.pendingTouchAnimations.push({
+      move,
+      stopwatch: new Stopwatch(200),
+    });
   }
   private drawSprite(sprite: Sprite, x: number, y: number, scale?: number) {
     const { canvasElm, ctx, currentLevel } = this;
@@ -239,7 +266,7 @@ export class GameManager {
   private drawSpriteWithOpacity(alpha: number, sprite: Sprite, x: number, y: number, scale?: number) {
     const { ctx } = this;
     if (!ctx) {
-      return;
+      throw CanvasNotReadyError;
     }
     const oldAlpha = ctx.globalAlpha;
     ctx.globalAlpha = alpha;
@@ -247,7 +274,7 @@ export class GameManager {
     ctx.globalAlpha = oldAlpha;
   }
   private async draw() {
-    const { canvasElm, ctx, currentLevel, world } = this;
+    const { canvasElm, ctx, currentLevel, world, touchTriangleByMove } = this;
     if (!canvasElm || !ctx) {
       return;
     }
@@ -309,6 +336,24 @@ export class GameManager {
         1.2,
       );
     });
+
+    // touch indicator
+    this.pendingTouchAnimations = this.pendingTouchAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
+    if (store.getState().shouldDrawTouch) {
+      this.pendingTouchAnimations.forEach((a) => {
+        const { move, stopwatch } = a;
+        const points = touchTriangleByMove[move];
+        const opacity = stopwatch.getPercent() * 0.5;
+        ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        points.reverse().forEach((p) => {
+          ctx.lineTo(p.x, p.y);
+        });
+        ctx.fill();
+      });
+    }
+
     // clear whiteout
     this.pendingClearAnimations = this.pendingClearAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
     this.pendingClearAnimations.forEach((a) => {

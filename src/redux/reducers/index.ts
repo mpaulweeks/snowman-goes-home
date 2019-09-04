@@ -1,7 +1,7 @@
 import { Reducer } from 'redux';
 import { mobileCheck } from '../../fe/mobileCheck';
 import { Stopwatch, World } from '../../utils';
-import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_ABOUT, TOGGLE_DRAW_GRID, TOGGLE_HOW2PLAY, TOGGLE_MUSIC, TOGGLE_OPTIONS } from '../actionTypes';
+import { SET_GAME_OVER, SET_LEVEL, SET_TIMER, SET_WORLD, TOGGLE_ABOUT, TOGGLE_DRAW_GRID, TOGGLE_DRAW_TOUCH, TOGGLE_HOW2PLAY, TOGGLE_MUSIC, TOGGLE_OPTIONS } from '../actionTypes';
 
 export interface DataState {
   audioPlaying: boolean;
@@ -11,6 +11,7 @@ export interface DataState {
   secondsElapsed: string;
   secondsRemaining: string;
   shouldDrawGrid: boolean;
+  shouldDrawTouch: boolean;
   showAbout: boolean;
   showHow2Play: boolean;
   showOptions: boolean;
@@ -35,6 +36,7 @@ const initialState: DataState = {
   secondsElapsed: '',
   secondsRemaining: '',
   shouldDrawGrid: false,
+  shouldDrawTouch: mobileCheck(),
   showAbout: false,
   showHow2Play: true,
   showOptions: false,
@@ -83,6 +85,12 @@ const reducer: Reducer<DataState, DataAction> = (state = initialState, action: D
       return {
         ...state,
         shouldDrawGrid: !state.shouldDrawGrid,
+      };
+    }
+    case TOGGLE_DRAW_TOUCH: {
+      return {
+        ...state,
+        shouldDrawTouch: !state.shouldDrawTouch,
       };
     }
     case TOGGLE_HOW2PLAY: {
