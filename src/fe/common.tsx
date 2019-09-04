@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Sprites } from './sprite';
+import { mobileCheck } from './mobileCheck';
 
 export const Row = styled.div`
   display: flex;
@@ -99,10 +100,12 @@ export const ActionButton = styled(LoadingButton)`
   font-style: normal;
   color: var(--foreground);
 
-  &:hover {
-    color: var(--background);
-    background-color: var(--foreground);
-  }
+  ${!mobileCheck() && `
+    &:hover {
+      color: var(--background);
+      background-color: var(--foreground);
+    }
+  `}
 `;
 
 export const GameTitle = () => (
