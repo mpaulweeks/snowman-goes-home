@@ -347,8 +347,8 @@ export class GameManager {
     this.touchAnimations.forEach((a) => {
       const { move, stopwatch } = a;
       const points = touchPolygonByMove[move];
-      const opacity = stopwatch.getPercent() * 0.5;
-      ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+      const opacity = stopwatch.getPercent();
+      ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
       ctx.beginPath();
       ctx.moveTo(points[0].x, points[0].y);
       points.reverse().forEach((p) => {
