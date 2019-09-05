@@ -106,14 +106,16 @@ export class GameManager {
     this.ctx = canvasElm.getContext('2d') as CanvasRenderingContext2D;
 
     // setup touchPolygonByMove
-    const TopLeft = new Point(0, 0);
-    const TopLeftCenter = new Point(canvasElm.width / 4, canvasElm.height / 4);
-    const TopRight = new Point(canvasElm.width, 0);
-    const TopRightCenter = new Point(canvasElm.width * 3 / 4, canvasElm.height / 4);
-    const BottomLeft = new Point(0, canvasElm.height);
-    const BottomLeftCenter = new Point(canvasElm.width / 4, canvasElm.height * 3 / 4);
-    const BottomRight = new Point(canvasElm.width, canvasElm.height);
-    const BottomRightCenter = new Point(canvasElm.width * 3 / 4, canvasElm.height * 3 / 4);
+    const qw = canvasElm.width / 4;
+    const qh = canvasElm.height / 4;
+    const TopLeft = new Point(-qw, -qh);
+    const TopLeftCenter = new Point(qw, qh);
+    const TopRight = new Point(qw * 5, -qh);
+    const TopRightCenter = new Point(qw * 3, qh);
+    const BottomLeft = new Point(-qw, qh * 5);
+    const BottomLeftCenter = new Point(qw, qh * 3);
+    const BottomRight = new Point(qw * 5, qh * 5);
+    const BottomRightCenter = new Point(qw * 3, qh * 3);
     this.touchPolygonByMove = {
       [Move.Left]: [TopLeft, TopLeftCenter, BottomLeftCenter, BottomLeft],
       [Move.Right]: [TopRight, TopRightCenter, BottomRightCenter, BottomRight],
@@ -348,6 +350,7 @@ export class GameManager {
       const { move, stopwatch } = a;
       const points = touchPolygonByMove[move];
       const opacity = stopwatch.getPercent();
+      ctx.strokeStyle = `rgba(0, 0, 0, ${opacity})`;
       ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
       ctx.beginPath();
       ctx.moveTo(points[0].x, points[0].y);
@@ -355,6 +358,7 @@ export class GameManager {
         ctx.lineTo(p.x, p.y);
       });
       ctx.fill();
+      ctx.stroke();
     });
 
     // clear whiteout
