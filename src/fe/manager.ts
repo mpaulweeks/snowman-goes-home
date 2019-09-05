@@ -134,6 +134,18 @@ export class GameManager {
     const rect = (evt.target as HTMLElement).getBoundingClientRect();
     const x = touchEvt.clientX - rect.left;
     const y = touchEvt.clientY - rect.top;
+
+    // check if not close enough to the edges
+    const isCenter = (
+      rect.width * 0.25 < x &&
+      x < rect.width * 0.75 &&
+      rect.height * 0.25 < y &&
+      y < rect.height * 0.75
+    );
+    if (isCenter) {
+      return;
+    }
+
     const px = x / rect.width;
     const py = y / rect.height;
     const isTopRight = px > py;
