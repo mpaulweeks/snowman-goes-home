@@ -319,6 +319,23 @@ export class GameManager {
       }
     }
 
+    // touch indicator
+    this.touchAnimations = this.touchAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
+    this.touchAnimations.forEach((a) => {
+      const { move, stopwatch } = a;
+      const points = touchPolygonByMove[move];
+      const opacity = stopwatch.getPercent();
+      ctx.strokeStyle = `rgba(100, 100, 100, ${opacity})`;
+      ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      points.reverse().forEach((p) => {
+        ctx.lineTo(p.x, p.y);
+      });
+      ctx.fill();
+      ctx.stroke();
+    });
+
     // grid
     if (store.getState().shouldDrawGrid) {
       ctx.strokeStyle = worldStyle.gridColor;
@@ -354,23 +371,6 @@ export class GameManager {
         traveled.point.y,
         1.2,
       );
-    });
-
-    // touch indicator
-    this.touchAnimations = this.touchAnimations.filter((a) => a.stopwatch.getRemaining() > 0);
-    this.touchAnimations.forEach((a) => {
-      const { move, stopwatch } = a;
-      const points = touchPolygonByMove[move];
-      const opacity = stopwatch.getPercent();
-      ctx.strokeStyle = `rgba(0, 0, 0, ${opacity})`;
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-      ctx.beginPath();
-      ctx.moveTo(points[0].x, points[0].y);
-      points.reverse().forEach((p) => {
-        ctx.lineTo(p.x, p.y);
-      });
-      ctx.fill();
-      ctx.stroke();
     });
 
     // clear whiteout
