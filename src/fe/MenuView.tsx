@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { World, Difficulty } from '../utils';
 import { connect } from 'react-redux';
-import { DataState, toggleMusic, toggleOptions } from '../redux';
+import { DataState, toggleAbout, toggleMusic, toggleOptions } from '../redux';
 import { GameManager } from './manager';
 import { Sprites } from './sprite';
 import { IcyContainer, LoadingButton, ActionButton, Row, BubbleArea, RowWithMargin, ColumnWithPadding, GameTitle } from './common';
@@ -24,6 +24,7 @@ const WorldInfo = styled.span`
 interface Props {
   gm: GameManager;
   store: DataState;
+  toggleAbout(): void;
   toggleMusic(): void;
   toggleOptions(): void;
 };
@@ -126,6 +127,9 @@ class _MenuView extends React.Component<Props, State> {
               <ActionButton onClick={this.props.toggleOptions}>
                 options
               </ActionButton>
+              <ActionButton onClick={this.props.toggleAbout}>
+                about
+              </ActionButton>
             </RowWithMargin>
           </BubbleArea>
         </Row>
@@ -139,6 +143,7 @@ export const MenuView = connect(
     store,
   }),
   {
+    toggleAbout,
     toggleMusic,
     toggleOptions,
   }
