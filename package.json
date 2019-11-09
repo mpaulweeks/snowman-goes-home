@@ -5,7 +5,8 @@
   "license": "MIT",
   "homepage": ".",
   "scripts": {
-    "predeploy": "yarn build",
+    "remove-maps": "rm build/static/js/*.map",
+    "predeploy": "yarn build && yarn remove-maps",
     "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "test-ci": "jest",
